@@ -40,7 +40,7 @@ kernelmind-apex_1.0.31_arm64.deb
 
 1. 断电状态下连接机器人本体、电控箱、Jetson、相机和外设。
 2. 连接 Jetson 到机器人控制网络，推荐使用有线网口。
-3. 连接 GMSL/CSI 相机线束，确认 head/hand camera 插口与配置中的 `head_left`、`head_right`、`hand_left`、`hand_right` 对应。
+3. 连接 GMSL/CSI 相机线束，确认各路相机插口与配置中的 `head_left`、`head_right`、`hand_left`、`hand_right` 对应。
 4. 连接 VR 头显或上位机到同一网络。
 5. 接通电源，先启动 Jetson，再启动机器人电控。
 
@@ -83,7 +83,7 @@ ros2 pkg list | grep -E 'marvin|gmsl|node_manager'
 |---|---|
 | `/opt/kernelmind/apex/install` | ROS 2 workspace install 目录 |
 | `/opt/kernelmind/apex/bringup_RM.sh` | 标准启动脚本 |
-| `/opt/kernelmind/apex/bringup_RM_glove.sh` | glove 版本启动脚本 |
+| `/opt/kernelmind/apex/bringup_RM_glove.sh` | 外设版本启动脚本 |
 | `/etc/profile.d/kernelmind_apex.sh` | ROS 环境加载脚本 |
 | `/etc/kernelmind/marvin_teleop/config` | teleop 配置软链接 |
 | `/etc/kernelmind/marvin_ros_control/config` | control 配置软链接 |
@@ -216,7 +216,7 @@ source /etc/profile.d/kernelmind_apex.sh
 /opt/kernelmind/apex/bringup_RM.sh
 ```
 
-Glove 版本启动：
+外设版本启动：
 
 ```bash
 source /etc/profile.d/kernelmind_apex.sh
