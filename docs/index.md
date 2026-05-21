@@ -12,17 +12,3 @@ title: KernelMind Apex 文档
 
 - [安装使用教程](install-usage-guide)
 
-## 本地预览
-
-在仓库根目录运行：
-
-```bash
-npm install
-npm run start
-```
-
-默认访问：
-
-```text
-http://localhost:3000/Apex_Deploy/
-```
