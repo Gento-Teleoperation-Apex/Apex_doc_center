@@ -17,11 +17,9 @@ const sidebars = {
       type: 'category',
       label: '快速入门',
       items: [
-        'getting-started/connection-configuration',
-        'getting-started/software-installation',
+        'getting-started/install_usage_guide',
       ],
     },
-    'install_usage_guide',
   ],
 };
 

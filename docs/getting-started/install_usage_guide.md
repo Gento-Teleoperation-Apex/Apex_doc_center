@@ -1,6 +1,5 @@
 ---
 id: install_usage_guide
-slug: /install-usage-guide
 title: 安装使用教程
 ---
 
@@ -34,7 +33,7 @@ kernelmind-apex_1.0.31_arm64.deb
 | QuickView / WebSocket 信令地址 | `ws://192.168.10.123:8554` | 按实际网络修改 |
 | VR / 上位机 IP | `192.168.10.x` | 与 Jetson 同网段 |
 
-![网络拓扑占位图](images/network_topology_placeholder.png)
+![网络拓扑占位图](/img/network_topology_placeholder.png)
 
 ## 2. 连接设备
 
@@ -44,7 +43,7 @@ kernelmind-apex_1.0.31_arm64.deb
 4. 连接 VR 头显或上位机到同一网络。
 5. 接通电源，先启动 Jetson，再启动机器人电控。
 
-![设备接线占位图](images/device_wiring_placeholder.png)
+![设备接线占位图](/img/device_wiring_placeholder.png)
 
 通电后在 Jetson 上检查基础设备：
 
@@ -172,7 +171,7 @@ sudo journalctl -u isc-dhcp-server -f
 cat /var/lib/dhcp/dhcpd.leases
 ```
 
-![DHCP 配置占位图](images/dhcp_config_placeholder.png)
+![DHCP 配置占位图](/img/dhcp_config_placeholder.png)
 
 ### 4.3 修改 QuickView / 相机参数
 
@@ -272,7 +271,7 @@ ls ~/.ros/log
 
 QuickView 页面或客户端应能看到 VR view 和 quad view。若使用图片记录验收，可替换下面占位图：
 
-![QuickView 画面占位图](images/quickview_output_placeholder.png)
+![QuickView 画面占位图](/img/quickview_output_placeholder.png)
 
 ## 7. 常见问题
 

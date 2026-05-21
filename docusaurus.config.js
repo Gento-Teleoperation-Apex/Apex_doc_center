@@ -43,6 +43,10 @@ const config = {
     ({
       navbar: {
         title: 'KernelMind Apex',
+        logo: {
+          alt: 'Tianji Logo',
+          src: 'img/tianji_logo.jpg',
+        },
         items: [
           {
             type: 'docSidebar',
