@@ -1,5 +1,4 @@
 ---
-id: install_usage_guide
 title: 安装使用教程
 ---
 
@@ -55,14 +54,77 @@ sudo dmesg --follow
 
 如果相机设备没有出现，先检查线束、转接板供电、相机驱动和 Jetson 相机服务。
 
-## 3. 安装 deb
+## 3. 安装头显 APK（ADB 方式）
 
-将 deb 包拷贝到 Jetson，例如放到 `~/Downloads`：
+以下步骤用于在 Meta Quest 头显上安装或更新 KernelMind Apex APK。
+
+### 3.1 安装 ADB 工具
+
+Orin 需连接 WiFi 以下载 ADB 工具：
+
+```bash
+sudo apt update
+sudo apt install android-tools-adb -y
+adb version
+```
+
+显示 ADB 版本号表示安装成功。
+
+![安装 ADB](/img/upgrade_p05.png)
+
+### 3.2 连接头显
+
+1. 使用 Type-C 数据线连接头显和 Orin。
+2. 佩戴头显，在头显内允许 USB 调试。
+3. 在 Orin 执行：
+
+```bash
+adb devices
+```
+
+若显示 `device`，表示连接成功。
+
+![连接头显并检查 adb devices](/img/upgrade_p06.png)
+
+### 3.3 上传安装包
+
+将头显 APK 与 Orin `.deb` 安装包上传到 Orin 的 `~/Downloads` 目录，例如：
+
+- `KernalMind_Apex_meta_260410.apk`
+- `kernelmind-apex_1.0.5.7_arm64.deb`
+
+![上传 APK 和 deb 安装包](/img/upgrade_p07.png)
+
+### 3.4 安装 / 更新头显 APK
+
+先卸载旧版，再安装新版：
+
+```bash
+adb devices
+adb uninstall <旧包名>
+adb install KernalMind_Apex_meta_260410.apk
+```
+
+![安装 Meta 头显 APK](/img/upgrade_p09.png)
+
+## 4. 安装 deb
+
+将 deb 包拷贝到 Jetson，例如放到 `~/Downloads`。
+
+**更新时建议先卸载旧版本**：
+
+```bash
+sudo apt remove kernelmind-apex
+```
+
+再安装新版本：
 
 ```bash
 cd ~/Downloads
 sudo apt install ./kernelmind-apex_<version>_arm64.deb
 ```
+
+![安装 Orin KernelMind 系统](/img/upgrade_p11.png)
 
 安装完成后重新登录，或手动加载环境：
 
@@ -87,9 +149,9 @@ ros2 pkg list | grep -E 'marvin|gmsl|node_manager'
 | `/etc/kernelmind/marvin_teleop/config` | teleop 配置软链接 |
 | `/etc/kernelmind/marvin_ros_control/config` | control 配置软链接 |
 
-## 4. 配置网络参数
+## 5. 配置网络参数
 
-### 4.1 设置 Jetson 静态 IP
+### 5.1 设置 Jetson 静态 IP
 
 下面以 `eth0` 和 `192.168.10.123/24` 为例，按现场网段替换：
 
@@ -114,7 +176,7 @@ ip addr show eth0
 ping 192.168.10.50
 ```
 
-### 4.2 配置 ISC DHCP（需要 Jetson 给设备分配 IP 时）
+### 5.2 配置 ISC DHCP（需要 Jetson 给设备分配 IP 时）
 
 如果 VR、上位机或其它设备需要从 Jetson 获取 IP，可安装 ISC DHCP Server：
 
@@ -173,7 +235,7 @@ cat /var/lib/dhcp/dhcpd.leases
 
 ![DHCP 配置占位图](/img/dhcp_config_placeholder.png)
 
-### 4.3 修改 QuickView / 相机参数
+### 5.3 修改 QuickView / 相机参数
 
 QuickView 相机配置文件安装在：
 
@@ -206,7 +268,7 @@ hand_left: "none"
 
 修改后重新启动 launch 生效。
 
-## 5. 启动系统
+## 6. 启动系统
 
 标准 M6 启动：
 
@@ -241,7 +303,7 @@ LAUNCH_PKG=node_manager LAUNCH_FILE=bringup_all_dm_m6_no_rviz.launch.py \
 ros2 launch gmsl_quadcam quad_csi_quickview.launch.py
 ```
 
-## 6. 启动后检查
+## 7. 启动后检查
 
 检查节点：
 
@@ -273,9 +335,9 @@ QuickView 页面或客户端应能看到 VR view 和 quad view。若使用图片
 
 ![QuickView 画面占位图](/img/quickview_output_placeholder.png)
 
-## 7. 常见问题
+## 8. 常见问题
 
-### 7.1 deb 安装失败
+### 8.1 deb 安装失败
 
 ```bash
 sudo apt update
@@ -285,7 +347,7 @@ sudo apt install ./kernelmind-apex_<version>_arm64.deb
 
 确认系统是 Ubuntu 22.04 ARM64，并已安装 ROS 2 Humble 基础包。
 
-### 7.2 网络不通
+### 8.2 网络不通
 
 检查网卡和路由：
 
@@ -297,7 +359,7 @@ ping <设备IP>
 
 如果启用了 ISC DHCP，确认 `INTERFACESv4` 是正确网卡，且 Jetson 静态 IP 与 DHCP subnet 在同一网段。
 
-### 7.3 相机没有画面
+### 8.3 相机没有画面
 
 ```bash
 ls /dev/video*
@@ -306,7 +368,7 @@ ros2 launch gmsl_quadcam quad_csi_quickview.launch.py
 
 如果日志出现 `No cameras available`，通常是相机线束、驱动、sensor-id 或相机服务未就绪。先确认 `quad_csi_quickview.yaml` 里的 `camera_sources` 与实际接线一致。
 
-### 7.4 VR 或上位机连不上信令
+### 8.4 VR 或上位机连不上信令
 
 确认 `signal_url` 使用 Jetson 在控制网络中的 IP：
 
@@ -321,14 +383,14 @@ ping 192.168.10.123
 nc -vz 192.168.10.123 8554
 ```
 
-### 7.5 机器人不响应控制
+### 8.5 机器人不响应控制
 
 1. 检查急停、电控电源和驱动器状态。
 2. 检查 ROS 节点是否都启动。
 3. 检查 VR/headset target pose 是否正常更新。
 4. 如果控制被安全逻辑 disable，先排除连接问题，再重新 enable。
 
-## 8. 卸载
+## 9. 卸载
 
 ```bash
 sudo apt remove kernelmind-apex
