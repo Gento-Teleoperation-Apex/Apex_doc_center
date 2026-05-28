@@ -1,0 +1,6 @@
+{
+  "copyright": {
+    "message": "Copyright © {currentYear} KernelMind. Built with Docusaurus.",
+    "description": "The footer copyright"
+  }
+}

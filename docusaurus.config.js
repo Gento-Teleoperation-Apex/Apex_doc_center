@@ -18,7 +18,11 @@ const config = {
 
   i18n: {
     defaultLocale: 'zh-Hans',
-    locales: ['zh-Hans'],
+    locales: ['zh-Hans', 'en'],
+    localeConfigs: {
+      'zh-Hans': { label: '中文' },
+      en: { label: 'English' },
+    },
   },
 
   presets: [
@@ -53,6 +57,10 @@ const config = {
             sidebarId: 'mainSidebar',
             position: 'left',
             label: '文档',
+          },
+          {
+            type: 'localeDropdown',
+            position: 'right',
           },
           {
             href: 'https://github.com/KLMmotion/Apex_doc_center',

@@ -1,0 +1,38 @@
+{
+  "sidebar.mainSidebar.category.Marvin Pro": {
+    "message": "Marvin Pro",
+    "description": "The label for category Marvin Pro in sidebar mainSidebar"
+  },
+  "sidebar.mainSidebar.category.旧ID": {
+    "message": "Old ID",
+    "description": "The label for category Old ID in sidebar mainSidebar"
+  },
+  "sidebar.mainSidebar.category.新ID": {
+    "message": "New ID",
+    "description": "The label for category New ID in sidebar mainSidebar"
+  },
+  "sidebar.mainSidebar.category.快速入门": {
+    "message": "Getting Started",
+    "description": "The label for category Getting Started in sidebar mainSidebar"
+  },
+  "sidebar.mainSidebar.category.产品介绍": {
+    "message": "Product Introduction",
+    "description": "The label for category Product Introduction in sidebar mainSidebar"
+  },
+  "sidebar.mainSidebar.category.Gento": {
+    "message": "Gento",
+    "description": "The label for category Gento in sidebar mainSidebar"
+  },
+  "sidebar.mainSidebar.category.Skye": {
+    "message": "Skye",
+    "description": "The label for category Skye in sidebar mainSidebar"
+  },
+  "sidebar.mainSidebar.category.Luna": {
+    "message": "Luna",
+    "description": "The label for category Luna in sidebar mainSidebar"
+  },
+  "sidebar.mainSidebar.category.数据转换": {
+    "message": "Data Converter",
+    "description": "The label for category Data Converter in sidebar mainSidebar"
+  }
+}
