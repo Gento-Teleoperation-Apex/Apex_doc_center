@@ -1,6 +1,6 @@
 ---
 title: 模型训练
-sidebar_position: 2
+sidebar_position: 3
 ---
 
 # PI0 / PI05 模型训练

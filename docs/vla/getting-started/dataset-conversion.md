@@ -19,7 +19,7 @@ OpenPI 当前训练代码使用 LeRobot **v2.1** 数据集布局。若你通过 
 - 生成 legacy 的 `episodes.jsonl` / `episodes_stats.jsonl`
 - 保留 v3.0 原始文件，并在同一目录下追加 v2.1 兼容文件
 
-转换完成后，数据集目录即可直接用于 OpenPI 训练流程。
+转换完成后，数据集目录即可直接用于 OpenPI 训练流程。转换结果的四路相机视频与目录结构说明见 [数据集样例](/vla/getting-started/dataset-sample)。
 
 ## 本地 v3.0 数据集原地转换
 
