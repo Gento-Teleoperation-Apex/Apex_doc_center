@@ -1,0 +1,202 @@
+/* Local Variable Fonts */
+@font-face {
+  font-family: 'Space Grotesk VF';
+  src: url('/fonts/SpaceGrotesk-VariableFont_wght.ttf') format('truetype');
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+
+/* ========================================================
+   Typora Scoped Theme: Modern Tech Enterprise (bingru.css)
+   ======================================================== */
+article:has(.bingru-theme) {
+  --bingru-bg-color: #fcfaf7;
+  --bingru-panel-bg-color: #f5f4f1;
+  --bingru-border-color: rgba(17, 20, 45, 0.05);
+  --bingru-border-darker: rgba(17, 20, 45, 0.1);
+  --bingru-icon-color: #9B9CAE;
+  --bingru-text-secondary: #616B7E;
+  --bingru-text-primary: #11142D;
+
+  font-family: "Space Grotesk VF", sans-serif !important;
+  color: var(--bingru-text-primary) !important;
+  line-height: 1.6 !important;
+  font-size: 14px !important;
+}
+
+/* Scoped bold styling */
+article:has(.bingru-theme) strong,
+article:has(.bingru-theme) b {
+  font-weight: 600 !important;
+  color: var(--bingru-text-primary) !important;
+}
+
+/* Scoped Headings with Typora theme borders and margins */
+article:has(.bingru-theme) h1 {
+  font-size: 1.8rem !important;
+  color: var(--bingru-text-primary) !important;
+  margin-top: 2.2rem !important;
+  margin-bottom: 0.8rem !important;
+  padding-bottom: 0.6rem !important;
+  border-bottom: 1px solid var(--bingru-border-color) !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.02rem !important;
+}
+
+article:has(.bingru-theme) h2 {
+  font-size: 1.35rem !important;
+  color: var(--bingru-text-primary) !important;
+  border-left: 4px solid var(--bingru-text-primary) !important;
+  padding: 2px 14px !important;
+  border-radius: 0 6px 6px 0 !important;
+  margin-top: 2rem !important;
+  margin-bottom: 1rem !important;
+  font-weight: 700 !important;
+}
+
+article:has(.bingru-theme) h3 {
+  font-size: 1.15rem !important;
+  color: var(--bingru-text-primary) !important;
+  margin-top: 1.8rem !important;
+  margin-bottom: 0.6rem !important;
+  font-weight: 700 !important;
+}
+
+/* Scoped Paragraphs */
+article:has(.bingru-theme) p {
+  margin-bottom: 1.1rem !important;
+  color: var(--bingru-text-primary) !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* Modern Tables matching Typora theme */
+article:has(.bingru-theme) table {
+  width: 95% !important;
+  margin: 2rem auto !important;
+  border-collapse: collapse !important;
+  border-spacing: 0 !important;
+  font-size: 0.9em !important;
+  align-items: center !important;
+}
+
+article:has(.bingru-theme) th,
+article:has(.bingru-theme) td {
+  border: 1px solid var(--bingru-border-darker) !important;
+  padding: 10px 16px !important;
+}
+
+article:has(.bingru-theme) th {
+  background-color: var(--bingru-panel-bg-color) !important;
+  color: var(--bingru-text-secondary) !important;
+  font-weight: 700 !important;
+  text-align: left !important;
+}
+
+article:has(.bingru-theme) td {
+  background-color: #ffffff !important;
+  color: var(--bingru-text-primary) !important;
+}
+
+/* Scoped Blockquotes */
+article:has(.bingru-theme) blockquote {
+  background-color: var(--bingru-panel-bg-color) !important;
+  border-left: 4px solid var(--bingru-icon-color) !important;
+  border-radius: 0 8px 8px 0 !important;
+  padding: 16px 20px !important;
+  margin: 1.8rem 0 !important;
+  color: var(--bingru-text-secondary) !important;
+  font-size: 0.9em !important;
+}
+
+article:has(.bingru-theme) blockquote p {
+  color: var(--bingru-text-secondary) !important;
+  margin-bottom: 0 !important;
+}
+
+/* Typora Code Block and Tag styling */
+article:has(.bingru-theme) code {
+  display: inline-block !important;
+  min-width: 1.2em !important;
+  text-align: center !important;
+  padding: 1px 8px !important;
+  margin: 0 3px !important;
+  vertical-align: baseline !important;
+  font-family: "Space Grotesk" !important;
+  font-size: 0.85em !important;
+  font-weight: 500 !important;
+  color: var(--bingru-text-primary) !important;
+  border: 2px solid var(--bingru-icon-color) !important;
+  border-radius: 8px !important;
+  white-space: nowrap !important;
+  word-break: break-all !important;
+  box-shadow: 0 1px 1px rgba(17, 20, 45, 0.03) !important;
+}
+
+article:has(.bingru-theme) pre code {
+  display: block !important;
+  min-width: auto !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background-color: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  text-align: left !important;
+  white-space: pre !important;
+}
+
+/* Modern Centered Pure Markdown Images */
+article:has(.bingru-theme) p:has(> img:only-child),
+article:has(.bingru-theme) p:has(> img:first-child + em:last-child),
+article:has(.bingru-theme) p:has(> a:only-child > img:only-child) {
+  text-align: center !important;
+  margin: 2rem 0 !important;
+}
+
+article:has(.bingru-theme) p:has(> img:only-child) img,
+article:has(.bingru-theme) p:has(> img:first-child + em:last-child) img,
+article:has(.bingru-theme) p:has(> a:only-child > img:only-child) img {
+  display: block !important;
+  margin: 0 auto 0.8rem auto !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+  max-width: 100% !important;
+}
+
+article:has(.bingru-theme) p:has(> img:only-child) em,
+article:has(.bingru-theme) p:has(> img:first-child + em:last-child) em {
+  display: block !important;
+  text-align: center !important;
+  font-size: 0.85em !important;
+  color: var(--bingru-text-secondary) !important;
+  margin-top: 0.5rem !important;
+  margin-bottom: 1rem !important;
+  font-weight: 500 !important;
+  font-style: normal !important;
+}
+
+/* Explicit HTML <figure> Support */
+article:has(.bingru-theme) figure {
+  text-align: center !important;
+  margin: 2rem 0 !important;
+}
+
+article:has(.bingru-theme) figure img {
+  display: block !important;
+  margin: 0 auto 0.8rem auto !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+  max-width: 80% !important;
+}
+
+article:has(.bingru-theme) figcaption {
+  text-align: center !important;
+  font-size: 0.85em !important;
+  color: var(--bingru-text-secondary) !important;
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+  font-weight: 500 !important;
+}

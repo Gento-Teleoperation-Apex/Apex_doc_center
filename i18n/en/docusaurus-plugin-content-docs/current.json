@@ -34,5 +34,9 @@
   "sidebar.mainSidebar.category.数据转换": {
     "message": "Data Converter",
     "description": "The label for category Data Converter in sidebar mainSidebar"
+  },
+  "sidebar.mainSidebar.category.XR 遥操作客户端": {
+    "message": "XR Teleoperation App Manual",
+    "description": "The label for category XR 遥操作客户端 in sidebar mainSidebar"
   }
 }
