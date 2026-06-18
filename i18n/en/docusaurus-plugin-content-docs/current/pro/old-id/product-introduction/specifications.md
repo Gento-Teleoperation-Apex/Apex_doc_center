@@ -20,7 +20,21 @@ Confirm the following addresses before deployment:
 | Orin user password | `1234` |
 | Router / Wi-Fi password | `12345678` |
 
-![Marvin Pro IP configuration overview](/img/pro_p43.png)
+Network configuration checklist:
+
+| Check | Requirement |
+| --- | --- |
+| Orin IP | Must match the IP entered in the headset Apex app |
+| Dual-arm controller IP | Must match the Orin dual-arm configuration IP |
+| Router subnet | Must place Orin and the robot controller on the same subnet |
+| SSH login | Orin should be reachable via `ssh marvin@192.168.10.123` |
+| VR headset connection | The headset should connect to the Apex service after entering the Orin IP |
+
+:::info Image placeholder: network configuration overview
+
+Replace this block later with an IP configuration overview for Orin, robot controller, router, and the headset Apex app.
+
+:::
 
 ## Software Environment
 
@@ -56,6 +70,18 @@ Confirm the following addresses before deployment:
 | `/info/collision_statusA` | Left arm trajectory collision flag | `std_msgs/msg/Bool` |
 | `/info/collision_statusB` | Right arm trajectory collision flag | `std_msgs/msg/Bool` |
 
-![ROS Topic reference (page 1)](/img/pro_p35.png)
+Topic check suggestions:
 
-![ROS Topic reference (page 2)](/img/pro_p36.png)
+| Check | Notes |
+| --- | --- |
+| Control input | Check `/control/target_poseL`, `/control/target_poseR`, `/control/gripL`, and `/control/gripR` |
+| Robot feedback | Check `/info/eef_left`, `/info/eef_right`, `/info/joint_feedback`, and `/joint_states` |
+| Video input | Check whether `/usb_cam_0/image_raw` publishes stable image data |
+| Gripper feedback | Check `/gripper/feedback_L_err` and `/gripper/feedback_R_err` for abnormal error codes |
+| Safety state | Check `/info/arm_state`, `/info/collision_statusA`, and `/info/collision_statusB` |
+
+:::info Image placeholder: ROS Topic overview
+
+Replace this block later with a ROS Topic communication diagram or rqt graph screenshot showing control input, robot feedback, video input, and safety state relationships.
+
+:::

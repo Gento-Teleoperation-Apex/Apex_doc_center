@@ -10,13 +10,13 @@ sidebar_position: 3
 1. 检查连接 VR 的线束是否正常。
 2. 长按右手柄圆圈按钮重置。
 
-![Skye 虚拟手柄位置不准确](/img/skye_p19.png)
+![Skye 虚拟手柄位置不准确](/img/skye/controller_reset.png)
 
 ### 2. RViz 不出图
 
 在 RViz 中点击 `Fixed Frame`，选择 `base link`。
 
-![RViz Fixed Frame 设置](/img/skye_p20.png)
+![RViz Fixed Frame 设置](/img/skye/rviz_fixed_frame.png)
 
 ### 3. DHCP 服务启动失败
 

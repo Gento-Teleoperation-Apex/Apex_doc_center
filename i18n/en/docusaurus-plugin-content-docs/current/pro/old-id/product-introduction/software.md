@@ -30,7 +30,9 @@ Three control modes are available after the robot starts:
 | Position | Precise position control |
 | Impedance | Force-controlled interaction, drag teaching, teleoperation (use this for teleop) |
 
-![Teleoperation software control modes](/img/pro_p28.png)
+Click **Standby**, **Position**, or **Impedance** to switch modes.
+
+![Teleoperation software control modes](/img/pro/software/control_modes.png)
 
 ## Speed Control
 
@@ -39,7 +41,13 @@ Three control modes are available after the robot starts:
 
 Speed can only be changed while in **Standby mode**.
 
-![Speed control](/img/pro_p29.png)
+> **Note**
+>
+> * Start the robot before switching modes.
+> * If startup fails, check the IP address, backend service, and robot driver status.
+> * Robot startup may fail if the USB drive is not inserted.
+
+![Speed control](/img/pro/software/speed_control.png)
 
 ## Data Recording
 
@@ -52,25 +60,32 @@ Speed can only be changed while in **Standby mode**.
 
 > Recording is only available when the USB drive is inserted.
 
-![Data recording feature](/img/pro_p30.png)
+![Data recording feature](/img/pro/software/data_recording.png)
 
 ## Reset & Hardware Replay
 
 **Reset**: after teleoperation or hardware replay, click **Reset** to return the robot arms to the default Home position.
 
-![Reset feature](/img/pro_p31.png)
+![Reset feature](/img/pro/software/reset.png)
 
 **Hardware Replay**: select a recorded bag file and press play.
 
+Steps:
+
+1. Click the **Playback** card on the main panel.
+2. Click **Select File** in the side panel.
+3. Select an available bag file in the dialog; the file details will be shown after loading.
+4. Click **Play** to replay the recorded robot motion.
+
 > Note: teleoperation and replay cannot be active at the same time.
 
-![Hardware replay feature](/img/pro_p32.png)
+![Hardware replay feature](/img/pro/software/playback.png)
 
 ## Gripper Restart
 
 If a gripper disconnects or is hot-plugged, click **Gripper Restart** to restore its state.
 
-![Gripper restart feature](/img/pro_p33.png)
+![Gripper restart feature](/img/pro/software/gripper_restart.png)
 
 ## Operation Logs
 
@@ -80,4 +95,6 @@ Logs are saved on Orin at:
 ~/.ros/log
 ```
 
-![Operation log location](/img/pro_p20.png)
+Export this folder when logs are needed for troubleshooting.
+
+![Operation log location](/img/pro/software/log_location.png)

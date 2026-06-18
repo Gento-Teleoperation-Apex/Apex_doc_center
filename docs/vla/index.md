@@ -64,7 +64,7 @@ actions = [delta_pos(3), delta_rot(3), gripper(1)]
 
 | 文档 | 内容 |
 | --- | --- |
-| [数据集转换](/vla/getting-started/dataset-conversion) | LeRobot v3.0 → v2.1 格式转换 |
-| [数据集样例](/vla/getting-started/dataset-sample) | 四路相机视频与目录结构说明 |
-| [模型训练](/vla/getting-started/training) | PI0 / PI05 微调与 checkpoint 管理 |
-| [真机部署](/vla/getting-started/deployment) | 策略服务器与机器人客户端联调 |
+| [数据集转换](/vla/dataset-conversion) | LeRobot v3.0 → v2.1 格式转换 |
+| [数据集样例](/vla/dataset-sample) | 四路相机视频与目录结构说明 |
+| [模型训练](/vla/training) | PI0 / PI05 微调与 checkpoint 管理 |
+| [真机部署](/vla/deployment) | 策略服务器与机器人客户端联调 |

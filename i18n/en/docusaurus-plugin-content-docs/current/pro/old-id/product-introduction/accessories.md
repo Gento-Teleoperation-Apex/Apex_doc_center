@@ -38,4 +38,11 @@ Foot pedal button assignments:
 | Button 1 (left) | Enable both left and right arms simultaneously |
 | Button 3 (right) | Return both arms to Home position |
 
-![Foot pedal extension workflow](/img/pro_p55.png)
+Foot pedal setup workflow:
+
+| Step | Action | Notes |
+| --- | --- | --- |
+| 1 | Connect the foot pedal USB cable to an Orin USB port | Confirm that the system detects the pedal |
+| 3 | Install the foot pedal SDK and dependencies | Start the teleoperation software after installation |
+
+![Foot pedal connection diagram](/img/pro/pro_accessories_foot_pedal.png)

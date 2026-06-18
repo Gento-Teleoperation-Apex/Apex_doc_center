@@ -3,13 +3,9 @@
     "message": "Marvin Pro",
     "description": "The label for category Marvin Pro in sidebar mainSidebar"
   },
-  "sidebar.mainSidebar.category.旧ID": {
-    "message": "Old ID",
-    "description": "The label for category Old ID in sidebar mainSidebar"
-  },
-  "sidebar.mainSidebar.category.新ID": {
-    "message": "New ID",
-    "description": "The label for category New ID in sidebar mainSidebar"
+  "sidebar.mainSidebar.category.PRO": {
+    "message": "PRO",
+    "description": "The label for category PRO in sidebar mainSidebar"
   },
   "sidebar.mainSidebar.category.快速入门": {
     "message": "Getting Started",
@@ -18,6 +14,10 @@
   "sidebar.mainSidebar.category.产品介绍": {
     "message": "Product Introduction",
     "description": "The label for category Product Introduction in sidebar mainSidebar"
+  },
+  "sidebar.mainSidebar.category.VLA 入门": {
+    "message": "VLA Guide",
+    "description": "The label for category VLA 入门 in sidebar mainSidebar"
   },
   "sidebar.mainSidebar.category.Gento": {
     "message": "Gento",

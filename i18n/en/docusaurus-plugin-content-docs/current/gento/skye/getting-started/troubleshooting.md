@@ -10,13 +10,13 @@ sidebar_position: 3
 1. Check that the VR cable harness is properly connected.
 2. Long-press the right controller circle button to reset.
 
-![Skye virtual controller position inaccurate](/img/skye_p19.png)
+![Skye virtual controller position inaccurate](/img/skye/controller_reset.png)
 
 ### 2. RViz Shows No Image
 
 In RViz, click `Fixed Frame` and select `base link`.
 
-![RViz Fixed Frame setting](/img/skye_p20.png)
+![RViz Fixed Frame setting](/img/skye/rviz_fixed_frame.png)
 
 ### 3. DHCP Service Fails to Start
 

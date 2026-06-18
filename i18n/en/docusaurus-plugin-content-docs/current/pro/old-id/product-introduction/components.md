@@ -26,9 +26,27 @@ The deserializer board is mounted under the Orin and supports up to 4 GMSL camer
 | 7 | Right-wrist camera |
 | 0 | Right-eye camera |
 
-Power-on sequence: **power the deserializer board first**, wait ~10 seconds, **then power Orin**, wait ~1 minute and confirm all four indicator LEDs are solid on.
+### Wiring Checklist
 
-![Deserializer board ports and power-on procedure](/img/pro_p16.png)
+When connecting cameras and peripherals, connect each camera cable to the corresponding numbered port first, then connect the USB drive, Ethernet cable, deserializer-board power, and Orin power.
+
+| Item | Connection |
+| --- | --- |
+| Camera cables | Connect to the matching deserializer-board ports and confirm the port-to-camera mapping |
+| USB drive | Connect to Orin for data recording; label must be `BAG_STORAGE` |
+| Ethernet cable 2 | Connect to Orin, keeping it on the same router network as the robot controller and VR headset adapter |
+| Deserializer-board power | Connect to the deserializer-board power input |
+| Orin power | Connect to the Orin controller power input |
+
+### Power-On Check
+
+| Step | Action | Checkpoint |
+| --- | --- | --- |
+| 1 | Power the deserializer board first | Wait about 10 seconds and confirm stable board power |
+| 2 | Power Orin next | Wait about 1 minute and confirm Orin has booted |
+| 3 | Check indicators | Confirm all four camera-port indicator LEDs are solid on |
+
+![Deserializer board wiring diagram](/img/pro/pro_components_deserializer_wiring.png)
 
 ## Communication Network
 
