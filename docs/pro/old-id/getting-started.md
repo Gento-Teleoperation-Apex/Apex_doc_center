@@ -550,7 +550,7 @@ adb install -r KernalMind_Apex_meta_260410.apk
 更新时建议先卸载旧版本：
 
 ```bash
-sudo apt remove kernelmind-apex
+sudo apt remove kernelmind_apex
 ```
 
 再安装新版本：
@@ -751,7 +751,7 @@ QuickView 页面或客户端应能看到 VR view 和 quad view。
 ### 5.7 卸载
 
 ```bash
-sudo apt remove kernelmind-apex
+sudo apt remove kernelmind_apex
 ```
 
 如需完全清理运行日志和本地配置，请先备份数据，再手动删除相关目录。

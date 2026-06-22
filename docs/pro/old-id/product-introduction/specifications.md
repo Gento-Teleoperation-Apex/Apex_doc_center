@@ -63,7 +63,7 @@ sidebar_position: 2
 | `/info/joint_feedback` | 机械臂关节反馈，左手轴1-轴7，右手轴1-轴7，频率250hz | `marvin_msgs/msg/Jointfeedback` |
 | `/joint_states` | 机械臂关节位置，左手轴1-轴7，右手轴1-轴7，频率50hz | `std_msgs/msg/JointState` |
 | `/robot_description` | 机械臂URDF可视化 | `std_msgs/msg/String` |
-| `/usb_cam_0/image raw` | 双目相机视频流 | `sensor_msgs/msg/Image` |
+| `/usb_cam_0/image_raw` | 双目相机视频流 | `sensor_msgs/msg/Image` |
 | `/gripper/feedback_L_err` | 左手夹爪错误码，用于监测夹爪状态 | `std_msgs/msg/Int32MultiArray` |
 | `/gripper/feedback_R_err` | 右手夹爪错误码，用于监测夹爪状态 | `std_msgs/msg/Int32MultiArray` |
 | `/info/arm_state` | 机械臂状态信息 | `std_msgs/msg/Int16MultiArray` |

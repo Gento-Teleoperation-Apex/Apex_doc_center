@@ -30,7 +30,7 @@ uv run scripts/train_pytorch.py pi05_lerobot_datasets0314 \
 ## 多 GPU 训练（单节点）
 
 ```bash
-torchrun --standalone --nnodes=1 --nproc_per_node=2 \
+uv run torchrun --standalone --nnodes=1 --nproc_per_node=2 \
   scripts/train_pytorch.py pi05_lerobot_datasets0314 \
   --exp_name pi05_lerobot_run1
 ```
