@@ -61,7 +61,18 @@ sudo systemctl status apex-teleop.service
 
 ## 3. 界面布局
 
-![Apex Teleop 新版界面总览](/img/pro/software/apex_teleop_overview.jpg)
+![Apex Teleop 标注版界面总览](/img/gento/luna/apex_teleop_overview_annotated.jpg)
+
+| 操作步骤 | 操作区域 | 说明 |
+|------|----------|------|
+| 1 | IP 地址输入框 | 输入机器人 IP，例如 `192.168.20.123`，按 Enter 确认 |
+| 2 | 模块控制条 | 按需启动 Camera、Robot、Teleop 等后端模块 |
+| 2.1（可选） | WebRTC 画面 | Camera 模块启动后显示 WebRTC 连接按钮，点击后查看相机画面 |
+| 3 / 4 | Robot Mode | 启动机器人控制，并切换 Standby、Position、Impedance 控制模式 |
+| 5（可选） | 3D 查看器 | 实时显示机器人模型和各关节角度 |
+| 6（可选） | Data Record | 录制遥操作数据 |
+| 7（可选） | Data Playback | 选择 bag 文件并执行实机回放 |
+| 8（可选） | 左侧导航栏 | 进入日志页面查看模块运行日志 |
 
 ### 3.1 顶部状态栏
 
