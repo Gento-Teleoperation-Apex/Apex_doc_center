@@ -114,46 +114,18 @@ sudo systemctl status apex-teleop.service
 
 ## 4. 功能操作
 
-### 4.1 机器人控制（Robot Control）
+### 4.1 Robot Mode 状态卡片
 
 ![Robot Mode 控制卡片](/img/pro/software/apex_teleop_robot_mode.jpg)
 
-#### 启动机器人
+当前版本的 `Robot Mode` 卡片用于查看机器人控制入口状态，并保留控制模式状态显示和夹爪重启入口。
 
-1. 在「模块控制条」中确保 **Robot** 模块状态为绿色（已启动）
-2. 点击 **Start Robot** 按钮
-3. 按钮变为 **Started** 表示启动成功
-4. 状态栏显示 `control_ready: true`
-
-> **注意：** 如果 Robot 模块未启动，按钮显示 **Service Off** 且不可点击。
-
-#### 切换控制模式
-
-| 模式 | 编号 | 说明 |
-|------|------|------|
-| Standby | 0 | 待机模式，可调节速度 |
-| Position | 1 | 位置控制模式 |
-| Impedance | 3 | 阻抗控制模式 |
-
-- 点击模式按钮切换
-- 当前模式按钮高亮显示（紫色）
-- 切换后按钮锁定 2 秒防止误触
-
-#### 速度控制
-
-仅在 **Standby 模式**下可调节：
-
-| 档位 | 速度因子 | 说明 |
-|------|---------|------|
-| Slow | 0 | 慢速模式 |
-| Fast | 3 | 快速模式 |
-
-#### 复位与夹爪
-
-| 按钮 | 功能 |
+| 区域 | 说明 |
 |------|------|
-| Home | 机器人回零复位 |
-| Restart (Gripper) | 重启夹爪控制器 |
+| `Service Off` / 启动入口 | 显示机器人控制服务是否可用 |
+| `Standby Mode` / `Position Mode` / `Impedance Mode` | 显示或切换机器人控制模式，服务未就绪时不可用 |
+| 提示文本 | 显示当前操作前置条件，例如需要先启动机器人 |
+| `Restart (Gripper)` | 重启夹爪控制器 |
 
 ### 4.2 数据录制
 
@@ -222,7 +194,7 @@ sudo systemctl status apex-teleop.service
 
 - **"Switch failed: Service returned error_code=0"**：ROS 服务调用返回异常，实际可能已切换成功，等待 2 秒自动刷新状态
 - **Start 成功但立即恢复未启动**：ROS 控制节点未真正进入 ready 状态，检查机器人硬件连接
-- **速度按钮不可点击**：需确保在 Standby 模式且未处于错误状态
+- **模式按钮不可点击**：需确认 Robot 服务已启动，且机器人未处于错误状态
 
 ### 5.3 模块管理
 
