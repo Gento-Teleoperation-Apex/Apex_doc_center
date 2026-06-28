@@ -66,7 +66,7 @@ Marvin Pro 新版遥操系统主要由机器人本体、机器人控制器、天
 | 软件模块 | 安装位置 | 说明 |
 |---|---|---|
 | KernelMind Apex 控制器端 | 天准核心控制器 | `kernelmind-apex_<version>_<arch>.deb`，提供 ROS 2 节点、运动控制、相机与录制服务 |
-| KernelMind Apex 头显端 | Meta Quest | `KernalMind_Apex_meta_<version>.apk`，提供 VR 遥操作界面 |
+| KernelMind Apex 头显端 | Meta Quest | `KernelMind_Apex_meta_<version>.apk`，提供 VR 遥操作界面 |
 | 上位机遥操软件 | PC | 用于连接天准控制器、启动机器人、切换模式、录制和回放数据 |
 
 ## 默认网络与运行环境

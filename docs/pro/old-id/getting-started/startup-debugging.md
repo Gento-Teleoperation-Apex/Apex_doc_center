@@ -288,7 +288,7 @@ adb version
 adb devices
 adb shell pm list packages | grep Apex
 adb uninstall <旧包名>
-adb install -r KernalMind_Apex_meta_260410.apk
+adb install -r KernelMind_Apex_meta_260410.apk
 ```
 
 ![安装 Meta 头显 APK](/img/pro/quick-start/install_headset_apk_terminal.png)

@@ -10,7 +10,7 @@ Human-Robot TeleOperation for Meta Quest
 
 **Latest version:** [`download`![download](./Screenshots/download.svg)](https://github.com/KLMmotion/km_teleop_openxr/releases)
 
-*Tianji | KernalMind*
+*Tianji | KernelMind*
 
 ## Open app
 
@@ -87,7 +87,7 @@ Align your hand with the virtual robotic arm and hold the **Grip** button to sta
 This is for developer use only. You may bring safety issues to both of your device and the robot. Please enable it only when you know what you are doing.
 :::
 
-Double click on `KernalM` logo on the top row of the panel to open developer panel. You will see new options appear next to the main panel.
+Double click on `KernelM` logo on the top row of the panel to open developer panel. You will see new options appear next to the main panel.
 
 Double click again to close developer panel.
 
