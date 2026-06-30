@@ -30,32 +30,55 @@ Apex Teleop 是机器人遥操作控制台，支持实时 3D 可视化、运动�
 
 ## 2. 快速开始
 
-### 2.1 启动后端服务
+### 2.1 登录天准电箱
 
-在天准核心控制器上确保以下服务已启动：
-
-| 服务 | systemd 单元 | 说明 |
-|------|-------------|------|
-| 后端 API | `apex-backend.service` | 统一 HTTP/WebSocket 入口 |
-| 摄像头 | `apex-camera.service` | GMSL 四路摄像头 |
-| 机器人控制 | `apex-robot.service` | ROS 控制与状态发布 |
-| 遥操作 | `apex-teleop.service` | IK、规划、指令多路复用 |
+上位机与电箱接入同一网段后，先将上位机有线网卡 IP 设置为 `6.6.7.xxx` 网段，例如 `6.6.7.165`，再测试电箱网络：
 
 ```bash
-sudo systemctl status apex-backend.service
-sudo systemctl status apex-camera.service
-sudo systemctl status apex-robot.service
-sudo systemctl status apex-teleop.service
+ping 6.6.7.100
 ```
 
-### 2.2 启动前端应用
+通过 SSH 登录天准电箱：
+
+```bash
+ssh nvidia@6.6.7.100
+# 密码：nvidia
+```
+
+如需直接查看控制器界面，也可以使用 HDMI 高清线将显示器直接连接至电箱，并接入键盘、鼠标进行本地操作。
+
+### 2.2 初始化相机
+
+每次电箱重新上电后，需要先初始化相机：
+
+```bash
+cd ~/cam_geac
+./rb_camera.sh
+```
+
+等待约 20 秒，相机初始化完成后再启动遥操系统。
+
+### 2.3 启动遥操系统
+
+进入 Apex 目录并执行启动脚本：
+
+```bash
+cd /opt/kernelmind/apex
+./bringup_RM.sh
+```
+
+按回车键后，系统将自动启动遥操相关服务，待启动完成后即可进行机器人操作。
+
+> 使用 MobaXterm 通过 SSH 连接时，需取消勾选 `X11-Forwarding`，否则可能导致相机采集超时或 VR 视野白屏。
+
+### 2.4 启动前端应用
 
 打开新版 Apex Teleop 前端，确保上位机与天准核心控制器处于同一局域网内。
 
-### 2.3 配置机器人 IP
+### 2.5 配置机器人 IP
 
 1. 点击顶部状态栏右侧的 IP 地址区域。
-2. 输入天准核心控制器 IP 地址，例如 `192.168.20.123`。
+2. 输入天准核心控制器 IP 地址：`6.6.7.100`。
 3. 按 Enter 或点击「确认」按钮。
 4. 页面自动刷新并连接到新地址。
 
@@ -74,7 +97,7 @@ sudo systemctl status apex-teleop.service
 
 | 操作步骤 | 操作区域 | 说明 |
 |------|----------|------|
-| 1 | IP 地址输入框 | 输入天准核心控制器 IP，例如 `192.168.20.123`，按 Enter 确认 |
+| 1 | IP 地址输入框 | 输入天准核心控制器 IP：`6.6.7.100`，按 Enter 确认 |
 | 2 | 模块控制条 | 按需启动 Camera、Robot、Teleop 等后端模块 |
 | 2.1（可选） | WebRTC 画面 | Camera 模块启动后显示 WebRTC 连接按钮，点击后查看相机画面 |
 | 3 / 4 | Robot Mode | 启动机器人控制，并切换 Standby、Position、Impedance 控制模式 |
@@ -229,7 +252,7 @@ sudo chmod 666 bringup_all_dm_m6.launch.py
 sudo chmod 666 <文件名>
 ```
 
-机器人 IP 默认出厂值为 `192.168.10.190`。其他参数需结合实际使用情况，与技术支持人员确认后再修改。
+机器人 IP 默认出厂值为 `6.6.7.190`。其他参数需结合实际使用情况，与技术支持人员确认后再修改。
 
 ![修改配置参数](/img/pro/quick-start/config_parameters.png)
 
@@ -241,7 +264,7 @@ sudo chmod 666 <文件名>
 /opt/kernelmind/apex/install/marvin_ros_control/share/marvin_ros_control/config/robot_param_m6.yaml
 ```
 
-字段：`robot_ip`，默认值 `192.168.10.190`。这个 IP 是天准控制器连接双臂控制板使用的配置类 IP，需与双臂控制板 IP 一致。
+字段：`robot_ip`，默认值 `6.6.7.190`。这个 IP 是天准控制器连接双臂控制板使用的配置类 IP，需与双臂控制板 IP 一致。
 
 ![修改天准控制器连接双臂 IP](/img/pro/quick-start/config_orin_robot_ip.png)
 
@@ -250,7 +273,7 @@ sudo chmod 666 <文件名>
 头显开机后，打开未知来源中的 Apex 软件，按左手柄菜单键唤出配置界面：
 
 - 第 1 个输入项：身高，影响虚拟手柄对齐高度，例如 `1.65` 表示 165 cm。
-- 第 2 个输入项：连接天准控制器的 IP，一般为 `192.168.10.123`。
+- 第 2 个输入项：连接天准控制器的 IP，一般为 `6.6.7.100`。
 
 ![修改头显 Apex 连接 IP](/img/pro/quick-start/config_headset_ip.png)
 
@@ -387,25 +410,25 @@ ros2 pkg list | grep -E 'marvin|gmsl|node_manager'
 
 ### 6.3 配置网络参数
 
-下面以 `eth0` 和 `192.168.10.123/24` 为例，按现场网段替换：
+下面以 `eth0` 和 `6.6.7.100/24` 为例，按现场网段替换：
 
 ```bash
 nmcli device status
 sudo nmcli con add type ethernet ifname eth0 con-name apex-robot-net \
-  ipv4.method manual ipv4.addresses 192.168.10.123/24
+  ipv4.method manual ipv4.addresses 6.6.7.100/24
 sudo nmcli con up apex-robot-net
 ```
 
 如果已有连接配置，直接修改：
 
 ```bash
-sudo nmcli con mod apex-robot-net ipv4.method manual ipv4.addresses 192.168.10.123/24
+sudo nmcli con mod apex-robot-net ipv4.method manual ipv4.addresses 6.6.7.100/24
 sudo nmcli con up apex-robot-net
 ```
 
-如果局域网内有独立路由器（默认 `192.168.10.1`），DHCP 的 `option routers` 应填写路由器地址。只有在天准控制器充当软路由并直接提供 DHCP 时，才填写天准控制器地址。
+上位机电脑网卡需设置为同网段地址，例如 `6.6.7.165`。
 
-若改为其他网段，例如 `6.6.7.x`，需同时确认天准控制器自身网卡已设置为同网段静态 IP，例如 `6.6.7.123`，否则 DHCP 服务可能无法监听该网卡。
+如果局域网内有独立路由器，DHCP 的 `option routers` 应填写路由器地址。只有在天准控制器充当软路由并直接提供 DHCP 时，才填写天准控制器地址。
 
 ### 6.4 修改 QuickView / 相机参数
 
@@ -420,7 +443,7 @@ QuickView 相机配置文件安装在：
 ```yaml
 quad_csi_quickview:
   ros__parameters:
-    signal_url: "ws://192.168.10.123:8554"
+    signal_url: "ws://6.6.7.100:8554"
     vr_room_id: "10"
     quad_room_id: "11"
     camera_config:
@@ -442,7 +465,7 @@ quad_csi_quickview:
 | VR 头显画面白屏 | 检查 MobaXterm 是否关闭 `X11-Forwarding`，检查相机服务和信令地址 |
 | 启动时报错 | 检查 `robot_param_m6.yaml` 中 `K`、`D` 等参数是否保留浮点格式，例如 `6.0` |
 | 相机没有画面 | 检查 `/dev/video*`、相机线束、天准控制器相机接口、sensor-id 和 `quad_csi_quickview.yaml` |
-| VR 或上位机连不上信令 | 检查 `signal_url` 是否为天准控制器控制网 IP，例如 `ws://192.168.10.123:8554` |
+| VR 或上位机连不上信令 | 检查 `signal_url` 是否为天准控制器控制网 IP，例如 `ws://6.6.7.100:8554` |
 | 机器人不响应控制 | 检查急停、电控电源、驱动器状态、ROS 节点和 target pose 是否正常更新 |
 | deb 安装失败 | 执行 `sudo apt update`、`sudo apt install -f` 后重新安装 |
 
@@ -451,7 +474,7 @@ quad_csi_quickview:
 ```bash
 ip addr
 ip route
-ping 192.168.10.123
+ping 6.6.7.100
 ros2 node list
 ros2 topic list
 ros2 service list
