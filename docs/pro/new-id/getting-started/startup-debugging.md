@@ -81,6 +81,7 @@ cd /opt/kernelmind/apex
 2. 输入天准核心控制器 IP 地址：`6.6.7.100`。
 3. 按 Enter 或点击「确认」按钮。
 4. 页面自动刷新并连接到新地址。
+5. 启动 Robot 模块后，点击前端 `Home`（中文界面可能显示为“家”或“复位”）按钮，使机器人进入遥操姿态，再继续启动 Teleop 或进入遥操操作。
 
 > **注意：** 上位机、天准核心控制器、机器人控制器和头显必须处于同一局域网内，且 IP 在同一网段。
 
@@ -93,18 +94,20 @@ cd /opt/kernelmind/apex
 
 ## 3. 界面布局
 
-![Apex Teleop 标注版界面总览](/img/gento/luna/apex_teleop_overview_annotated.jpg)
+![Marvin Pro 天准版 Apex Teleop 界面总览](/img/pro/new-id/apex-teleop-pro-overview.png)
+
+> 截图中的 IP 仅为界面示例。Marvin Pro 天准版现场配置以天准核心控制器 IP `6.6.7.100` 为准。
 
 | 操作步骤 | 操作区域 | 说明 |
 |------|----------|------|
 | 1 | IP 地址输入框 | 输入天准核心控制器 IP：`6.6.7.100`，按 Enter 确认 |
-| 2 | 模块控制条 | 按需启动 Camera、Robot、Teleop 等后端模块 |
-| 2.1（可选） | WebRTC 画面 | Camera 模块启动后显示 WebRTC 连接按钮，点击后查看相机画面 |
-| 3 / 4 | Robot Mode | 启动机器人控制，并切换 Standby、Position、Impedance 控制模式 |
+| 2 | 模块控制条 | 按需启动 Camera、Robot、Teleop、dnsmasq 等后端模块 |
+| 2.1（可选） | 摄像头画面 | Camera 模块启动后显示相机画面，未启动时显示“Camera 模块未启动” |
+| 3 / 4 | 机器人模式 | 启动机器人控制，点击 Home 进入遥操姿态，并切换待机模式、位置模式、阻抗模式 |
 | 5（可选） | 3D 查看器 | 实时显示机器人模型和各关节角度 |
-| 6（可选） | Data Record | 录制遥操作数据 |
-| 7（可选） | Data Playback | 选择 bag 文件并执行实机回放 |
-| 8（可选） | 左侧导航栏 | 进入日志页面查看模块运行日志 |
+| 6（可选） | 数据录制 | 录制遥操作数据 |
+| 7（可选） | 实机回放 | 选择数据包并执行实机回放 |
+| 8（可选） | 左侧导航栏 | 在主界面与日志页面之间切换 |
 
 ### 3.1 顶部状态栏
 
@@ -115,35 +118,25 @@ cd /opt/kernelmind/apex
 | Teleop | 绿色=遥操作服务运行中 |
 | Net | 绿色=DHCP 网络服务运行中 |
 | VR | 绿色=VR 控制器已连接 |
-| Healthy | 绿色=所有模块正常，红色=存在错误 |
 
-![顶部状态栏](/img/pro/software/apex_teleop_status_bar.jpg)
-
-右侧连接状态条显示机器人连接、VR 状态以及各控制模块状态码。
-
-![连接状态条](/img/pro/software/apex_teleop_connection_status.jpg)
+右上角提供刷新、语言切换和 IP 地址输入框。右侧连接状态条显示机器人连接、VR 状态以及相关模块状态。
 
 ### 3.2 3D 机器人查看器
 
 - 实时展示机器人各关节角度
 - 支持鼠标旋转、缩放、平移视角
-- 蓝色球体：左臂目标位姿
-- 红色球体：右臂目标位姿
-- 左侧显示 Robot/VR 连接状态及手臂状态码
-
-![3D 机器人查看器](/img/pro/software/apex_teleop_3d_viewer.jpg)
+- 用于确认机器人当前姿态、关节角度和遥操前初始状态
 
 ### 3.3 模块控制条
 
-| 模块 | Start | Stop | Restart |
-|------|-------|------|---------|
-| Camera | 启动摄像头 | 停止摄像头 | 重启摄像头 |
-| Robot | 启动机器人控制 | 停止机器人控制 | 重启机器人控制 |
-| Teleop | 启动遥操作 | 停止遥操作 | 重启遥操作 |
+| 模块 | 功能 | 说明 |
+|------|------|------|
+| Camera | 启动摄像头 | 启动后右侧显示相机画面 |
+| Robot | 启动机器人控制 | 启动后可进入机器人控制模式 |
+| Teleop | 启动遥操作 | Robot 未就绪时可能显示 Locked |
+| dnsmasq | 启动网络服务 | 用于头显等设备的网络地址分配，按现场配置启动 |
 
-> Teleop 启动需要 Robot Control 已处于运行状态，否则按钮显示 Locked。
-
-![模块控制条](/img/pro/software/apex_teleop_module_control.jpg)
+> Teleop 启动需要 Robot 已处于运行状态，否则按钮显示 Locked。
 
 ### 3.4 摄像头画面
 
@@ -151,54 +144,49 @@ cd /opt/kernelmind/apex
 - Camera 模块未启动时显示提示文字
 - 底部显示码率、丢包数和 FPS 等实时状态
 
-![WebRTC 摄像头画面](/img/pro/software/apex_teleop_webrtc.jpg)
-
 ---
 
 ## 4. 功能操作
 
-### 4.1 Robot Mode 状态卡片
+### 4.1 机器人模式状态卡片
 
-![Robot Mode 控制卡片](/img/pro/software/apex_teleop_robot_mode.jpg)
-
-当前版本的 `Robot Mode` 卡片用于查看机器人控制入口状态，并保留控制模式状态显示和夹爪重启入口。
+`机器人模式` 卡片用于查看机器人控制入口状态，并保留控制模式状态显示和夹爪重启入口。
 
 | 区域 | 说明 |
 |------|------|
 | `Service Off` / 启动入口 | 显示机器人控制服务是否可用 |
-| `Standby Mode` / `Position Mode` / `Impedance Mode` | 显示或切换机器人控制模式，服务未就绪时不可用 |
+| `待机模式` / `位置模式` / `阻抗模式` | 显示或切换机器人控制模式，服务未就绪时不可用 |
 | 提示文本 | 显示当前操作前置条件，例如需要先启动机器人 |
-| `Restart (Gripper)` | 重启夹爪控制器 |
+| `Home` / `家` / `复位` | 连接并启动机器人后，点击该按钮使机器人进入遥操姿态 |
+| `重启（夹爪）` | 重启夹爪控制器 |
 
 ### 4.2 数据录制
 
-![Data Record 数据录制卡片](/img/pro/software/apex_teleop_data_record.jpg)
-
-1. 在 **Record Name** 中输入录制名称。
-2. 点击 **Start Recording** 开始录制。
+1. 在录制名称输入框中填写本次录制名称。
+2. 点击 **开始录制** 开始录制。
 3. 录制中按钮会显示录制状态。
-4. 点击 **Stop Recording** 停止并保存。
+4. 点击 **停止录制** 停止并保存。
 
 > 录制文件保存在天准核心控制器的指定目录中。
 
 ### 4.3 数据回放
 
-![Data Playback 数据回放卡片](/img/pro/software/apex_teleop_data_playback.jpg)
-
-1. 从 **Select playback file** 列表中选择要回放的 bag 文件。
-2. 点击 **Play** 开始回放。
-3. 点击 **Stop** 停止回放。
-4. 如需循环播放，切换 **Loop Playback**。
-5. 3D 查看器会同步显示回放的关节数据。
+1. 点击 **选择文件**，选择要回放的数据包。
+2. 点击 **播放** 开始回放。
+3. 点击 **暂停** 暂停当前回放。
+4. 点击 **停止** 停止回放。
+5. 如需调整回放速度，使用速度下拉框选择倍速。
+6. 3D 查看器会同步显示回放的关节数据。
 
 **回放控制：**
 
 | 控件 | 功能 |
 |------|------|
-| Play | 播放 |
-| Stop | 停止回放 |
-| Select playback file | 选择回放文件 |
-| Loop Playback | 循环回放开关 |
+| 选择文件 | 选择回放数据包 |
+| 播放 | 开始回放 |
+| 暂停 | 暂停当前回放 |
+| 停止 | 停止回放 |
+| 速度 | 调整回放倍速 |
 
 ### 4.4 日志查看
 

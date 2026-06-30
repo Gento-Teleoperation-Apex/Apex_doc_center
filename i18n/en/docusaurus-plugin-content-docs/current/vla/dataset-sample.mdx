@@ -1,0 +1,109 @@
+---
+title: Dataset Sample
+sidebar_position: 3
+---
+
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+# LeRobot Dataset Sample
+
+This section shows real acquisition data exported by [KM Data Converter](../data-converter/README.zh-CN) and converted to LeRobot **v2.1**, making it easier to compare directory structure and observation fields used during training.
+
+The sample comes from a dual-arm tabletop manipulation recording: 50 episodes, 25 FPS, and 960x540 resolution. The videos below show the **file-016** segment, about 22 seconds. The task description is:
+
+> Pick up the blue cube and place it on the yellow cube.
+
+## Four-Camera Layout
+
+The original `cameras.mp4` is a 2x2 tiled video. After splitting, it maps to four `observation.images.*` fields in LeRobot:
+
+```text
+left_eye      right_eye      <- head stereo / main view
+left_wrist    right_wrist    <- wrist cameras
+```
+
+| Field name | View | Typical OpenPI training mapping |
+| --- | --- | --- |
+| `observation.images.left_eye` | Left eye / main camera | `observation/image` |
+| `observation.images.right_eye` | Right eye | Can be selected as the main view or fused |
+| `observation.images.left_wrist` | Left wrist | `observation/wrist_image` for the left arm |
+| `observation.images.right_wrist` | Right wrist | Second wrist view for the right arm |
+
+## Right Eye
+
+The right-side head camera is used to observe the full workspace and relative positions of both arms.
+
+<video controls width="720" muted playsInline preload="metadata">
+  <source src="https://cdn.jsdelivr.net/gh/KLMmotion/Apex_doc_center@gh-pages/img/vla/sample_right_eye.mp4" type="video/mp4" />
+  <source src={useBaseUrl('/img/vla/sample_right_eye.mp4')} type="video/mp4" />
+</video>
+
+<p><a href="https://cdn.jsdelivr.net/gh/KLMmotion/Apex_doc_center@gh-pages/img/vla/sample_right_eye.mp4">Download right-eye sample video</a></p>
+
+Corresponding disk path in the exported v3.0 chunk layout:
+
+```text
+videos/observation.images.right_eye/chunk-000/file-016.mp4
+```
+
+After conversion to v2.1, the same segment is usually located at:
+
+```text
+videos/chunk-000/observation.images.right_eye/episode_000016.mp4
+```
+
+## Right Wrist
+
+The wrist camera mounted at the right arm end is close to the gripper and helps observe grasping and placement details.
+
+<video controls width="720" muted playsInline preload="metadata">
+  <source src="https://cdn.jsdelivr.net/gh/KLMmotion/Apex_doc_center@gh-pages/img/vla/sample_right_wrist.mp4" type="video/mp4" />
+  <source src={useBaseUrl('/img/vla/sample_right_wrist.mp4')} type="video/mp4" />
+</video>
+
+<p><a href="https://cdn.jsdelivr.net/gh/KLMmotion/Apex_doc_center@gh-pages/img/vla/sample_right_wrist.mp4">Download right-wrist sample video</a></p>
+
+Corresponding disk path in the exported v3.0 chunk layout:
+
+```text
+videos/observation.images.right_wrist/chunk-000/file-016.mp4
+```
+
+After conversion to v2.1, the same segment is usually located at:
+
+```text
+videos/chunk-000/observation.images.right_wrist/episode_000016.mp4
+```
+
+## Dataset Directory Structure Excerpt
+
+```text
+lerobot_datasets-70-01-01-08-03-13/
+  meta/
+    info.json              # codebase_version, fps, features, etc.
+    episodes.jsonl         # task and frame count for each episode
+    tasks.jsonl
+  data/
+    chunk-000/
+      episode_000001.parquet   # per-frame joint states, action, etc.
+  videos/
+    observation.images.right_eye/chunk-000/file-016.mp4   # v3.0
+    observation.images.right_wrist/chunk-000/file-016.mp4
+    # v2.1 example:
+    # chunk-000/observation.images.right_eye/episode_000016.mp4
+```
+
+Example feature definitions in `meta/info.json` related to these videos:
+
+| Feature | Type | Shape / Description |
+| --- | --- | --- |
+| `observation.images.right_eye` | video | 540 x 960 x 3, H.264, 25 FPS |
+| `observation.images.right_wrist` | video | 540 x 960 x 3, H.264, 25 FPS |
+| `observation.state` | float32 | 26D robot proprioceptive state |
+| `action` | float32 | 56D action vector |
+
+## Mapping to Training Configuration
+
+OpenPI policy input usually uses only the **main camera + one wrist camera**. If training with dual-arm four-channel videos, specify the correct `image_keys` in `openpi.training.config` and map LeRobot fields to `observation/image` and `observation/wrist_image`.
+
+After format conversion, continue with [Dataset Conversion](./dataset-conversion) and [Model Training](./training).

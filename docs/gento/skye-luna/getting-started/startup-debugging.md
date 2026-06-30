@@ -27,7 +27,33 @@ Apex Teleop 是机器人遥操作控制台，支持实时 3D 可视化、运动�
 
 ## 2. 快速开始
 
-### 2.1 启动后端服务
+### 2.1 远程连接天准003控制单元
+
+上位机与机器人接入同一局域网后，先测试天准003控制单元网络。默认以 `6.6.7.100` 为例；如现场修改过 IP，请以实际地址为准。
+
+```bash
+ping 6.6.7.100
+```
+
+通过 SSH 登录天准003控制单元：
+
+```bash
+ssh nvidia@6.6.7.100
+# 密码：nvidia
+```
+
+### 2.2 启动后端程序
+
+进入 Apex 目录并执行启动脚本：
+
+```bash
+cd /opt/kernelmind/apex
+./bringup_RM.sh
+```
+
+按回车键后，系统将启动遥操相关服务。待启动完成后，再打开前端进行连接。
+
+### 2.3 检查后端服务
 
 在机器人控制器（如内置天准003控制单元）上确保以下服务已启动：
 
@@ -46,14 +72,17 @@ sudo systemctl status apex-robot.service
 sudo systemctl status apex-teleop.service
 ```
 
-### 2.2 启动前端应用
+### 2.4 启动前端应用
 
-### 2.3 配置机器人 IP
+打开 Apex Teleop 前端，确保上位机与机器人处于同一局域网内。
+
+### 2.5 配置机器人 IP
 
 1. 点击顶部状态栏右侧的 IP 地址区域
-2. 输入机器人控制器的 IP 地址（如 `192.168.20.123`）
+2. 输入机器人控制器 / 天准003控制单元的 IP 地址（默认以 `6.6.7.100` 为例；如现场配置为 `192.168.20.xxx`，以实际地址为准）
 3. 按 Enter 或点击「确认」按钮
 4. 页面自动刷新连接到新地址
+5. 启动 Robot 模块后，点击前端 `Home`（中文界面可能显示为“家”或“复位”）按钮，使机器人进入遥操姿态，再继续启动 Teleop 或进入遥操操作
 
 > **注意：** 必须与机器人在同一局域网内，且 IP 在同一网段。
 
@@ -68,7 +97,7 @@ sudo systemctl status apex-teleop.service
 | 1 | IP 地址输入框 | 输入机器人 IP，例如 `192.168.20.123`，按 Enter 确认 |
 | 2 | 模块控制条 | 按需启动 Camera、Robot、Teleop 等后端模块 |
 | 2.1（可选） | WebRTC 画面 | Camera 模块启动后显示 WebRTC 连接按钮，点击后查看相机画面 |
-| 3 / 4 | Robot Mode | 启动机器人控制，并切换 Standby、Position、Impedance 控制模式 |
+| 3 / 4 | Robot Mode | 启动机器人控制，点击 Home 进入遥操姿态，并切换 Standby、Position、Impedance 控制模式 |
 | 5（可选） | 3D 查看器 | 实时显示机器人模型和各关节角度 |
 | 6（可选） | Data Record | 录制遥操作数据 |
 | 7（可选） | Data Playback | 选择 bag 文件并执行实机回放 |
@@ -136,6 +165,7 @@ sudo systemctl status apex-teleop.service
 | `Service Off` / 启动入口 | 显示机器人控制服务是否可用 |
 | `Standby Mode` / `Position Mode` / `Impedance Mode` | 显示或切换机器人控制模式，服务未就绪时不可用 |
 | 提示文本 | 显示当前操作前置条件，例如需要先启动机器人 |
+| `Home` / `家` / `复位` | 连接并启动机器人后，点击该按钮使机器人进入遥操姿态 |
 | `Restart (Gripper)` | 重启夹爪控制器 |
 
 ### 4.2 数据录制

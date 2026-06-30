@@ -48,8 +48,9 @@ cd /opt/kernelmind/apex
 1. 输入 Orin IP：`192.168.10.123`。
 2. 点击 `Confirm`。
 3. 点击 `Start Robot` 启动机器人。
-4. 点击 `Impedance Mode` 进入关节阻抗模式。
-5. 速度模式可选 `Slow` / `Fast`，只能在复位或待机状态下设置。
+4. 点击前端 `Home`（中文界面可能显示为“家”或“复位”）按钮，使机器人进入遥操姿态。
+5. 点击 `Impedance Mode` 进入关节阻抗模式。
+6. 速度模式可选 `Slow` / `Fast`，只能在复位或待机状态下设置。
 
 ![KernelMind Apex 遥操软件连接](/img/pro/quick-start/launch_apex_teleop_app.png)
 
@@ -69,6 +70,8 @@ cd /opt/kernelmind/apex
 | 待机模式 | 初始化、错误恢复，不遥操时建议切换到该模式 |
 | 位置模式 | 精确位置控制 |
 | 阻抗模式 | 力控交互、拖动示教、遥操控制（遥操时使用） |
+
+连接并启动机器人后，需先点击前端 `Home`（或“家”“复位”）按钮，使机器人进入遥操姿态，再进入阻抗模式或开始遥操。
 
 ![遥操软件控制模式](/img/pro/software/control_modes.png)
 

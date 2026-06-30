@@ -7,6 +7,10 @@
     "message": "PRO",
     "description": "The label for category PRO in sidebar mainSidebar"
   },
+  "sidebar.mainSidebar.category.PRO 新版": {
+    "message": "PRO New Version",
+    "description": "The label for category PRO 新版 in sidebar mainSidebar"
+  },
   "sidebar.mainSidebar.category.快速入门": {
     "message": "Getting Started",
     "description": "The label for category Getting Started in sidebar mainSidebar"
@@ -30,6 +34,10 @@
   "sidebar.mainSidebar.category.Luna": {
     "message": "Luna",
     "description": "The label for category Luna in sidebar mainSidebar"
+  },
+  "sidebar.mainSidebar.category.Skye/Luna": {
+    "message": "Skye/Luna",
+    "description": "The label for category Skye/Luna in sidebar mainSidebar"
   },
   "sidebar.mainSidebar.category.数据转换": {
     "message": "Data Converter",
