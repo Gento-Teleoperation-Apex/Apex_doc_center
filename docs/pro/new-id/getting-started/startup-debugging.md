@@ -22,7 +22,7 @@ sidebar_position: 2
 
 Apex Teleop 是机器人遥操作控制台，支持实时 3D 可视化、运动控制、摄像头画面、数据录制与回放。
 
-**支持的机器人型号：** Marvin Pro 新版、Gento 系列（Skye/Luna 等）
+**支持的机器人型号：** Marvin Pro 天准版、Gento 系列（Skye/Luna 等）
 
 **通信架构：** 前端通过统一后端 API（端口 8080）与 ROS 2 控制节点通信。
 
@@ -311,6 +311,8 @@ Home 点是机器人复位点，也可以理解为遥操初始位置。Home 点�
 
 ### 5.7 脚踏板安装与配置
 
+脚踏板为非标配扩展件，仅在选配动捕手套、灵巧手或脚踏使能方案时配置。
+
 天准控制器需联网下载依赖：
 
 ```bash
@@ -396,7 +398,7 @@ adb install -r KernelMind_Apex_meta_260410.apk
 ```bash
 sudo apt remove kernelmind_apex
 cd ~/Downloads
-sudo apt install ./kernelmind-apex_<version>_<arch>.deb
+sudo apt install ./kernelmind_apex_<version>_<arch>.deb
 ```
 
 安装完成后重新登录，或手动加载环境：
@@ -464,7 +466,7 @@ quad_csi_quickview:
 |---|---|
 | VR 头显画面白屏 | 检查 MobaXterm 是否关闭 `X11-Forwarding`，检查相机服务和信令地址 |
 | 启动时报错 | 检查 `robot_param_m6.yaml` 中 `K`、`D` 等参数是否保留浮点格式，例如 `6.0` |
-| 相机没有画面 | 检查 `/dev/video*`、相机线束、天准控制器相机接口、sensor-id 和 `quad_csi_quickview.yaml` |
+| 相机没有画面 | 检查 `/dev/video*`、森云相机端接头、手臂外露线束、sensor-id 和 `quad_csi_quickview.yaml` |
 | VR 或上位机连不上信令 | 检查 `signal_url` 是否为天准控制器控制网 IP，例如 `ws://6.6.7.100:8554` |
 | 机器人不响应控制 | 检查急停、电控电源、驱动器状态、ROS 节点和 target pose 是否正常更新 |
 | deb 安装失败 | 执行 `sudo apt update`、`sudo apt install -f` 后重新安装 |
@@ -486,7 +488,7 @@ ls ~/.ros/log
 ### 7.2 安全注意事项
 
 1. 遥操前确认急停按钮、控制器供电、通信网线、U 盘、头显电量均正常。
-2. 不遥操时切换待机模式，避免误触侧键或脚踏板导致机器人运动。
+2. 不遥操时切换待机模式，避免误触侧键；选配脚踏板时，也要避免误踩导致机器人运动。
 3. 增量模式下虽不需要红蓝手柄对齐，但进入遥操前手的位置仍应与机械臂夹爪当前位置大致一致。
 4. 使用脚踏板时，禁止踩住使能的同时按右手摇杆菜单键。
 5. 修改 IP、负载、刚度、阻尼、Home 点、TCP 偏移前，应备份原始配置文件。
