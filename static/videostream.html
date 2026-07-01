@@ -384,7 +384,7 @@ function sendCandidate(candidate, mid, mLineIndex) {
 function createPeerConnection() {
   const config = {
     sdpSemantics: 'unified-plan',
-    iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
+    iceServers: [], // 本地局域网/无外网环境，置空 iceServers 以防止公网 STUN 服务超时卡顿
   };
   pc = new RTCPeerConnection(config);
 
