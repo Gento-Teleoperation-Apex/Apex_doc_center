@@ -19,6 +19,16 @@
   #controls button.stats-toggle { background: #2196F3; }
   #controls button.stats-toggle:hover { background: #1976D2; }
   #controls button.stats-toggle.active { background: #ff9800; }
+  #controls button.fullscreen { background: #9c27b0; }
+  #controls button.fullscreen:hover { background: #7b1fa2; }
+  #controls button.fullscreen.active { background: #e91e63; }
+
+  #video-area:fullscreen {
+    background-color: #1a1a1a;
+  }
+  #video-area:-webkit-full-screen {
+    background-color: #1a1a1a;
+  }
 
   #main-container {
     display: flex;
@@ -150,6 +160,7 @@
   <button id="btnConnect" onclick="start()">连接</button>
   <button id="btnStop" class="stop" onclick="stop()" disabled>断开</button>
   <button id="btnStats" class="stats-toggle active" onclick="toggleStats()">Stats</button>
+  <button id="btnFullscreen" class="fullscreen" onclick="toggleFullscreen()">全屏</button>
   <span id="status" style="margin-left:10px;">未连接</span>
   <span id="track-info"></span>
   <div id="hidden-tracks"></div>
@@ -678,6 +689,60 @@ function stop() {
   document.getElementById('btnStop').disabled = true;
   log('已断开');
 }
+
+function toggleFullscreen() {
+  const elem = document.getElementById('video-area');
+  if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+    } else if (elem.webkitRequestFullscreen) { /* Safari */
+      elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) { /* IE11 */
+      elem.msRequestFullscreen();
+    }
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) { /* Safari */
+      document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) { /* IE11 */
+      document.msExitFullscreen();
+    }
+  }
+}
+
+document.addEventListener('fullscreenchange', () => {
+  const btn = document.getElementById('btnFullscreen');
+  if (document.fullscreenElement) {
+    btn.textContent = '退出全屏';
+    btn.classList.add('active');
+  } else {
+    btn.textContent = '全屏';
+    btn.classList.remove('active');
+  }
+});
+
+document.addEventListener('webkitfullscreenchange', () => {
+  const btn = document.getElementById('btnFullscreen');
+  if (document.webkitIsFullScreen) {
+    btn.textContent = '退出全屏';
+    btn.classList.add('active');
+  } else {
+    btn.textContent = '全屏';
+    btn.classList.remove('active');
+  }
+});
+
+// ESC key to exit full screen explicitly
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    } else if (document.webkitFullscreenElement) {
+      document.webkitExitFullscreen();
+    }
+  }
+});
 </script>
 </body>
 </html>
