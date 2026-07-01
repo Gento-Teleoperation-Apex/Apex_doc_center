@@ -196,6 +196,24 @@ let videoTracks = {};
 let hiddenTracks = {};
 let statsPanelVisible = true;
 
+// 自动记忆信令地址和房间号
+const addrInput = document.getElementById('addr');
+const roomInput = document.getElementById('room');
+
+if (localStorage.getItem('signal_addr') !== null) {
+  addrInput.value = localStorage.getItem('signal_addr');
+}
+if (localStorage.getItem('signal_room') !== null) {
+  roomInput.value = localStorage.getItem('signal_room');
+}
+
+addrInput.addEventListener('input', () => {
+  localStorage.setItem('signal_addr', addrInput.value);
+});
+roomInput.addEventListener('input', () => {
+  localStorage.setItem('signal_room', roomInput.value);
+});
+
 function log(msg) {
   const el = document.getElementById('log');
   const t = new Date().toLocaleTimeString();
