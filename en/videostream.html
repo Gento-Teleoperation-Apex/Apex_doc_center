@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<!--
+  QuickView-Link Web 接收端 (P2P 模式)
+  通过 WebSocket 连接 P2P 信令服务器，信令服务器只做消息转发不参与媒体。
+  Publisher 的 SDP Offer 经信令转发到这里，本端回 Answer 后直接和 Publisher 建立 WebRTC 连接。
+  支持多路 Track 同时显示、单路关闭/重开。
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<title>QuickView-Link Web Puller</title>
+<style>
+  body { margin: 0; background: #1a1a1a; color: #fff; font-family: monospace; }
+  #controls { padding: 10px; background: #222; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  #controls input { background: #333; color: #fff; border: 1px solid #555; padding: 5px 8px; }
+  #controls button { background: #4CAF50; color: #fff; border: none; padding: 6px 16px; cursor: pointer; }
+  #controls button:hover { background: #45a049; }
+  #controls button.stop { background: #f44336; }
+  #controls button.stats-toggle { background: #2196F3; }
+  #controls button.stats-toggle:hover { background: #1976D2; }
+  #controls button.stats-toggle.active { background: #ff9800; }
+
+  #main-container {
+    display: flex;
+    height: calc(100vh - 170px);
+  }
+  #video-area {
+    flex: 1;
+    min-width: 0;
+  }
+  #video-grid {
+    display: grid;
+    gap: 4px;
+    padding: 4px;
+    height: 100%;
+    grid-template-columns: 1fr;
+  }
+  #video-grid.multi-2 { grid-template-columns: 1fr 1fr; }
+  #video-grid.multi-3 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+  #video-grid.multi-4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+  #video-grid.multi-5, #video-grid.multi-6 { grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr; }
+  .video-cell {
+    position: relative;
+    background: #000;
+    overflow: hidden;
+  }
+  .video-cell video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .video-label {
+    position: absolute;
+    top: 4px;
+    left: 6px;
+    background: rgba(0,0,0,0.6);
+    color: #0f0;
+    padding: 2px 6px;
+    font-size: 11px;
+    border-radius: 3px;
+    pointer-events: none;
+  }
+  .video-close {
+    position: absolute;
+    top: 4px;
+    right: 6px;
+    background: rgba(244,67,54,0.8);
+    color: #fff;
+    border: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 20px;
+    text-align: center;
+    padding: 0;
+  }
+  .video-close:hover { background: #f44336; }
+
+  #stats-panel {
+    width: 360px;
+    background: #111;
+    border-left: 1px solid #333;
+    overflow-y: auto;
+    padding: 8px;
+    display: block;
+    flex-shrink: 0;
+  }
+  #stats-panel.hidden { display: none; }
+  .stats-track {
+    background: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 4px;
+    padding: 8px;
+    margin-bottom: 8px;
+  }
+  .stats-track-title {
+    color: #4CAF50;
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 6px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 4px;
+  }
+  .stats-section {
+    margin-top: 6px;
+  }
+  .stats-section-title {
+    color: #ff9800;
+    font-size: 11px;
+    margin-bottom: 3px;
+  }
+  .stats-row {
+    color: #ccc;
+    font-size: 11px;
+    line-height: 1.5;
+  }
+  .stats-row span { color: #0f0; }
+
+  #hidden-tracks {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .hidden-track-btn {
+    background: #555;
+    color: #fff;
+    border: none;
+    padding: 3px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 11px;
+    font-family: monospace;
+  }
+  .hidden-track-btn:hover { background: #4CAF50; }
+  #log { position: fixed; bottom: 0; left: 0; right: 0; height: 120px; background: rgba(0,0,0,0.8);
+         overflow-y: auto; padding: 5px; font-size: 12px; border-top: 1px solid #444; }
+  #track-info { margin-left: 10px; color: #aaa; font-size: 12px; }
+</style>
+</head>
+<body>
+
+<div id="controls">
+  <label>信令地址:</label>
+  <input id="addr" value="ws://127.0.0.1:8080" size="30">
+  <label>房间号:</label>
+  <input id="room" value="10" size="6">
+  <button id="btnConnect" onclick="start()">连接</button>
+  <button id="btnStop" class="stop" onclick="stop()" disabled>断开</button>
+  <button id="btnStats" class="stats-toggle active" onclick="toggleStats()">Stats</button>
+  <span id="status" style="margin-left:10px;">未连接</span>
+  <span id="track-info"></span>
+  <div id="hidden-tracks"></div>
+</div>
+
+<div id="main-container">
+  <div id="video-area">
+    <div id="video-grid"></div>
+  </div>
+  <div id="stats-panel"></div>
+</div>
+
+<div id="log"></div>
+
+<script>
+const MSG = {
+  CLIENT_LOGIN:     212,
+  CLIENT_MESSAGE:   215,
+  CLIENT_SUBSCRIBE: 217,
+  SIGNAL_LOGIN:     318,
+  SIGNAL_MESSAGE:   319,
+  SIGNAL_PUBLISH:   320,
+  SIGNAL_SUBSCRIBE: 321,
+  SIGNAL_SUBSCRIBER_DISCONNECTED: 322,
+};
+const CODE_SUCCESS = 0;
+const CODE_READY   = 1;
+
+let ws = null;
+let pc = null;
+let streamId = '';
+let videoTracks = {};
+let hiddenTracks = {};
+let statsPanelVisible = true;
+
+function log(msg) {
+  const el = document.getElementById('log');
+  const t = new Date().toLocaleTimeString();
+  el.innerHTML += `<div>[${t}] ${msg}</div>`;
+  el.scrollTop = el.scrollHeight;
+  console.log(msg);
+}
+
+function setStatus(s) { document.getElementById('status').textContent = s; }
+
+function toggleStats() {
+  statsPanelVisible = !statsPanelVisible;
+  const panel = document.getElementById('stats-panel');
+  const btn = document.getElementById('btnStats');
+  panel.classList.toggle('hidden', !statsPanelVisible);
+  btn.classList.toggle('active', statsPanelVisible);
+}
+
+function updateTrackInfo() {
+  const showing = Object.keys(videoTracks).length;
+  const hidden = Object.keys(hiddenTracks).length;
+  let text = '';
+  if (showing > 0) text += `显示: ${showing}路`;
+  if (hidden > 0) text += ` 已关闭: ${hidden}路`;
+  document.getElementById('track-info').textContent = text;
+}
+
+function updateGridLayout() {
+  const grid = document.getElementById('video-grid');
+  const count = Object.keys(videoTracks).length;
+  grid.className = count > 1 ? `multi-${Math.min(count, 6)}` : '';
+}
+
+function updateHiddenButtons() {
+  const container = document.getElementById('hidden-tracks');
+  container.innerHTML = '';
+  for (const trackId of Object.keys(hiddenTracks)) {
+    const btn = document.createElement('button');
+    btn.className = 'hidden-track-btn';
+    btn.textContent = '+ ' + trackId;
+    btn.title = '点击重新显示该轨道';
+    btn.onclick = () => showTrack(trackId);
+    container.appendChild(btn);
+  }
+}
+
+function addVideoTrack(track) {
+  const trackId = track.id;
+  if (videoTracks[trackId] || hiddenTracks[trackId]) return;
+
+  const grid = document.getElementById('video-grid');
+  const cell = document.createElement('div');
+  cell.className = 'video-cell';
+  cell.id = 'cell-' + trackId;
+
+  const video = document.createElement('video');
+  video.autoplay = true;
+  video.playsinline = true;
+  video.muted = true;
+  const stream = new MediaStream();
+  stream.addTrack(track);
+  video.srcObject = stream;
+
+  const label = document.createElement('div');
+  label.className = 'video-label';
+  label.id = 'label-' + trackId;
+  label.textContent = trackId;
+
+  const closeBtn = document.createElement('button');
+  closeBtn.className = 'video-close';
+  closeBtn.textContent = '×';
+  closeBtn.title = '关闭该轨道';
+  closeBtn.onclick = (e) => {
+    e.stopPropagation();
+    hideTrack(trackId);
+  };
+
+  cell.appendChild(video);
+  cell.appendChild(label);
+  cell.appendChild(closeBtn);
+  grid.appendChild(cell);
+
+  videoTracks[trackId] = { video, stream, cell, track };
+
+  track.onended = () => {
+    log('Track ended: ' + trackId);
+    removeVideoTrack(trackId);
+    delete hiddenTracks[trackId];
+    updateHiddenButtons();
+  };
+
+  updateGridLayout();
+  updateTrackInfo();
+  log('添加视频轨道: ' + trackId + ' (共' + Object.keys(videoTracks).length + '路)');
+}
+
+function hideTrack(trackId) {
+  const info = videoTracks[trackId];
+  if (!info) return;
+  hiddenTracks[trackId] = info.track;
+  info.video.srcObject = null;
+  info.cell.remove();
+  delete videoTracks[trackId];
+  updateGridLayout();
+  updateTrackInfo();
+  updateHiddenButtons();
+  log('关闭轨道: ' + trackId);
+}
+
+function showTrack(trackId) {
+  const track = hiddenTracks[trackId];
+  if (!track) return;
+  delete hiddenTracks[trackId];
+  addVideoTrack(track);
+  updateHiddenButtons();
+  log('重新显示轨道: ' + trackId);
+}
+
+function removeVideoTrack(trackId) {
+  const info = videoTracks[trackId];
+  if (!info) return;
+  info.video.srcObject = null;
+  info.cell.remove();
+  delete videoTracks[trackId];
+  updateGridLayout();
+  updateTrackInfo();
+}
+
+function clearAllTracks() {
+  for (const id of Object.keys(videoTracks)) {
+    removeVideoTrack(id);
+  }
+  hiddenTracks = {};
+  updateHiddenButtons();
+  updateTrackInfo();
+}
+
+function send(obj) {
+  if (ws && ws.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify(obj));
+  }
+}
+
+function sendLogin() {
+  log('发送 Login');
+  send({ message_id: MSG.CLIENT_LOGIN, peer_name: 'web_puller_' + Date.now() });
+}
+
+function sendSubscribe(roomId) {
+  log('发送 Subscribe, room=' + roomId);
+  send({ message_id: MSG.CLIENT_SUBSCRIBE, type: 0, channel_id: roomId });
+}
+
+function sendSdp(sdp) {
+  log('发送 SDP Answer');
+  send({ message_id: MSG.CLIENT_MESSAGE, type: 0, body: sdp, stream_id: streamId });
+}
+
+function sendCandidate(candidate, mid, mLineIndex) {
+  send({
+    message_id: MSG.CLIENT_MESSAGE,
+    type: 1,
+    body: { candidate, mid, mLineIndex },
+    stream_id: streamId,
+  });
+}
+
+function createPeerConnection() {
+  const config = {
+    sdpSemantics: 'unified-plan',
+    iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
+  };
+  pc = new RTCPeerConnection(config);
+
+  pc.ontrack = (event) => {
+    log('收到远端 Track: ' + event.track.kind + ', id=' + event.track.id);
+    if (event.track.kind === 'video') {
+      addVideoTrack(event.track);
+    }
+  };
+
+  pc.onicecandidate = (event) => {
+    if (event.candidate) {
+      sendCandidate(
+        event.candidate.candidate,
+        event.candidate.sdpMid,
+        event.candidate.sdpMLineIndex
+      );
+    }
+  };
+
+  pc.oniceconnectionstatechange = () => {
+    log('ICE 状态: ' + pc.iceConnectionState);
+    if (pc.iceConnectionState === 'connected' || pc.iceConnectionState === 'completed') {
+      setStatus('已连接 - 播放中');
+      startStatsPolling();
+    } else if (pc.iceConnectionState === 'disconnected' || pc.iceConnectionState === 'failed') {
+      setStatus('连接断开');
+      stopStatsPolling();
+    }
+  };
+}
+
+async function handleOffer(sdp) {
+  log('收到 SDP Offer');
+  if (!pc) createPeerConnection();
+
+  await pc.setRemoteDescription(new RTCSessionDescription({ type: 'offer', sdp }));
+  const answer = await pc.createAnswer();
+  await pc.setLocalDescription(answer);
+  sendSdp(answer.sdp);
+}
+
+function handleCandidate(body) {
+  if (!pc) return;
+  pc.addIceCandidate(new RTCIceCandidate({
+    candidate: body.candidate,
+    sdpMid: body.mid,
+    sdpMLineIndex: body.mLineIndex,
+  }));
+}
+
+function start() {
+  const addr = document.getElementById('addr').value;
+  const roomId = document.getElementById('room').value;
+
+  if (ws) stop();
+
+  setStatus('连接中...');
+  log('连接信令服务器: ' + addr + '/client');
+
+  ws = new WebSocket(addr + '/client');
+
+  ws.onopen = () => {
+    log('WebSocket 已连接');
+    setStatus('已连接信令，登录中...');
+    sendLogin();
+    document.getElementById('btnConnect').disabled = true;
+    document.getElementById('btnStop').disabled = false;
+  };
+
+  ws.onmessage = (event) => {
+    let msg;
+    try { msg = JSON.parse(event.data); } catch(e) { return; }
+
+    switch (msg.message_id) {
+      case MSG.SIGNAL_LOGIN:
+        if (msg.code === CODE_SUCCESS) {
+          log('登录成功');
+          setStatus('登录成功，订阅中...');
+          sendSubscribe(roomId);
+        } else {
+          log('登录失败');
+          setStatus('登录失败');
+        }
+        break;
+
+      case MSG.SIGNAL_SUBSCRIBE:
+        streamId = msg.stream_id || '';
+        if (msg.code === CODE_READY) {
+          log('订阅就绪，等待 Offer...');
+          setStatus('订阅就绪，等待推流端...');
+          createPeerConnection();
+        } else if (msg.code === CODE_SUCCESS) {
+          log('订阅成功');
+        } else {
+          log('订阅失败: ' + (msg.reason || 'code=' + msg.code));
+          setStatus('订阅失败');
+        }
+        break;
+
+      case MSG.SIGNAL_MESSAGE:
+        if (msg.type === 0) {
+          handleOffer(msg.body);
+        } else if (msg.type === 1) {
+          handleCandidate(msg.body);
+        }
+        break;
+
+      case MSG.SIGNAL_SUBSCRIBER_DISCONNECTED:
+        log('推流端断开');
+        setStatus('推流端断开');
+        break;
+    }
+  };
+
+  ws.onclose = () => {
+    log('WebSocket 已断开');
+    setStatus('未连接');
+    document.getElementById('btnConnect').disabled = false;
+    document.getElementById('btnStop').disabled = true;
+  };
+
+  ws.onerror = (err) => {
+    log('WebSocket 错误');
+    setStatus('连接错误');
+  };
+}
+
+// ─── Stats polling & side panel rendering ───
+
+let statsTimer = null;
+let prevStats = {};
+
+async function pollStats() {
+  if (!pc) return;
+  try {
+    const stats = await pc.getStats();
+    const codecs = {};
+    stats.forEach(report => {
+      if (report.type === 'codec') codecs[report.id] = report;
+    });
+
+    const panel = document.getElementById('stats-panel');
+    let html = '';
+
+    stats.forEach(report => {
+      if (report.type === 'inbound-rtp' && report.kind === 'video') {
+        const trackId = report.trackIdentifier;
+        if (!trackId) return;
+        const codec = codecs[report.codecId];
+        const now = report.timestamp;
+        const prev = prevStats[trackId];
+
+        // Update video overlay with brief info
+        const label = document.getElementById('label-' + trackId);
+        if (label) {
+          let brief = trackId.substring(0, 8);
+          if (codec) brief += ' | ' + codec.mimeType.replace('video/', '');
+          const w = report.frameWidth;
+          const h = report.frameHeight;
+          if (w && h) brief += ` ${w}x${h}`;
+          label.textContent = brief;
+        }
+
+        // Build panel content
+        html += `<div class="stats-track">`;
+        html += `<div class="stats-track-title">Track: ${trackId}</div>`;
+
+        // ── 视频 Profile ──
+        html += `<div class="stats-section"><div class="stats-section-title">── 视频Profile ──</div>`;
+        if (codec) {
+          html += `<div class="stats-row">Codec: <span>${codec.mimeType}</span>`;
+          if (codec.payloadType !== undefined) html += ` (PT: <span>${codec.payloadType}</span>)`;
+          if (codec.clockRate) html += ` | <span>${codec.clockRate}Hz</span>`;
+          html += `</div>`;
+          if (codec.sdpFmtpLine) {
+            const params = parseFmtp(codec.sdpFmtpLine);
+            if (params['profile-level-id']) {
+              const plid = params['profile-level-id'];
+              const profileIdc = parseInt(plid.substring(0, 2), 16);
+              const constraintFlags = plid.substring(2, 4);
+              const levelIdc = parseInt(plid.substring(4, 6), 16);
+              html += `<div class="stats-row">Profile: <span>${getProfileName(profileIdc)}</span> | Level: <span>${(levelIdc / 10).toFixed(1)}</span></div>`;
+              html += `<div class="stats-row">profile-level-id: <span>${plid}</span> (constraint: 0x${constraintFlags})</div>`;
+            }
+            if (params['packetization-mode'] !== undefined) {
+              const pm = params['packetization-mode'];
+              const pmName = pm === '0' ? 'Single NAL' : pm === '1' ? 'Non-interleaved' : 'Interleaved';
+              html += `<div class="stats-row">Packetization: <span>${pmName} (mode ${pm})</span>`;
+              if (params['level-asymmetry-allowed'] !== undefined) {
+                html += ` | LevelAsymmetry: <span>${params['level-asymmetry-allowed']}</span>`;
+              }
+              html += `</div>`;
+            }
+            if (params['sprop-parameter-sets']) {
+              html += `<div class="stats-row">SPS/PPS: <span>${params['sprop-parameter-sets']}</span></div>`;
+            }
+            if (params['profile-id']) {
+              html += `<div class="stats-row">HEVC profile-id: <span>${params['profile-id']}</span>`;
+              if (params['tier-flag']) html += ` | tier: <span>${params['tier-flag']}</span>`;
+              if (params['level-id']) html += ` | level-id: <span>${params['level-id']}</span>`;
+              html += `</div>`;
+            }
+          }
+        }
+        const w = report.frameWidth;
+        const h = report.frameHeight;
+        const fps = report.framesPerSecond;
+        if (w && h) {
+          html += `<div class="stats-row">分辨率: <span>${w}x${h}</span>`;
+          if (fps) html += ` @<span>${Math.round(fps)}fps</span>`;
+          html += `</div>`;
+        }
+        html += `</div>`;
+
+        // ── 网络信息 ──
+        html += `<div class="stats-section"><div class="stats-section-title">── 网络信息 ──</div>`;
+        if (prev) {
+          const dtSec = (now - prev.timestamp) / 1000;
+          if (dtSec > 0) {
+            const deltaBits = (report.bytesReceived - prev.bytesReceived) * 8;
+            const kbps = Math.round(deltaBits / dtSec / 1000);
+            html += `<div class="stats-row">码率: <span>${kbps} kbps</span>`;
+            const deltaPackets = report.packetsReceived - prev.packetsReceived;
+            const deltaLost = report.packetsLost - prev.packetsLost;
+            if (deltaPackets + deltaLost > 0) {
+              const lossRate = (deltaLost / (deltaPackets + deltaLost) * 100).toFixed(1);
+              html += ` | 丢包率: <span>${lossRate}%</span>`;
+            }
+            html += `</div>`;
+          }
+        }
+        if (report.jitter !== undefined) {
+          html += `<div class="stats-row">抖动: <span>${(report.jitter * 1000).toFixed(1)}ms</span></div>`;
+        }
+        html += `<div class="stats-row">总包数: <span>${report.packetsReceived}</span> | 总丢包: <span>${report.packetsLost}</span></div>`;
+        const nack = report.nackCount || 0;
+        const pli = report.pliCount || 0;
+        const fir = report.firCount || 0;
+        html += `<div class="stats-row">NACK: <span>${nack}</span> | PLI: <span>${pli}</span> | FIR: <span>${fir}</span></div>`;
+        html += `</div>`;
+
+        // ── 解码信息 ──
+        html += `<div class="stats-section"><div class="stats-section-title">── 解码信息 ──</div>`;
+        const framesDecoded = report.framesDecoded || 0;
+        const keyFrames = report.keyFramesDecoded || 0;
+        html += `<div class="stats-row">关键帧: <span>${keyFrames}</span> / 总帧: <span>${framesDecoded}</span>`;
+        if (report.totalDecodeTime && framesDecoded > 0) {
+          const avgDecodeMs = (report.totalDecodeTime / framesDecoded * 1000).toFixed(1);
+          html += ` | 平均解码: <span>${avgDecodeMs}ms</span>`;
+        }
+        html += `</div>`;
+        if (report.jitterBufferDelay && report.jitterBufferEmittedCount) {
+          const avgJbMs = (report.jitterBufferDelay / report.jitterBufferEmittedCount * 1000).toFixed(1);
+          html += `<div class="stats-row">JitterBuffer延迟: <span>${avgJbMs}ms</span></div>`;
+        }
+        if (report.freezeCount !== undefined) {
+          html += `<div class="stats-row">卡顿: <span>${report.freezeCount}次</span>`;
+          if (report.totalFreezesDuration !== undefined) {
+            html += ` 总时长: <span>${report.totalFreezesDuration.toFixed(1)}s</span>`;
+          }
+          html += `</div>`;
+        }
+        html += `</div>`;
+
+        html += `</div>`;
+
+        prevStats[trackId] = {
+          timestamp: now,
+          bytesReceived: report.bytesReceived,
+          packetsReceived: report.packetsReceived,
+          packetsLost: report.packetsLost,
+        };
+      }
+    });
+
+    panel.innerHTML = html || '<div style="color:#666;padding:20px;text-align:center;">暂无视频流数据</div>';
+  } catch(e) {}
+}
+
+function parseFmtp(fmtpLine) {
+  const params = {};
+  fmtpLine.split(';').forEach(part => {
+    const kv = part.trim().split('=');
+    if (kv.length === 2) params[kv[0].trim()] = kv[1].trim();
+  });
+  return params;
+}
+
+function getProfileName(profileIdc) {
+  switch (profileIdc) {
+    case 66: return 'Baseline';
+    case 77: return 'Main';
+    case 88: return 'Extended';
+    case 100: return 'High';
+    case 110: return 'High 10';
+    case 122: return 'High 4:2:2';
+    case 244: return 'High 4:4:4 Predictive';
+    default: return 'Profile ' + profileIdc;
+  }
+}
+
+function startStatsPolling() {
+  if (statsTimer) return;
+  statsTimer = setInterval(pollStats, 2000);
+}
+
+function stopStatsPolling() {
+  if (statsTimer) { clearInterval(statsTimer); statsTimer = null; }
+}
+
+function stop() {
+  stopStatsPolling();
+  if (pc) { pc.close(); pc = null; }
+  if (ws) { ws.close(); ws = null; }
+  clearAllTracks();
+  document.getElementById('stats-panel').innerHTML = '';
+  setStatus('未连接');
+  document.getElementById('btnConnect').disabled = false;
+  document.getElementById('btnStop').disabled = true;
+  log('已断开');
+}
+</script>
+</body>
+</html>
