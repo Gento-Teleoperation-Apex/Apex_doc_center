@@ -22,7 +22,7 @@ sidebar_position: 2
 
 Apex Teleop 是机器人遥操作控制台，支持实时 3D 可视化、运动控制、摄像头画面、数据录制与回放。
 
-**支持的机器人型号：** Marvin Pro 天准版、Gento 系列（Skye/Luna 等）
+**支持的机器人型号：** Marvin Pro、Gento 系列（Skye/Luna 等）
 
 **通信架构：** 前端通过统一后端 API（端口 8080）与 ROS 2 控制节点通信。
 
@@ -94,9 +94,9 @@ cd /opt/kernelmind/apex
 
 ## 3. 界面布局
 
-![Marvin Pro 天准版 Apex Teleop 界面总览](/img/pro/new-id/apex-teleop-pro-overview.png)
+![Marvin Pro Apex Teleop 界面总览](/img/pro/new-id/apex-teleop-pro-overview.png)
 
-> 截图中的 IP 仅为界面示例。Marvin Pro 天准版现场配置以天准核心控制器 IP `6.6.7.100` 为准。
+> 截图中的 IP 仅为界面示例。Marvin Pro 现场配置以天准核心控制器 IP `6.6.7.100` 为准。
 
 | 操作步骤 | 操作区域 | 说明 |
 |------|----------|------|

@@ -3,19 +3,19 @@ title: Product Overview
 sidebar_position: 1
 ---
 
-# Marvin Pro Tianzhun Edition Product Overview
+# Marvin Pro Product Overview
 
 ## Product Positioning
 
 KernelMind Apex is a ready-to-use teleoperation kit for robotic operation scenarios. It provides the operator with an immersive first-person view through a VR headset and maps the operator's motion to the robot in real time.
 
-The official name of the PRO new version is Marvin Pro Tianzhun Edition. It supports dual-arm robot teleoperation and works with a Meta Quest VR headset and Tianzhun core controller. In this version, the Tianzhun controller is used as the core control unit. The deserializer board is integrated inside the robot, and the Senyun camera is a standard component connected through internal arm wiring.
+Marvin Pro supports dual-arm robot teleoperation and works with a Meta Quest VR headset and Tianzhun core controller. In this version, the Tianzhun controller is used as the core control unit. The deserializer board is integrated inside the robot, and the Senyun camera is a standard component connected through internal arm wiring.
 
 Optional accessories: Manus data gloves + Wuji Hand, used for finger motion capture and fine manipulation.
 
 ## System Components
 
-The Marvin Pro Tianzhun Edition teleoperation system mainly consists of the robot body, robot controller, Tianzhun electric cabinet, Senyun camera, VR headset, host PC, and data recording media.
+The Marvin Pro teleoperation system mainly consists of the robot body, robot controller, Tianzhun electric cabinet, Senyun camera, VR headset, host PC, and data recording media.
 
 | Category | Device | Description |
 | --- | --- | --- |
@@ -30,7 +30,7 @@ The Marvin Pro Tianzhun Edition teleoperation system mainly consists of the robo
 | Network and data | Ethernet cables and Type-C Ethernet adapter | Connects the electric cabinet, host PC, and VR headset |
 | Network and data | USB drive | Used for data recording; volume label must be `BAG_STORAGE` |
 
-![Marvin Pro Tianzhun Edition robot body](/img/pro/new-id/robot-body.png)
+![Marvin Pro robot body](/img/pro/new-id/robot-body.png)
 
 ![Senyun camera and internal arm wiring](/img/pro/new-id/senyun-camera.jpg)
 

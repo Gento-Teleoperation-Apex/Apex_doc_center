@@ -3,19 +3,19 @@ title: 产品概述
 sidebar_position: 1
 ---
 
-# Marvin Pro 天准版产品概述
+# Marvin Pro 产品概述
 
 ## 产品定位
 
 KernelMind Apex 是一套面向机器人遥操作场景的即装即用套件，通过 VR 头显为操作员提供第一视角沉浸式画面，并将操作员动作实时映射到机器人端执行。
 
-PRO 新版正式名称为 Marvin Pro 天准版，支持双臂机器人遥操，搭配 Meta Quest VR 头显与天准核心控制器。新版使用天准控制器作为核心控制单元，解串板集成在机器人内部，森云相机为标配并通过手臂内部线束连接。
+Marvin Pro 支持双臂机器人遥操，搭配 Meta Quest VR 头显与天准核心控制器。新版使用天准控制器作为核心控制单元，解串板集成在机器人内部，森云相机为标配并通过手臂内部线束连接。
 
 可选配件：Manus 数据手套 + Wuji Hand，用于手部动作捕获与精细操控。
 
 ## 系统组成
 
-Marvin Pro 天准版遥操系统主要由机器人本体、机器人控制器、天准电箱、森云相机、VR 头显、上位机和数据录制介质组成。
+Marvin Pro 遥操系统主要由机器人本体、机器人控制器、天准电箱、森云相机、VR 头显、上位机和数据录制介质组成。
 
 | 类别 | 设备 | 说明 |
 | --- | --- | --- |
@@ -30,7 +30,7 @@ Marvin Pro 天准版遥操系统主要由机器人本体、机器人控制器、
 | 网络与数据 | 网线与 Type-C 网口转换器 | 连接电箱、上位机和 VR 头显 |
 | 网络与数据 | U 盘 | 用于数据录制，标签需为 `BAG_STORAGE` |
 
-![Marvin Pro 天准版机器人本体](/img/pro/new-id/robot-body.png)
+![Marvin Pro 机器人本体](/img/pro/new-id/robot-body.png)
 
 ![森云相机与手臂内部线束](/img/pro/new-id/senyun-camera.jpg)
 

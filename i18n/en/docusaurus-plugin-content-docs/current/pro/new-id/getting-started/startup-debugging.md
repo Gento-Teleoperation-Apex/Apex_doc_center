@@ -22,7 +22,7 @@ sidebar_position: 2
 
 Apex Teleop is a robot teleoperation console that supports real-time 3D visualization, motion control, camera view, data recording, and playback.
 
-**Supported robot models:** Marvin Pro Tianzhun Edition and Gento series robots, including Skye/Luna.
+**Supported robot models:** Marvin Pro and Gento series robots, including Skye/Luna.
 
 **Communication architecture:** The frontend communicates with ROS 2 control nodes through the unified backend API on port 8080.
 
@@ -94,9 +94,9 @@ Headset operation manuals:
 
 ## 3. Interface Layout
 
-![Marvin Pro Tianzhun Edition Apex Teleop overview](/img/pro/new-id/apex-teleop-pro-overview.png)
+![Marvin Pro Apex Teleop overview](/img/pro/new-id/apex-teleop-pro-overview.png)
 
-> The IP address in the screenshot is only an interface example. For Marvin Pro Tianzhun Edition, use the Tianzhun core controller IP `6.6.7.100` on site.
+> The IP address in the screenshot is only an interface example. For Marvin Pro, use the Tianzhun core controller IP `6.6.7.100` on site.
 
 | Step | Area | Description |
 |------|------|-------------|

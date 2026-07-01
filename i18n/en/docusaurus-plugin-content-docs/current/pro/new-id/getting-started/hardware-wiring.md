@@ -5,7 +5,7 @@ sidebar_position: 1
 
 # Hardware Wiring
 
-This page is used as the on-site wiring checklist for the Marvin Pro Tianzhun Edition system. It covers Tianzhun electric cabinet power, emergency stop, USB drive, communication network, wired headset access, and robot zero-position preparation.
+This page is used as the on-site wiring checklist for the Marvin Pro system. It covers Tianzhun electric cabinet power, emergency stop, USB drive, communication network, wired headset access, and robot zero-position preparation.
 
 The new version uses the Tianzhun core controller as the main controller. The deserializer board is integrated inside the robot. The Senyun camera is a standard component mounted at the robot arm end, with wiring routed internally through the arm. No separate deserializer wiring is required on site.
 
