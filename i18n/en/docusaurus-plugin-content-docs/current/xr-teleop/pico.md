@@ -10,11 +10,13 @@ Human-Robot TeleOperation for Pico
 
 **Latest version:** [`download`![download](./Screenshots/download.svg)](https://github.com/KLMmotion/km_teleop_openxr/releases)
 
-*Tianji | KernelMind*
+*Tianji | KernalMind*
 
 ## Open app
 
-Install `.apk` to your headset, open with two controllers keeping tracked. Agree to popups.
+Uninstall the previous Apex_teleop App.
+
+Install latest `.apk` to your headset, open with two controllers keeping tracked. Agree to popups.
 
 ## Check your setups
 
@@ -29,7 +31,7 @@ Make sure your headset battery is above **20%**, or the warning message would po
 
 ### Internet
 
-Make sure your headset is connected to server through USB hub and LAN cable for best experience. You are strongly suggested to **turn off WiFi** in headset in case of any interference during operation. Click on the button below the message to open WiFi setting panel.
+Make sure your headset is connected to host through USB hub and LAN cable for best experience. You are strongly suggested to **turn off WiFi** in headset in case of any interference during operation. Click on the button below the message to open WiFi setting panel.
 
 <figure>
     <img src={require("./Screenshots/ss_wifi.jpg").default} alt="WiFi setting" />
@@ -59,13 +61,38 @@ Check your controller battery level before using. If it is too low, the controll
 
 We use your room boundary settings to determine the location of the real-world floor and display the position of the virtual robotic arm. If you haven't set up your room boundary, the system UI and virtual robotic arm may appear too high or too low during teleoperation. Please check if your room boundary is correctly configured in <i><b>Settings > General > Room Boundary</b></i>. Don't recommend to proceed with <i><b>Stationary</b></i>.
 
-## Connect to server
+## Robotic Arm End-Effector Configuration
+
+This option allows you to freely switch the robotic arm's end-effector configuration, typically between a dexterous hand or a gripper. Depending on the manufacturer's actuator, the corresponding configuration on the XR teleoperation side must also be adjusted.
+
+If the robotic arm is equipped with a gripper select Controller.
+
+If the robotic arm is equipped with a dexterous hand select Gloves on the XR side (currently supporting either Manus or UDCAP).
+
+<div style={{display: 'flex', justifyContent: 'space-between', gap: '10px'}}>
+    <figure style={{margin: 0, width: '48%'}}>
+        <img src={require("./Screenshots/PicoAxis_MANUS.jpg").default} alt="Manus" style={{width: '100%'}} />
+        <figcaption>Manus</figcaption>
+    </figure>
+    <figure style={{margin: 0, width: '48%'}}>
+        <img src={require("./Screenshots/PicoAxis_UDCAP.jpg").default} alt="UDCAP" style={{width: '100%'}} />
+        <figcaption>UDCAP</figcaption>
+    </figure>
+</div>
+
+## Connect to host
 
 This interface would be shown after you enter the app.
 
-Please enter your server IP address and your height (in cm). You can click the button above the height input field to get an estimated value. If a server address is detected, a button reading `ApexHost XXX.XXX.XXX.XXX` will also appear above the IP input field; click it to auto-fill the server address into the field.
+Please enter your host **IP address** and your **height (in cm)**. You can click the button above the height input field to get an estimated value. If a host address is detected, a button reading `ApexHost XXX.XXX.XXX.XXX` will also appear above the IP input field; click it to auto-fill the host address into the field.
 
-Once you fill IP and height, click on `Connect` button to connect to server.
+You can also change the end-effector configuration directly on the main panel (the button is located above the `Connect` button). Switch the origin configuration of the robotic arm sent out in XR based on different situations (e.g., Gripper, Dexhand) to calibrate the tracker position.
+
+:::tip Tip
+You must exit teleoperation to change configuration, the button remains uninteractable while you are manipulating the robot.
+:::
+
+Once you fill IP and height, click on `Connect` button to connect to host.
 
 *   **Connect successfully:**
     *   You will receive two short vibrations on controllers on both hands.
@@ -75,26 +102,42 @@ Once you fill IP and height, click on `Connect` button to connect to server.
     *   The `Connection` icon does not make any changes.
 
 <figure>
-    <img src={require("./Screenshots/ss_connecttcp.jpg").default} alt="Connect to server" />
-    <figcaption>Connect to server</figcaption>
+    <img src={require("./Screenshots/teleop_endeffector.jpg").default} alt="Connect to host and end-effector settings" />
+    <figcaption>Connect to host and end-effector settings</figcaption>
 </figure>
+
+### Host Recording
+
+Press the **B button** on your right controller to notify the host to start or stop recording. Voice prompts will indicate whether the recording started successfully or failed.
+Before using this feature, please ensure that the HTTP connection between the headset and the host is functioning correctly. You can verify this by checking the recording icon on the main panel; if there is no exclamation mark, it indicates the current connection is normal.
 
 ## How to start and end teleoperation
 
-After connecting to the server, you can start teleoperation by pressing the **Y button** on your left controller. The interface would show you the status of connection. In this mode, you can use the controllers to control the robot. Press the **X button** to end teleoperation. There will be voice prompts when starting and ending the process. If a low battery or device disconnection occurs during operation, the teleoperation will automatically disconnect, accompanied by controller vibrations.
+After connecting to the host, you can start teleoperation by pressing the **Y button** on your left controller. The interface would show you the status of connection. In this mode, you can use the controllers to control the robot. Press the **X button** to end teleoperation. There will be voice prompts when starting and ending the process. If a low battery or device disconnection occurs during operation, the teleoperation will automatically disconnect, accompanied by controller vibrations.
 
-Align your hand with the virtual robotic arm and hold the **Grip** button to start teleoperating. Release the Grip button to pause. We strongly recommend pressing the **X** button to exit teleoperation completely whenever you are paused or not actively controlling the arm.
+Align your hand with the virtual robotic arm and hold the **Grip** button to start teleoperating. Release the Grip button to pause. We strongly recommend pressing the **X button** to exit teleoperation completely whenever you are paused or not actively controlling the arm.
+
+On the main panel, if the left and right controller icons are lit up and not red, it indicates that the controller tracking is normal.
+
+During teleoperation, you will see the video streaming views as shown below:
 
 <div style={{display: 'flex', justifyContent: 'space-between', gap: '10px'}}>
-    <figure style={{margin: 0, width: '48%'}}>
-        <img src={require("./Screenshots/ss_teleop_wired.jpg").default} alt="Teleoperation with cable" style={{width: '100%'}} />
-        <figcaption>Teleoperation with cable</figcaption>
+    <figure style={{margin: 0, width: '49%'}}>
+        <img src={require("./Screenshots/teleop_wifi_connectingvideo.jpg").default} alt="Connecting video stream" style={{width: '100%'}} />
+        <figcaption style={{textAlign: 'center', fontSize: '0.9em'}}>Connecting video stream</figcaption>
     </figure>
-    <figure style={{margin: 0, width: '48%'}}>
-        <img src={require("./Screenshots/ss_teleop_teleopwifi.jpg").default} alt="Teleoperation without cable" style={{width: '100%'}} />
-        <figcaption>Teleoperation without cable</figcaption>
+    <figure style={{margin: 0, width: '49%'}}>
+        <img src={require("./Screenshots/teleop_wifi_connectedvideo.jpg").default} alt="Connected video stream" style={{width: '100%'}} />
+        <figcaption style={{textAlign: 'center', fontSize: '0.9em'}}>Connected video stream</figcaption>
     </figure>
 </div>
+
+<figure style={{marginTop: '15px'}}>
+    <img src={require("./Screenshots/teleop_video_focused.jpg").default} alt="Robotic arm right wrist camera stream" style={{width: '100%'}} />
+    <figcaption style={{textAlign: 'center', fontSize: '0.9em'}}>The user is viewing the camera stream from the robotic arm's right hand to assist in fine-grained manipulation</figcaption>
+</figure>
+
+In the focused view, besides the main binocular camera stream in the center, you can also see the video streams from the left and right wrist cameras on both sides of the robotic arm. This added detail significantly enhances the accuracy of teleoperation control.
 
 ## How to enter Developer Mode
 
@@ -102,57 +145,22 @@ Align your hand with the virtual robotic arm and hold the **Grip** button to sta
 This is for developer use only. You may bring safety issues to both of your device and the robot. Please enable it only when you know what you are doing.
 :::
 
-Double click on `KernelM` logo on the top row of the panel to open developer panel. You will see new options appear next to the main panel.
+Double click on `KernalM` logo on the top row of the panel to open developer panel. You will see new options appear next to the main panel. The App uses TCP for host communication, UDP for robot control and receives teleoperation data from robot, and WebRTC for video streaming.
 
 Double click again to close developer panel.
 
 <figure>
-    <img src={require("./Screenshots/ss_teleop_developer.jpg").default} alt="Developer Mode" />
+    <img src={require("./Screenshots/teleop_debugmode.jpg").default} alt="Developer Mode" />
     <figcaption>Developer Mode</figcaption>
 </figure>
 
 What can you do in Developer Mode?
 
-*   Change TCP, WebRTC, UDP ports **individually**.
-*   Test TCP, WebRTC, UDP connection status and disconnect/connect them individually.
-*   See App log regarding to TCP, WebRTC, UDP.
-*   **Change XR end-effector origin configurations:** Switch the origin configuration of the robotic arm sent out in XR based on different situations (e.g., Gripper, Dexhand) to calibrate the tracker position.
+In developer mode, you can check the communication details and specific logs between the host and the headset, monitor video transmission and decoding status, configure individual ports, and perform other advanced and fine-grained configurations:
 
-:::tip Tip
-You must exit teleoperation to change configuration, the button remains uninteractable while you are manipulating the robot.
-:::
-
-Change configuration of end-effector origin by clicking on the button below, the green text indicates what is enabled.
-
-<div style={{display: 'flex', justifyContent: 'space-between', gap: '10px'}}>
-    <figure style={{margin: 0, width: '32%'}}>
-        <img src={require("./Screenshots/gripperconfig.jpg").default} alt="Gripper configuration" style={{width: '100%'}} />
-        <figcaption style={{textAlign: 'center', fontSize: '0.9em'}}>Config example: Gripper</figcaption>
-    </figure>
-    <figure style={{margin: 0, width: '32%'}}>
-        <img src={require("./Screenshots/dexhandconfig1.jpg").default} alt="Dexhand configuration 1" style={{width: '100%'}} />
-        <figcaption style={{textAlign: 'center', fontSize: '0.9em'}}>Config example: Dexhand 1</figcaption>
-    </figure>
-    <figure style={{margin: 0, width: '32%'}}>
-        <img src={require("./Screenshots/dexhandconfig2.jpg").default} alt="Dexhand configuration 2" style={{width: '100%'}} />
-        <figcaption style={{textAlign: 'center', fontSize: '0.9em'}}>Config example: Dexhand 2</figcaption>
-    </figure>
-</div>
-
-In current version, we support two gloves for dexterous hands : Manus, and UDCAP:
-
-<div style={{display: 'flex', justifyContent: 'space-between', gap: '10px'}}>
-    <figure style={{margin: 0, width: '48%'}}>
-        <img src={require("./Screenshots/PicoAxis_MANUS.jpg").default} alt="Manus glove configuration" style={{width: '100%'}} />
-        <figcaption>Configuration of Manus glove</figcaption>
-    </figure>
-    <figure style={{margin: 0, width: '48%'}}>
-        <img src={require("./Screenshots/PicoAxis_UDCAP.jpg").default} alt="UDCAP glove configuration" style={{width: '100%'}} />
-        <figcaption>Configuration of UDCAP glove</figcaption>
-    </figure>
-</div>
-
-> The App uses TCP for server communication, UDP for robot control and receives teleoperation data from robot, and WebRTC for video streaming.
+*   Change Host connection, Spatial Video, and Data ports **individually**.
+*   Test Host connection, Spatial Video, and Data connection status and disconnect/connect them individually.
+*   See App log regarding to Host connection, Spatial Video, and Data.
 
 ## Safety check
 
@@ -169,20 +177,22 @@ In current version, we support two gloves for dexterous hands : Manus, and UDCAP
   <tbody>
     <tr>
       <td>Left Hand</td><td>Menu Button</td><td>Maximize/Minimize Panel</td>
-      <td rowSpan={7}>
+      <td rowSpan={10}>
         <figure style={{margin: 0}}>
           <img src={require("./Screenshots/picoultracontroller.png").default} alt="Pico 4 Ultra Controller" width={380} />
-          <figcaption style={{textAlign: 'center'}}>Pico 4 Ultra Controller
-          <br/><i>Source: Pico Developer Documentation</i></figcaption>
+          <figcaption style={{textAlign: 'center'}}>Pico 4 Ultra Controller</figcaption>
         </figure>
       </td>
     </tr>
     <tr><td>Left Hand</td><td>Y Button</td><td>Start teleoperation</td></tr>
     <tr><td>Left Hand</td><td>X Button</td><td>Exit teleoperation</td></tr>
     <tr><td>Right Hand</td><td>A Button</td><td>Show/Hide video window</td></tr>
+    <tr><td>Right Hand</td><td>B Button</td><td>Start/Stop host recording</td></tr>
     <tr><td>Right Hand</td><td>Menu Button</td><td>Hold to reset XR origin</td></tr>
     <tr><td>Both Hands</td><td>Trigger</td><td>Click UI, Control Gripper</td></tr>
     <tr><td>Both Hands</td><td>Grip</td><td>Hold to control robot</td></tr>
+    <tr><td>Left Hand</td><td>Thumbstick(Press and push)</td><td>Robot base rotation</td></tr>
+    <tr><td>Right Hand</td><td>Thumbstick(Press and push)</td><td>Robot base translation</td></tr>
   </tbody>
 </table>
 
