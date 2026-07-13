@@ -7,6 +7,18 @@ sidebar_position: 4
 
 数据集转换为 LeRobot v2.1 格式后，可使用 OpenPI 提供的 PyTorch 或 JAX 训练入口对 PI0 / PI05 模型进行微调。
 
+## 准备训练环境
+
+克隆 KMD 适配版本并安装项目依赖：
+
+```bash
+git clone https://github.com/KLMmotion/openpi-kmd.git
+cd openpi-kmd
+uv sync
+```
+
+后续训练、统计量计算和策略服务命令均在 `openpi-kmd` 项目根目录执行。
+
 ## 训练入口
 
 | 脚本 | 框架 | 推荐场景 |
@@ -46,6 +58,21 @@ uv run torchrun --standalone --nnodes=1 --nproc_per_node=2 \
 - checkpoint 保存目录（`checkpoint_dir`）
 
 自定义数据集时，请复制现有 config 并修改数据集路径与 normalization stats 路径。
+
+## 归一化统计
+
+训练与推理使用同一份本体状态和动作归一化统计。微调新数据集时，可根据机器人与预训练数据的相似程度选择：
+
+- 复用与目标机器人动作空间一致的预训练统计量。
+- 针对新数据集重新计算统计量。
+
+重新计算统计量时，使用训练配置名执行：
+
+```bash
+uv run scripts/compute_norm_stats.py --config-name <config_name>
+```
+
+生成的 `norm_stats.json` 必须随 checkpoint 一起保留。真机部署时，`--asset-id` 应与 checkpoint 下 `assets/<asset_id>/norm_stats.json` 的目录名一致。若训练和部署使用的状态维度、关节顺序或单位不一致，机器人动作会出现明显偏差。
 
 ## Checkpoint 结构
 
@@ -104,3 +131,7 @@ uv run scripts/train.py pi05_lerobot_datasets0314 \
 - 首次训练前检查 normalization stats 是否已生成或正确引用
 - 多 GPU 训练时 `--nproc_per_node` 应与可用 GPU 数量匹配
 - 训练日志与 checkpoint 路径由 `--exp_name` 与 config 共同决定，建议使用有意义的实验名称
+
+## 项目参考
+
+- [KLMmotion/openpi-kmd](https://github.com/KLMmotion/openpi-kmd)：KMD 机器人适配的 OpenPI 训练、归一化统计、策略服务和推理客户端代码。

@@ -9,13 +9,6 @@ VLA（Vision-Language-Action）是一类结合视觉感知、自然语言指令�
 
 本章节基于 [OpenPI](https://github.com/Physical-Intelligence/openpi) 框架，说明从数据采集、数据集转换、模型训练到真机推理的完整流程。
 
-## 相关代码仓库
-
-| 仓库 | 用途 |
-| --- | --- |
-| [KLMmotion/openpi-kmd](https://github.com/KLMmotion/openpi-kmd) | 本项目 VLA 训练与 OpenPI 适配代码，用于数据集配置、PI0 / PI05 模型训练和 checkpoint 管理。 |
-| [KLMmotion/vlahost](https://github.com/KLMmotion/vlahost) | VLA 真机推理与机器人侧联调代码，用于连接策略服务器、采集观测并下发模型动作。 |
-
 ## 适用场景
 
 - 使用 LeRobot 格式数据集微调 PI0 / PI05 模型
@@ -29,36 +22,30 @@ VLA（Vision-Language-Action）是一类结合视觉感知、自然语言指令�
   -> KM Data Converter 导出 LeRobot v3.0 数据集
   -> convert_v3_to_v2.py 转换为 v2.1 格式
   -> train_pytorch.py 训练 PI0 / PI05 模型
-  -> serve_policy 启动策略服务器
-  -> Openpi_client_policy 连接真机执行动作
+  -> serve_policy_kmd_joint.py 启动策略服务器
+  -> vlahost 采集机器人状态与相机画面
+  -> openpi_client_policy_http_kmd_joint.py 推理并下发动作
 ```
 
 ## 观测与动作格式
 
-策略服务器期望的观测输入：
+当前 KMD 真机部署链路使用三路相机和 16 维关节空间状态：
 
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
-| `observation/state` | float32 向量 | 机器人本体状态，例如 8 维 EEF 位姿 + 夹爪 |
-| `observation/image` | HWC uint8 | 主相机图像，建议 224×224 或 256×256 |
-| `observation/wrist_image` | HWC uint8 | 腕部相机图像 |
+| `state` | float32 向量 | 16 维状态：左臂 7 关节、左夹爪、右臂 7 关节、右夹爪 |
+| `cam_high` | HWC uint8 | 主视角相机图像 |
+| `cam_left_wrist` | HWC uint8 | 左腕相机图像 |
+| `cam_right_wrist` | HWC uint8 | 右腕相机图像 |
 | `prompt` | string | 自然语言任务指令 |
 
 策略输出：
 
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
-| `actions` | `[T, action_dim]` | 动作序列 chunk，例如 `[T, 7]` 表示 EEF 增量 + 夹爪 |
+| `actions` | `[T, 16]` | 关节动作 chunk，顺序与 16 维状态一致 |
 
-动作向量典型含义（7 维）：
-
-```text
-actions = [delta_pos(3), delta_rot(3), gripper(1)]
-```
-
-- `delta_pos`：末端执行器位置增量
-- `delta_rot`：末端执行器姿态增量（轴角表示）
-- `gripper`：夹爪开合（0 = 打开，1 = 关闭）
+模型内部使用角度制；机器人侧 `joint_states.positions` 通常使用弧度制。OpenPI 客户端会在推理前执行 `rad -> deg`，并在下发动作前执行 `deg -> rad`。
 
 ## 环境要求
 

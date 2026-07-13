@@ -9,13 +9,6 @@ VLA (Vision-Language-Action) models are end-to-end policy models that combine vi
 
 This section is based on the [OpenPI](https://github.com/Physical-Intelligence/openpi) framework and describes the full workflow from data collection, dataset conversion, and model training to real-robot inference.
 
-## Related Code Repositories
-
-| Repository | Purpose |
-| --- | --- |
-| [KLMmotion/openpi-kmd](https://github.com/KLMmotion/openpi-kmd) | VLA training and OpenPI adaptation code for this project, including dataset configuration, PI0 / PI05 model training, and checkpoint management. |
-| [KLMmotion/vlahost](https://github.com/KLMmotion/vlahost) | Real-robot VLA inference and robot-side integration code for connecting to the policy server, collecting observations, and sending model actions to the robot. |
-
 ## Applicable Scenarios
 
 - Fine-tune PI0 / PI05 models using LeRobot-format datasets
@@ -29,36 +22,30 @@ Raw acquisition data (BAG / MCAP)
   -> KM Data Converter exports LeRobot v3.0 dataset
   -> convert_v3_to_v2.py converts to v2.1 format
   -> train_pytorch.py trains PI0 / PI05 model
-  -> serve_policy starts the policy server
-  -> Openpi_client_policy connects to the real robot and executes actions
+  -> serve_policy_kmd_joint.py starts the policy server
+  -> vlahost collects robot state and camera images
+  -> openpi_client_policy_http_kmd_joint.py performs inference and sends actions
 ```
 
 ## Observation and Action Format
 
-Expected observation input for the policy server:
+The current KMD real-robot deployment uses three cameras and a 16D joint-space state:
 
 | Field | Type | Description |
 | --- | --- | --- |
-| `observation/state` | float32 vector | Robot proprioceptive state, for example 8D EEF pose + gripper |
-| `observation/image` | HWC uint8 | Main camera image, recommended 224x224 or 256x256 |
-| `observation/wrist_image` | HWC uint8 | Wrist camera image |
+| `state` | float32 vector | 16D state: 7 left-arm joints, left gripper, 7 right-arm joints, right gripper |
+| `cam_high` | HWC uint8 | Main-view camera image |
+| `cam_left_wrist` | HWC uint8 | Left-wrist camera image |
+| `cam_right_wrist` | HWC uint8 | Right-wrist camera image |
 | `prompt` | string | Natural-language task instruction |
 
 Policy output:
 
 | Field | Type | Description |
 | --- | --- | --- |
-| `actions` | `[T, action_dim]` | Action sequence chunk, for example `[T, 7]` means EEF delta + gripper |
+| `actions` | `[T, 16]` | Joint-action chunk in the same order as the 16D state |
 
-Typical meaning of a 7D action vector:
-
-```text
-actions = [delta_pos(3), delta_rot(3), gripper(1)]
-```
-
-- `delta_pos`: end-effector position delta
-- `delta_rot`: end-effector orientation delta in axis-angle representation
-- `gripper`: gripper open/close value, where 0 = open and 1 = close
+The model uses degrees internally. Robot-side `joint_states.positions` normally uses radians. The OpenPI client converts `rad -> deg` before inference and `deg -> rad` before sending an action.
 
 ## Environment Requirements
 

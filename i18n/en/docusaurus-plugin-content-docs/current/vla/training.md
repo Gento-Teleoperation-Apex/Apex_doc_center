@@ -7,6 +7,18 @@ sidebar_position: 4
 
 After converting the dataset to LeRobot v2.1 format, use the PyTorch or JAX training entry points provided by OpenPI to fine-tune PI0 / PI05 models.
 
+## Prepare the Training Environment
+
+Clone the KMD-adapted repository and install its dependencies:
+
+```bash
+git clone https://github.com/KLMmotion/openpi-kmd.git
+cd openpi-kmd
+uv sync
+```
+
+Run all subsequent training, statistics, and policy-server commands from the `openpi-kmd` repository root.
+
 ## Training Entry Points
 
 | Script | Framework | Recommended scenario |
@@ -46,6 +58,21 @@ uv run torchrun --standalone --nnodes=1 --nproc_per_node=2 \
 - Checkpoint save directory (`checkpoint_dir`)
 
 For a custom dataset, copy an existing config and modify the dataset path and normalization stats path.
+
+## Normalization Statistics
+
+Training and inference must use the same proprioceptive-state and action normalization statistics. When fine-tuning a new dataset, choose one of these approaches based on how closely the target robot matches the pretraining data:
+
+- Reuse pretrained statistics with a matching action-space definition.
+- Compute fresh statistics from the new dataset.
+
+To compute fresh statistics, run the command with the training config name:
+
+```bash
+uv run scripts/compute_norm_stats.py --config-name <config_name>
+```
+
+Keep the generated `norm_stats.json` with the checkpoint. During real-robot deployment, `--asset-id` must match the directory name in `assets/<asset_id>/norm_stats.json`. A mismatch in state dimensions, joint order, or units between training and deployment can produce incorrect robot motion.
 
 ## Checkpoint Structure
 
@@ -104,3 +131,7 @@ After training, select an appropriate step directory from `checkpoint_dir` for d
 - Before first training, check whether normalization stats have been generated or referenced correctly
 - In multi-GPU training, `--nproc_per_node` should match the number of available GPUs
 - Training logs and checkpoint paths are determined by both `--exp_name` and the config; use meaningful experiment names
+
+## Project Reference
+
+- [KLMmotion/openpi-kmd](https://github.com/KLMmotion/openpi-kmd): OpenPI training, normalization-statistics, policy-server, and inference-client code adapted for KMD robots.

@@ -5,152 +5,185 @@ sidebar_position: 5
 
 # 真机推理部署
 
-训练完成后，通过**策略服务器**加载 checkpoint 并通过 WebSocket 对外提供推理 API，再由**机器人客户端**采集相机画面与本体状态、请求动作 chunk 并下发至机器人控制器。
+当前 KMD 真机链路由三个进程组成：机器人端运行 `vlahost`，GPU 服务器运行 OpenPI 策略服务器和推理客户端。机器人端只负责提供状态、相机画面和动作接口，不需要安装完整的 OpenPI 训练环境。
 
 ## 部署架构
 
 ```text
-┌─────────────────┐     WebSocket      ┌──────────────────┐
-│  策略服务器      │ ◄─────────────────► │  机器人客户端     │
-│  (GPU 服务器)    │    观测 / 动作      │  (机器人侧)       │
-└─────────────────┘                     └────────┬─────────┘
-                                                 │
-                                    WebRTC 视频 / WebSocket 关节状态
-                                                 │
-                                          ┌──────▼──────┐
-                                          │  机器人本体  │
-                                          └─────────────┘
+机器人（ROS 2）                         GPU 服务器
+┌─────────────────────┐  GET /state    ┌──────────────────────────┐
+│ vlahost             │ ◄───────────── │ OpenPI 推理客户端         │
+│ - 关节与末端状态     │  状态 + 图像    │ - 组装观测与语言指令      │
+│ - 四宫格相机图像     │ ─────────────► │ - 调用策略服务器          │
+│ - 动作话题发布       │  POST /action  │ - 下发关节动作            │
+└─────────────────────┘ ◄───────────── └────────────┬─────────────┘
+                                                    │ WebSocket
+                                      ┌─────────────▼─────────────┐
+                                      │ OpenPI 策略服务器          │
+                                      │ 加载 checkpoint 并推理     │
+                                      └───────────────────────────┘
 ```
 
-## 1. 启动策略服务器
+## 数据接口
 
-参考脚本 `scripts/serve_policy_pick_blue_bottle.py`，部署前需修改两个关键字段：
+当前部署适配以下数据格式：
 
-```python
-CHECKPOINT_DIR = pathlib.Path(
-    "/home/wyz/openpi/checkpoints/"
-    "pi05_lerobot_datasets0314/"
-    "lerobot_datasets0314_finetune/"
-    "28000"
-)
+- 三路相机：`cam_high`、`cam_left_wrist`、`cam_right_wrist`。
+- 16 维关节状态：`[左臂 7 关节, 左夹爪, 右臂 7 关节, 右夹爪]`。
+- 16 维关节动作：维度和顺序与关节状态一致。
+- 模型内部关节角使用角度制，机器人 ROS 反馈和动作使用弧度制，客户端负责单位转换。
 
-CONFIG_NAME = "pi05_lerobot_datasets0314"
-```
+`vlahost` 从四宫格图像中默认取用以下区域：
 
-| 字段 | 说明 |
+| 四宫格区域 | 模型相机字段 |
 | --- | --- |
-| `CHECKPOINT_DIR` | 训练 checkpoint 步数目录，例如 `28000` |
-| `CONFIG_NAME` | 训练时使用的 config 名称，需与训练配置一致 |
+| 右上 | `cam_left_wrist` |
+| 左下 | `cam_right_wrist` |
+| 右下 | `cam_high` |
+| 左上 | 忽略 |
 
-启动服务：
+如果实际相机排列不同，需要在推理客户端中调整映射或裁剪参数。
+
+## 1. 在机器人端安装 vlahost
+
+机器人端需要 ROS 2、FastAPI，并能够收到机器人状态与相机话题：
 
 ```bash
-uv run scripts/serve_policy_pick_blue_bottle.py --port 8000
+git clone https://github.com/KLMmotion/vlahost.git
+ln -s /path/to/vlahost ~/ros_ws/src/vlahost
+cd ~/ros_ws
+colcon build --packages-select vlahost
+source install/setup.bash
 ```
 
-服务启动后会：
+`vlahost` 默认订阅：
 
-1. 通过 `openpi.training.config.get_config(CONFIG_NAME)` 加载训练配置
-2. 调用 `openpi.policies.policy_config.create_trained_policy(...)` 创建策略
-3. 执行 warmup 推理以编译模型
-4. 在 `0.0.0.0:8000` 启动 `WebsocketPolicyServer`
-
-### 观测与动作接口
-
-**输入观测：**
-
-| 字段 | 格式 | 说明 |
+| 话题 | 类型 | 内容 |
 | --- | --- | --- |
-| `observation/state` | float32 向量 | 8 维状态（EEF 位姿 + 夹爪） |
-| `observation/image` | HWC uint8 | 主相机图像 |
-| `observation/wrist_image` | HWC uint8 | 腕部相机图像 |
-| `prompt` | string | 任务语言指令 |
+| `/info/joint_feedback` | `marvin_msgs/Jointfeedback` | 双臂关节反馈 |
+| `/info/eef_left` | `geometry_msgs/PoseStamped` | 左末端位姿 |
+| `/info/eef_right` | `geometry_msgs/PoseStamped` | 右末端位姿 |
+| `quad_tile/compressed` | `sensor_msgs/CompressedImage` | 四宫格相机 JPEG 图像 |
 
-**输出动作：**
-
-| 字段 | 格式 | 说明 |
-| --- | --- | --- |
-| `actions` | `[T, 7]` | 动作 chunk 序列 |
-
-## 2. 启动机器人客户端
-
-脚本 `vla_helpers/Openpi_client_policy.py` 实现完整的真机闭环：
-
-- 通过 WebRTC（`aiowebrtc/gst_py_save_images.py`）接收视频流
-- 通过 WebSocket 关节状态服务器接收 EEF 位姿与夹爪状态
-- 通过 `openpi_client.websocket_client_policy.WebsocketClientPolicy` 连接策略服务器
-- 构建观测（resize 图像至 224×224 或 256×256，组装 8 维状态向量）
-- 请求动作 chunk 并按频率下发至机器人
-
-启动命令：
+## 2. 启动机器人端服务
 
 ```bash
-uv run vla_helpers/Openpi_client_policy.py \
-  --ws-host <ROBOT_WS_HOST> \
-  --ws-port <ROBOT_WS_PORT> \
-  --policy-host <POLICY_SERVER_HOST> \
+source ~/ros_ws/install/setup.bash
+ros2 launch vlahost vlahost_server.launch.py host:=0.0.0.0 port:=8000
+```
+
+服务提供以下 HTTP 接口：
+
+| 接口 | 用途 |
+| --- | --- |
+| `GET /` | 浏览器调试页和实时相机预览 |
+| `GET /health` | 服务健康检查 |
+| `GET /state` | 获取关节、末端状态和四宫格图像 |
+| `POST /action` | 下发 EEF 或 16 维关节动作 |
+
+在 GPU 服务器或同一局域网内的电脑访问：
+
+```text
+http://<ROBOT_HOST>:8000/health
+```
+
+返回正常后再启动策略服务器和推理客户端。
+
+## 3. 启动策略服务器
+
+GPU 服务器需准备训练完成的 checkpoint，并确认其中包含：
+
+```text
+<checkpoint_step>/model.safetensors
+<checkpoint_step>/assets/<asset_id>/norm_stats.json
+```
+
+从 `openpi-kmd` 根目录启动：
+
+```bash
+uv run scripts/serve_policy_kmd_joint.py \
+  --checkpoint-dir /ABS/PATH/TO/CHECKPOINT_STEP \
+  --repo-id <dataset_id> \
+  --asset-id <asset_id> \
+  --port 8000
+```
+
+`--repo-id` 和 `--asset-id` 通常填写训练数据集使用的 ID；`--asset-id` 必须与 checkpoint 中归一化统计目录一致。策略服务器监听 `0.0.0.0:8000`。
+
+## 4. 启动推理客户端
+
+在能够同时访问机器人端 `vlahost` 和策略服务器的 GPU 服务器上执行：
+
+```bash
+uv run python vla_helpers/openpi_client_policy_http_kmd_joint.py \
+  --robot-server-url http://<ROBOT_HOST>:8000 \
+  --policy-host localhost \
   --policy-port 8000 \
-  --task-prompt "Pick up the blue square and move it to the blue plate" \
-  --replan-steps 5 \
-  --action-rate 5.0
+  --task-prompt "pick and place"
 ```
+
+常用参数：
 
 | 参数 | 说明 |
 | --- | --- |
-| `--ws-host` / `--ws-port` | 机器人 WebSocket 桥接地址（关节状态 + 动作指令） |
-| `--policy-host` / `--policy-port` | 策略服务器地址 |
-| `--task-prompt` | 传给模型的自然语言任务指令 |
-| `--replan-steps` | 每个动作 chunk 中实际执行的步数，执行完后重新请求 |
-| `--action-rate` | 向机器人控制器发送动作的频率（Hz） |
+| `--robot-server-url` | 机器人端 `vlahost` 地址 |
+| `--robot-timeout-sec` | `/state` 和 `/action` 的 HTTP 超时时间 |
+| `--policy-host` / `--policy-port` | OpenPI 策略服务器地址 |
+| `--task-prompt` | 发送给模型的自然语言任务指令 |
+| `--replan-steps` | 每次预测的动作 chunk 中实际执行的步数 |
+| `--action-rate` | 动作下发频率，单位 Hz |
+| `--disable-action-post` | 仅推理，不向机器人下发动作，首次联调建议启用 |
+| `--no-joints-in-radians` | 仅当 `vlahost` 已输出角度制关节值时使用 |
 
-### 客户端运行逻辑
+## 5. 连通性测试
 
-1. 持续采集相机帧与机器人状态
-2. 组装策略服务器期望的 observation dict
-3. 调用 `policy_client.infer(...)` 获取动作 chunk
-4. 缩放 delta EEF + 夹爪指令，通过 WebSocket 发送至机器人
-
-## 3. 远程推理
-
-若 GPU 资源在独立服务器上，策略服务器与机器人客户端可部署在不同机器：
-
-- 策略服务器：GPU 服务器，运行 `serve_policy_*.py`
-- 机器人客户端：机器人侧 Orin / 工控机，运行 `Openpi_client_policy.py`
-- 两者通过 `--policy-host` 指定的 IP 通信
-
-机器人侧仅需安装轻量依赖的 `openpi-client` 包：
+`vlahost` 提供轻量测试客户端，可在不启动模型时验证 HTTP 和相机链路：
 
 ```bash
-cd $OPENPI_ROOT/packages/openpi-client
-pip install -e .
+cd /path/to/vlahost
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r client_requirements.txt
+python3 vlahost/client.py --server-url http://<ROBOT_HOST>:8000
 ```
 
-## 4. 端到端检查清单
+需要查看四宫格相机画面时增加 `--show-images`：
 
-部署前逐项确认：
+```bash
+python3 vlahost/client.py \
+  --server-url http://<ROBOT_HOST>:8000 \
+  --show-images
+```
 
-- [ ] checkpoint 步数目录存在且包含 `model.safetensors`
-- [ ] `CONFIG_NAME` 与训练 config 一致
-- [ ] 策略服务器 warmup 完成，端口 8000 可访问
-- [ ] 机器人 WebSocket 桥接正常运行
-- [ ] 主相机与腕部相机画面正常
-- [ ] `--task-prompt` 与训练数据中的任务描述风格一致
-- [ ] `--replan-steps` 与 `--action-rate` 匹配机器人控制频率
+## 6. 启动顺序与检查清单
+
+1. 确认 checkpoint 步数目录包含 `model.safetensors`。
+2. 确认 `assets/<asset_id>/norm_stats.json` 存在。
+3. 启动机器人基础程序，确认关节反馈与四宫格相机话题正常。
+4. 启动机器人端 `vlahost`，确认 `/health` 和 `/state` 可访问。
+5. 启动 OpenPI 策略服务器，等待模型加载完成。
+6. 首次使用 `--disable-action-post` 启动推理客户端，核对相机顺序、状态维度和单位。
+7. 确认无误后允许客户端下发动作，并从低速、空旷环境开始测试。
 
 ## 常见问题
 
-**策略服务器启动后客户端连接超时**
+**策略服务器启动后推理立即失败**
 
-检查防火墙是否放行 `--policy-port`，以及 `--policy-host` 是否指向策略服务器实际 IP。
+检查 checkpoint 路径、`model.safetensors`、`asset_id` 和 `norm_stats.json`。还需确认 checkpoint 使用三路相机、16 维关节空间格式训练。
 
-**动作幅度过大或机器人抖动**
+**客户端无法获得机器人状态**
 
-调低 delta action 缩放系数，或减小 `--replan-steps` 以更频繁地重新规划。
+检查 `vlahost` 是否运行、`GET /state` 是否返回 `joint_states.positions`，以及该数组是否包含预期的 14 个双臂关节值。
 
-**图像格式报错**
+**机器人动作方向或幅度异常**
 
-确认输入图像为 HWC 格式的 uint8 数组，尺寸为 224×224 或 256×256，与训练时一致。
+检查左右臂顺序、夹爪维度以及角度/弧度转换。默认顺序为 `[左臂 7, 左夹爪, 右臂 7, 右夹爪]`。
 
-**推理延迟高**
+**相机画面对应错误**
 
-将策略服务器部署在带 GPU 的独立机器上，并在客户端侧预先 resize 图像以减少传输带宽。
+检查 `quad_image` 四宫格排列，并按实际安装位置调整客户端中的相机映射和 `--crop-*`、`--wrist-crop-*` 参数。
+
+## 项目参考
+
+- [KLMmotion/openpi-kmd](https://github.com/KLMmotion/openpi-kmd)：KMD 关节空间策略服务器和真机推理客户端。
+- [KLMmotion/vlahost](https://github.com/KLMmotion/vlahost)：机器人 ROS 2 与远程 VLA 推理客户端之间的 HTTP 桥接服务。
