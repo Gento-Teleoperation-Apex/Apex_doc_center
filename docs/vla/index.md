@@ -9,6 +9,13 @@ VLA（Vision-Language-Action）是一类结合视觉感知、自然语言指令�
 
 本章节基于 [OpenPI](https://github.com/Physical-Intelligence/openpi) 框架，说明从数据采集、数据集转换、模型训练到真机推理的完整流程。
 
+## 相关代码仓库
+
+| 仓库 | 用途 |
+| --- | --- |
+| [KLMmotion/openpi-kmd](https://github.com/KLMmotion/openpi-kmd) | 本项目 VLA 训练与 OpenPI 适配代码，用于数据集配置、PI0 / PI05 模型训练和 checkpoint 管理。 |
+| [KLMmotion/vlahost](https://github.com/KLMmotion/vlahost) | VLA 真机推理与机器人侧联调代码，用于连接策略服务器、采集观测并下发模型动作。 |
+
 ## 适用场景
 
 - 使用 LeRobot 格式数据集微调 PI0 / PI05 模型

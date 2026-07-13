@@ -9,6 +9,13 @@ VLA (Vision-Language-Action) models are end-to-end policy models that combine vi
 
 This section is based on the [OpenPI](https://github.com/Physical-Intelligence/openpi) framework and describes the full workflow from data collection, dataset conversion, and model training to real-robot inference.
 
+## Related Code Repositories
+
+| Repository | Purpose |
+| --- | --- |
+| [KLMmotion/openpi-kmd](https://github.com/KLMmotion/openpi-kmd) | VLA training and OpenPI adaptation code for this project, including dataset configuration, PI0 / PI05 model training, and checkpoint management. |
+| [KLMmotion/vlahost](https://github.com/KLMmotion/vlahost) | Real-robot VLA inference and robot-side integration code for connecting to the policy server, collecting observations, and sending model actions to the robot. |
+
 ## Applicable Scenarios
 
 - Fine-tune PI0 / PI05 models using LeRobot-format datasets
