@@ -9,7 +9,7 @@ sidebar_position: 1
 
 KernelMind Apex is a ready-to-use teleoperation kit for robotic operation scenarios. It provides the operator with an immersive first-person view through a VR headset and maps the operator's motion to the robot in real time.
 
-Marvin Pro supports dual-arm robot teleoperation and works with a Meta Quest VR headset and Tianzhun core controller. In this version, the Tianzhun controller is used as the core control unit. The deserializer board is integrated inside the robot, and the Senyun camera is a standard component connected through internal arm wiring.
+Marvin Pro supports dual-arm robot teleoperation with either a Pico or Meta Quest VR headset. The current version uses a Tianzhun controller as the core control unit. The deserializer board is integrated inside the robot, and the Senyun camera is a standard component connected through internal arm wiring.
 
 Optional accessories: Manus data gloves + Wuji Hand, used for finger motion capture and fine manipulation.
 
@@ -26,7 +26,7 @@ The Marvin Pro teleoperation system mainly consists of the robot body, robot con
 | Power and safety | Emergency stop box | Provides on-site safety protection and emergency stop |
 | Main control | Tianzhun electric cabinet / core controller | Runs KernelMind Apex and ROS 2 nodes |
 | Perception | Senyun camera | Standard camera mounted at the robot arm end; wiring is routed internally through the arm |
-| Operator side | VR headset (Meta Quest) and controllers | Provides first-person view and operator input |
+| Operator side | VR headset (Pico or Meta Quest) and controllers | Provides first-person view and operator input; model depends on the delivered configuration |
 | Network and data | Ethernet cables and Type-C Ethernet adapter | Connects the electric cabinet, host PC, and VR headset |
 | Network and data | USB drive | Used for data recording; volume label must be `BAG_STORAGE` |
 
@@ -40,7 +40,7 @@ The Marvin Pro teleoperation system mainly consists of the robot body, robot con
 
 | Accessory | Qty | Description |
 |---|---:|---|
-| VR headset (Meta Quest) | 1 | Provides immersive first-person operation view |
+| VR headset (Pico or Meta Quest) | 1 | Provides immersive first-person operation view; model depends on the delivered configuration |
 | Controllers (left/right) | 1 each | Control arm motion and gripper opening/closing |
 | Tianzhun electric cabinet / core controller | 1 | Runs KernelMind Apex and ROS 2 nodes |
 | Robot power cable | 1 | Connects to the electric cabinet power interface |
@@ -76,9 +76,9 @@ Foot pedal key functions:
 
 | Software module | Installation location | Description |
 |---|---|---|
-| KernelMind Apex controller package | Tianzhun electric cabinet / core controller | `kernelmind_apex_<version>_<arch>.deb`; provides ROS 2 nodes, motion control, camera, and recording services |
-| KernelMind Apex headset app | Meta Quest | `KernelMind_Apex_meta_<version>.apk`; provides the VR teleoperation interface |
-| Host teleoperation frontend | PC | Connects to the Tianzhun controller, starts the robot, switches modes, records data, and replays data |
+| KernelMind Apex controller software | Tianzhun electric cabinet / core controller | Matching controller package with ROS 2, motion control, camera, and recording services |
+| Apex headset client | Pico or Meta Quest | Headset application matched to the controller release |
+| Apex Teleop | PC | Connects to the controller, starts the robot, switches modes, records data, and replays data |
 
 ## Default Network and Runtime Environment
 
@@ -89,7 +89,6 @@ Foot pedal key functions:
 | Host PC network adapter IP | `6.6.7.xxx`, for example `6.6.7.165` |
 | Headset Apex app connection IP | `6.6.7.100`; must match the Tianzhun controller IP |
 | SSH login to Tianzhun controller | `ssh nvidia@6.6.7.100` |
-| Tianzhun controller user password | `nvidia` |
 
 | Item | Specification |
 |---|---|
@@ -97,8 +96,8 @@ Foot pedal key functions:
 | Operating system (host development PC) | Ubuntu 22.04 AMD64 |
 | Robot framework | ROS 2 Humble |
 | Main control hardware | Tianzhun core controller |
-| Headset | Meta Quest (VR-side APK) |
-| Package format | `kernelmind_apex_<version>_<arch>.deb` |
+| Headset | Pico or Meta Quest |
+| Installation packages | Use matching controller, host, and headset packages from the delivered release |
 
 ## Core Capabilities
 

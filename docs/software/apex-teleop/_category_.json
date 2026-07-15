@@ -1,0 +1,10 @@
+{
+  "label": "Apex Teleop 上位机",
+  "position": 1,
+  "collapsible": true,
+  "collapsed": false,
+  "link": {
+    "type": "doc",
+    "id": "software/apex-teleop/index"
+  }
+}

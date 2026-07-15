@@ -79,8 +79,7 @@ Foot pedal key functions:
 | Router IP | `192.168.10.1` |
 | Headset Apex app connection IP | `192.168.10.123`; must match the Orin IP |
 | SSH login to Orin | `ssh marvin@192.168.10.123` |
-| Orin user password | `1234` |
-| Router / Wi-Fi password | `12345678` |
+| Login credentials | Use the credentials supplied with the device; they are not published here |
 
 | Item | Specification |
 |---|---|

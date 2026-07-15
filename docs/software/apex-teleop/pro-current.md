@@ -1,0 +1,111 @@
+---
+title: Marvin Pro 当前版
+sidebar_position: 2
+---
+
+# Marvin Pro 当前版 Apex Teleop
+
+本页适用于 Marvin Pro 当前天准控制器版本，以 Apex Teleop `1.0.7.6o` 界面为例。
+
+## 界面总览
+
+![Marvin Pro 当前版 Apex Teleop 主界面](/img/software/apex-teleop/pro-main.png)
+
+| 区域 | 作用 |
+|---|---|
+| 顶部状态栏 | 显示 Robot、Camera、Teleop、Net、VR 和 Healthy 状态 |
+| 右上角 IP | 填写天准控制器 IP，按 Enter 建立连接 |
+| 左侧 3D 视图 | 显示 URDF 模型与机器人实时姿态 |
+| 右上模块控制 | 启停 Camera、Robot、Teleop、Tool 和 dnsmasq |
+| 左下 Robot Mode | Set Ready、控制模式、输入模式、Home 和夹爪重启 |
+| Data Record | 录制机器人与相机数据 |
+| Data Playback | 选择并回放已录制数据 |
+| WebRTC | 显示四宫格相机画面 |
+| 左侧导航 | 在主界面、日志和设置页面之间切换 |
+
+## 首次遥操顺序
+
+1. 在右上角输入天准控制器 IP，按 **Enter** 连接。
+2. 启动 **Robot** 模块。
+3. 确认左侧 URDF 姿态与实体机器人当前姿态一致。
+4. 启动 **Teleop** 和 **dnsmasq**。
+5. 根据需要启动 **Camera**；仅配置了末端执行器时启动 **Tool**。
+6. 在左下角点击 **Start Robot**，使机器人进入 Ready 状态。
+7. 点击 **Impedance Mode**，进入阻抗模式。
+8. 点击 **Home**，让机器人回到遥操初始位。
+9. 将 **Input Mode** 切换为 **Teleop**。
+10. 连接头显，在 Apex 头显客户端中建立连接并开始遥操。
+
+> 操作前确认机器人周围无人、急停可触及。切换模式和执行 Home 时，应随时观察实体机器人，而不只查看 3D 模型。
+
+## 模块控制
+
+| 模块 | 是否必需 | 说明 |
+|---|---|---|
+| Robot | 必需 | 连接机器人并发布机器人状态 |
+| Teleop | 必需 | 启动遥操链路 |
+| dnsmasq | 必需 | 为有线连接的头显提供网络服务 |
+| Camera | 可选 | 启动四路相机与 WebRTC 画面 |
+| Tool | 可选 | 控制已配置的夹爪或其他末端执行器 |
+
+模块变为绿色表示已运行。Robot 未运行或机器人未 Ready 时，依赖项可能处于不可操作状态。
+
+## Robot Mode
+
+### 机器人控制模式
+
+| 按钮 | 说明 |
+|---|---|
+| Start Robot | 设置机器人 Ready，允许后续模式操作 |
+| Standby Mode | 待机，不执行外部运动指令 |
+| Position Mode | 位置控制模式 |
+| Impedance Mode | 遥操使用的阻抗控制模式 |
+| Home | 回到配置的遥操初始位 |
+| Restart (Gripper) | 重启已配置的夹爪 |
+
+### 输入模式
+
+| 模式 | 说明 |
+|---|---|
+| None | 不接受外部运动输入 |
+| Teleop | 接受头显遥操输入，正常遥操时选择此项 |
+| Custom | 接受客户程序或 VLA 的外部控制输入 |
+
+使用 `Custom` 前请先阅读[客户二次开发接口](./customer-interfaces)。
+
+## 相机画面
+
+![四宫格相机画面](/img/software/apex-teleop/pro-camera.png)
+
+相机区域固定显示四宫格。示例配置 `camera_sources: [0, 1, none, none]` 只启用两路相机，因此上方两格有画面、下方两格为黑色；这不代表相机模块故障。底部可查看码率、丢包和 FPS。
+
+## 数据录制
+
+1. 确认数据盘已正确连接，并按交付要求设置卷标。
+2. 点击 **Start Recording** 开始录制。
+3. 录制期间保持 Robot、Teleop 及所需 Camera 模块运行。
+4. 点击停止录制，等待文件写入完成后再移除数据盘。
+
+## 数据回放
+
+1. 点击 **Select File** 选择录制文件。
+2. 使用 **Play**、**Pause** 和 **Stop** 控制回放。
+3. 通过 **Speed** 选择回放速度。
+
+实机回放前必须清空机器人工作空间，确认起始姿态和记录数据匹配，并保持急停可触及。
+
+## 日志查看
+
+点击左侧日志图标进入日志页，通过右上角下拉框选择模块。
+
+![Robot 模块日志](/img/software/apex-teleop/pro-log-robot.png)
+
+![Teleop 模块日志](/img/software/apex-teleop/pro-log-teleop.png)
+
+| 控件 | 说明 |
+|---|---|
+| 模块下拉框 | 在 Robot、Teleop 等模块日志间切换 |
+| Locked | 当前滚动位置已锁定，便于查看历史内容 |
+| Clear | 清空当前页面显示的日志 |
+
+排查时先记录故障发生时间，再分别查看 Robot 和 Teleop 日志。不要只依据状态灯判断故障原因。

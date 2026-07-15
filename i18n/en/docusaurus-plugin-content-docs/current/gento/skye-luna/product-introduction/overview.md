@@ -5,65 +5,72 @@ sidebar_position: 1
 
 # Skye/Luna Product Overview
 
-## Product Positioning
+## Product positioning
 
-Gento Skye/Luna refers to robot models that support teleoperation. The Tianzhun 003 control unit and teleoperation-related hardware are integrated before shipment. Through the teleoperation system, VR headset, and motion-capture components, the operator's body motion is mapped to the robot in real time, allowing dual-arm robot control without handheld controllers.
+Skye and Luna are robot models that support full-body teleoperation; they are not the name of the teleoperation system. Each delivered robot integrates a Tianzhun 003 control unit, four cameras, and the hardware required for teleoperation. With a Pico headset, wearable arm units, a waist tracker, and leg trackers, the operator's motion can be mapped to the robot arms, torso, and knee joints.
 
-## System Components
+## System components
 
 | Component | Description |
 |---|---|
-| VR headset | Worn by the operator for first-person view; default IP `6.6.7.100` |
-| Control arms (left/right) | Worn on the arms to capture arm motion |
-| Waist sensor | Worn on the back to capture torso pose |
-| Ankle sensor | Worn on the front of the ankle to capture gait information |
+| Skye or Luna robot | Executes dual-arm and full-body teleoperation, including knee joints |
+| Tianzhun 003 control unit | Runs KernelMind Apex and ROS 2 control services |
+| Four cameras | Provide a four-tile first-person and environment view |
+| Pico headset | Displays video and provides head tracking |
+| Wearable arm units (left/right) | Capture operator arm motion |
+| Waist tracker | Captures torso pose |
+| Leg trackers | Capture leg and knee motion |
+| Host PC | Runs the classic Apex Teleop interface |
 
 ![Skye/Luna standard devices and accessories](/img/gento/skye-luna/device-overview.jpg)
 
-## Wearing Instructions
+## Robot interfaces
 
-- **VR headset**: long-press for 2 seconds to power on; long-press for 5 seconds to power off
-- **Waist / ankle sensors**: long-press for 2 seconds to power on; long-press for 5 seconds to power off
-- **Waist sensor**: worn on the back
-- **Ankle sensor**: worn on the front
+![Skye rear interfaces](/img/gento/skye-luna/skye-rear-ports.jpg)
 
-## Network Configuration
+![Luna rear interfaces](/img/gento/skye-luna/luna-rear-ports.jpg)
 
-| Item | Default |
-|---|---|
-| Skye VR headset IP | `6.6.7.100` |
-| Tianzhun 003 DHCP subnet | `6.6.7.x` |
+Interface locations differ by model. Follow [Hardware Wiring](../getting-started/hardware-wiring) and the labels on the delivered system.
 
-Set the VR headset IP address to `6.6.7.100`.
+## Wearing instructions
 
-## Standard Accessories
+- **Pico headset**: adjust for a clear view and secure fit.
+- **Wearable arm units**: distinguish left and right and keep elbow motion unobstructed.
+- **Waist tracker**: wear it on the back in the specified orientation.
+- **Leg trackers**: install them at the specified positions for leg and knee mapping.
+- Check battery, connection, and tracking state before use.
+
+## Standard accessories
 
 | Accessory | Qty | Description |
 |---|---:|---|
-| VR headset | 1 | Dedicated VR device for Skye/Luna |
-| Control arms (left/right) | 1 each | Wearable motion-capture arms |
-| Waist sensor | 1 | Captures torso pose |
-| Ankle sensor | 1 | Worn on the front of the ankle |
-| Ethernet cables | Several | Connects the robot, router / switch, host PC, and headset Ethernet adapter |
-| Type-C Ethernet adapter | 1 | Used to connect the headset to the wired LAN |
+| Pico headset | 1 | Headset used for Skye/Luna full-body teleoperation |
+| Wearable arm units (left/right) | 1 each | Capture arm motion |
+| Waist tracker | 1 | Captures torso pose |
+| Leg trackers | Per delivery | Capture leg and knee motion |
+| Ethernet cables | Several | Connect the robot, host PC, network device, and headset adapter |
+| Type-C Ethernet adapter | 1 | Connects Pico to the wired LAN |
 
-## Configuration File List
+## Software
 
-| Upload location | File | Description |
+| Software | Location | Description |
 |---|---|---|
-| Tianzhun side | `kernelmind-apex_0.1.1g_arm64.deb` | Version package |
-| Tianzhun side | `dhcp_service.md` | DHCP file |
-| Tianzhun side | `install_van.sh` | Install file |
-| VR headset | `0508ZJ_apex_MJPEG_wb(2).apk.1` | VR-side APK |
+| KernelMind Apex controller software | Tianzhun 003 | Matching robot control, camera, and teleoperation services |
+| Classic Apex Teleop | Host PC | Connects the robot, switches modes, records, plays back, and displays logs |
+| Apex Pico client | Pico headset | Network connection, video display, and full-body teleoperation input |
 
-When updating the version, remove the old version first:
+## Network
 
-```bash
-sudo apt remove kernelmind_apex
-```
+| Item | Description |
+|---|---|
+| Tianzhun 003 | Default examples use `6.6.7.100`; use the actual site address if changed |
+| Host PC | Same subnet as Tianzhun 003, with no address conflict |
+| Pico headset | Receives another address on the same subnet and connects to the actual Tianzhun 003 IP |
 
-Open a terminal in the downloaded package directory and install the new version:
+Do not assign the Pico headset the same IP address as Tianzhun 003.
 
-```bash
-sudo apt install ./<package-name>
-```
+## Product differences
+
+- Skye/Luna includes knee joints and full-body mapping; Marvin Pro is dual-arm teleoperation only.
+- Skye/Luna uses Pico waist and leg tracking and does not use Meta Quest as the standard full-body headset.
+- Skye/Luna currently uses the [classic Apex Teleop interface](/software/apex-teleop/classic).

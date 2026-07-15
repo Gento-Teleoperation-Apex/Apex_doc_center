@@ -3,6 +3,22 @@
     "message": "Marvin Pro",
     "description": "The label for category Marvin Pro in sidebar mainSidebar"
   },
+  "sidebar.mainSidebar.category.产品文档": {
+    "message": "Product Documentation",
+    "description": "The label for category 产品文档 in sidebar mainSidebar"
+  },
+  "sidebar.mainSidebar.category.Skye / Luna": {
+    "message": "Skye / Luna",
+    "description": "The label for category Skye / Luna in sidebar mainSidebar"
+  },
+  "sidebar.mainSidebar.category.软件使用说明": {
+    "message": "Software Guides",
+    "description": "The label for category 软件使用说明 in sidebar mainSidebar"
+  },
+  "sidebar.mainSidebar.category.Apex XR 头显客户端": {
+    "message": "Apex XR Headset Client",
+    "description": "The label for category Apex XR 头显客户端 in sidebar mainSidebar"
+  },
   "sidebar.mainSidebar.category.PRO": {
     "message": "PRO",
     "description": "The label for category PRO in sidebar mainSidebar"
