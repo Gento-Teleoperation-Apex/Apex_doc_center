@@ -1,6 +1,6 @@
 ---
 title: 真机部署
-sidebar_position: 5
+sidebar_position: 6
 ---
 
 # 真机推理部署
@@ -44,6 +44,56 @@ sidebar_position: 5
 
 如果实际相机排列不同，需要在推理客户端中调整映射或裁剪参数。
 
+### GET /state 响应
+
+`vlahost` 将 ROS 2 话题中的最新状态和 JPEG 图像编码为 JSON：
+
+```json
+{
+  "stamp": 123456789,
+  "joint_states": {
+    "positions": ["14 joint values"],
+    "velocities": ["14 joint values"],
+    "efforts": ["14 joint values"],
+    "est_joint_force": ["14 joint values"]
+  },
+  "eef_left": {
+    "position": {"x": 0, "y": 0, "z": 0},
+    "orientation": {"x": 0, "y": 0, "z": 0, "w": 1}
+  },
+  "eef_right": {
+    "position": {"x": 0, "y": 0, "z": 0},
+    "orientation": {"x": 0, "y": 0, "z": 0, "w": 1}
+  },
+  "quad_image": {"format": "jpeg", "data": "<base64>"}
+}
+```
+
+### POST /action 请求
+
+EEF 控制请求格式：
+
+```json
+{
+  "eef_left": [0, 0, 0, 0, 0, 0],
+  "eef_right": [0, 0, 0, 0, 0, 0],
+  "gripper_left": 0.0,
+  "gripper_right": 0.0
+}
+```
+
+16 维关节空间 checkpoint 使用：
+
+```json
+{
+  "joint_actions": ["16 joint action values in radians"]
+}
+```
+
+:::warning 版本核对
+当前 `openpi-kmd` 客户端会发送 `joint_actions`，两个项目的 README 也定义了该字段；但本次下载的 `vlahost/vlahost/server.py` 中 `ActionRequest` 仍只包含 EEF 与夹爪字段。正式使用 16 维关节动作前，请确认部署的 `vlahost` 版本已经实现 `joint_actions` 的解析和机器人控制话题发布。
+:::
+
 ## 1. 在机器人端安装 vlahost
 
 机器人端需要 ROS 2、FastAPI，并能够收到机器人状态与相机话题：
@@ -64,6 +114,16 @@ source install/setup.bash
 | `/info/eef_left` | `geometry_msgs/PoseStamped` | 左末端位姿 |
 | `/info/eef_right` | `geometry_msgs/PoseStamped` | 右末端位姿 |
 | `quad_tile/compressed` | `sensor_msgs/CompressedImage` | 四宫格相机 JPEG 图像 |
+
+EEF 控制模式下，`vlahost` 默认发布：
+
+| 话题 | 类型 | 内容 |
+| --- | --- | --- |
+| `/control/target_poseL_model` | `geometry_msgs/PoseStamped` | 左末端目标位姿 |
+| `/control/target_poseR_model` | `geometry_msgs/PoseStamped` | 右末端目标位姿 |
+| `control/gripperValueL` | `std_msgs/Float32` | 左夹爪目标值 |
+| `control/gripperValueR` | `std_msgs/Float32` | 右夹爪目标值 |
+| `control/eef_constraint` | `std_msgs/Int16MultiArray` | 末端约束参数 |
 
 ## 2. 启动机器人端服务
 

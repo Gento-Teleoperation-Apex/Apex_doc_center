@@ -1,6 +1,6 @@
 ---
 title: Model Training
-sidebar_position: 4
+sidebar_position: 5
 ---
 
 # PI0 / PI05 Model Training
@@ -18,6 +18,8 @@ uv sync
 ```
 
 Run all subsequent training, statistics, and policy-server commands from the `openpi-kmd` repository root.
+
+See [Environment and Project Setup](/vla/environment) for complete Python, GPU, and Docker preparation.
 
 ## Training Entry Points
 

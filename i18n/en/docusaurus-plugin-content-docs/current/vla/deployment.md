@@ -1,6 +1,6 @@
 ---
 title: Real-Robot Deployment
-sidebar_position: 5
+sidebar_position: 6
 ---
 
 # Real-Robot Inference Deployment
@@ -44,6 +44,56 @@ By default, `vlahost` maps the quad image as follows:
 
 If the physical camera layout differs, adjust the mapping or crop settings in the inference client.
 
+### GET /state Response
+
+`vlahost` encodes the latest ROS 2 state and JPEG image as JSON:
+
+```json
+{
+  "stamp": 123456789,
+  "joint_states": {
+    "positions": ["14 joint values"],
+    "velocities": ["14 joint values"],
+    "efforts": ["14 joint values"],
+    "est_joint_force": ["14 joint values"]
+  },
+  "eef_left": {
+    "position": {"x": 0, "y": 0, "z": 0},
+    "orientation": {"x": 0, "y": 0, "z": 0, "w": 1}
+  },
+  "eef_right": {
+    "position": {"x": 0, "y": 0, "z": 0},
+    "orientation": {"x": 0, "y": 0, "z": 0, "w": 1}
+  },
+  "quad_image": {"format": "jpeg", "data": "<base64>"}
+}
+```
+
+### POST /action Request
+
+EEF-control request:
+
+```json
+{
+  "eef_left": [0, 0, 0, 0, 0, 0],
+  "eef_right": [0, 0, 0, 0, 0, 0],
+  "gripper_left": 0.0,
+  "gripper_right": 0.0
+}
+```
+
+A 16D joint-space checkpoint uses:
+
+```json
+{
+  "joint_actions": ["16 joint action values in radians"]
+}
+```
+
+:::warning Version check
+The current `openpi-kmd` client sends `joint_actions`, and both project READMEs define this field. However, `ActionRequest` in the downloaded `vlahost/vlahost/server.py` currently contains only EEF and gripper fields. Before using 16D joint actions, confirm that the deployed `vlahost` version implements `joint_actions` parsing and publishes the corresponding robot-control topics.
+:::
+
 ## 1. Install vlahost on the Robot
 
 The robot requires ROS 2 and FastAPI and must publish robot-state and camera topics:
@@ -64,6 +114,16 @@ source install/setup.bash
 | `/info/eef_left` | `geometry_msgs/PoseStamped` | Left end-effector pose |
 | `/info/eef_right` | `geometry_msgs/PoseStamped` | Right end-effector pose |
 | `quad_tile/compressed` | `sensor_msgs/CompressedImage` | Quad-camera JPEG image |
+
+In EEF-control mode, `vlahost` publishes these topics by default:
+
+| Topic | Type | Content |
+| --- | --- | --- |
+| `/control/target_poseL_model` | `geometry_msgs/PoseStamped` | Left end-effector target pose |
+| `/control/target_poseR_model` | `geometry_msgs/PoseStamped` | Right end-effector target pose |
+| `control/gripperValueL` | `std_msgs/Float32` | Left gripper target |
+| `control/gripperValueR` | `std_msgs/Float32` | Right gripper target |
+| `control/eef_constraint` | `std_msgs/Int16MultiArray` | End-effector constraint parameters |
 
 ## 2. Start the Robot-Side Service
 

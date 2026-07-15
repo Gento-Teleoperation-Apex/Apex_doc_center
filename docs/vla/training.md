@@ -1,6 +1,6 @@
 ---
 title: 模型训练
-sidebar_position: 4
+sidebar_position: 5
 ---
 
 # PI0 / PI05 模型训练
@@ -18,6 +18,8 @@ uv sync
 ```
 
 后续训练、统计量计算和策略服务命令均在 `openpi-kmd` 项目根目录执行。
+
+完整的 Python、GPU 和 Docker 准备方法见[环境与项目准备](/vla/environment)。
 
 ## 训练入口
 

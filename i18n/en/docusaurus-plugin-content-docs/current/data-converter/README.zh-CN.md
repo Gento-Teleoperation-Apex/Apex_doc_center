@@ -1,25 +1,20 @@
-# KM Data Converter
+# KernelMind Data Converter Guide
 
-A conversion toolchain for robot imitation-learning datasets. It automatically organizes, aligns, and exports MCAP data and four-channel camera videos from the raw acquisition directory `BAG_STORAGE` into a LeRobot v3.0 dataset.
+KernelMind Data Converter is a conversion tool for teleoperation and robot datasets. It organizes MCAP files, camera videos, and timestamp information from raw `BAG_STORAGE/my_bag-*` recording directories into trainable LeRobot v3 datasets. It also provides an Electron desktop UI for path selection, video stream mapping, end-effector selection, LeRobot Schema configuration, conversion progress, and Rerun visualization.
 
-- One-click conversion from raw acquisition data to LeRobot v3.0 datasets
-- Supports splitting 2x2 tiled camera videos, with left eye, right eye, left wrist, and right wrist views by default
-- Exports MCAP robot state data to RRD and aligns it with video frames
-- Provides an Electron desktop UI for selecting paths, setting FPS, entering task descriptions, and viewing real-time logs
-- Supports viewing converted datasets and robot state in Rerun
+## Core Features
 
-## Conversion Flow
+- Run the full pipeline in one click: split `cameras.mp4`, convert MCAP, align video with robot state, and export a LeRobot Dataset.
+- Support custom mapping for 2x2 stitched videos. One or more video streams from `left_eye`, `right_eye`, `left_wrist`, and `right_wrist` can be written to the dataset.
+- Support `gripper` gripper mode and `hand` dexterous hand mode.
+- Support configurable LeRobot `action` and `observation.state` composition order. The UI displays topic count and total dimensions in real time.
+- Built-in live logs, log export, pause, resume, and stop conversion.
+- Built-in Rerun Web Viewer for `.mcap`, `.rrd`, `.rbl`, or LeRobot dataset directories. Native Rerun can also be opened.
+- Provides the raw data quality check command `quality-check`, which can generate quality reports before conversion.
 
-```text
-BAG_STORAGE raw data
-  -> split four-channel camera video
-  -> export MCAP to RRD
-  -> align video and robot state
-  -> export LeRobot dataset
-  -> inspect with Rerun visualization
-```
+## Raw Data Directory Requirements
 
-Each episode directory must use the following structure:
+The input directory must contain one or more `my_bag-*` episode directories:
 
 ```text
 BAG_STORAGE/
@@ -31,217 +26,293 @@ BAG_STORAGE/
       cameras_first_frame.yaml
 ```
 
-The default `cameras.mp4` layout is:
+Key files:
 
-```text
-left_eye      right_eye
-left_wrist    right_wrist
+| File | Purpose |
+| --- | --- |
+| `data/data_0.mcap` | Raw ROS / robot state recording. |
+| `video/cameras.mp4` | 2x2 camera video. |
+| `video/cameras_first_frame.yaml` | Absolute timestamp of the first frame. The file must contain `first_frame_time.epoch_ns`. |
+
+Episode directory names must start with `my_bag-`. The final generated dataset directory is named with the earliest episode timestamp.
+
+## Pre-Conversion Quality Check
+
+Before conversion, check the directory structure, raw recordings, and required topics in each `my_bag-*` episode and write reports to the selected output directory:
+
+```powershell
+python -m km_data_converter quality-check ^
+  --input D:\BAG_STORAGE ^
+  --output D:\output\km_dataset
 ```
 
-## Environment Setup
+Reports are written to `D:\output\km_dataset\quality_report`. To require additional topics, pass `--required-topic` more than once:
 
-Python 3.10 to 3.12 is recommended.
+```powershell
+python -m km_data_converter quality-check ^
+  --input D:\BAG_STORAGE ^
+  --output D:\output\km_dataset ^
+  --required-topic /joint_states ^
+  --required-topic /control/joint_cmd_A
+```
+
+Use `--rules <rules.yaml>` to load custom rules. Add `--replace-rules` when the custom rule file should completely replace the default rules.
+
+## Installation
+
+Python `3.10` to `3.12` is recommended.
 
 ```powershell
 pip install -e .
+```
+
+```powershell
 pip install rerun-sdk[all]
+```
+
+```powershell
 pip install -e .\examples\python\rerun_export
 ```
 
-If video or YAML dependencies are missing, install them additionally:
+## Start The Desktop UI
 
-```powershell
-pip install opencv-python pyyaml
-```
-
-## Use the Desktop UI
-
-The project includes an Electron UI, suitable for daily conversion work.
-
-![Electron UI preview](image/img_v3_02125_5a1db36f-9785-40a1-a9ef-b49fd4240f0g.jpg)
+The desktop app is located in `km_data_converter_UI` and uses Electron + Vite + React.
 
 ```powershell
 cd .\km_data_converter_UI
 npm install
+npm run build
 npm run dev
 ```
 
-In the UI, select the `BAG_STORAGE` source directory and output directory, set target FPS, task description, and advanced options, then start the full conversion flow. The UI displays progress, real-time logs, the final dataset path, and provides a button to open the conversion result in Rerun.
+`node_modules/` is created by `npm install`. `dist/`.
+`dist-electron/` are build outputs created by commands such as `npm run build`.
+After startup, the UI opens the `KernelMind Data Converter` window.
 
-![Electron UI conversion flow preview](image/img_v3_02125_6fb03327-ba42-4ab0-b605-35e36ddaf33g.jpg)
+## 5-Step Frontend Workflow
 
-## Command-Line Conversion
+### 1. Input Paths
 
-After placing all acquisition directories under `BAG_STORAGE`, run:
+![Input Paths](image/step6.png)
 
-```powershell
-python -m km_data_converter run-full
-```
+Fill in or select the following in `Input Paths`:
 
-You can also pass explicit input and output paths:
+- Raw data directory: the `BAG_STORAGE` directory containing `my_bag-*`.
+- Output directory: intermediate RRD files, config files, and the final LeRobot dataset are written here.
+- Video FPS: output FPS for split videos. The UI default is `30`. It is recommended to set the output video FPS lower than the original video FPS.
+- Task description: optional task text written to the final dataset.
 
-```powershell
-python -m km_data_converter run-full <bag_storage_path> [output_root_path]
-```
+### 2. Video Stream Mapping
 
-Common parameter example:
+![Video Stream Mapping](image/step7.png)
 
-```powershell
-python -m km_data_converter run-full ^
-  --bag-storage BAG_STORAGE ^
-  --target-fps 10 ^
-  --output-dir OUTPUT_DIR ^
-  --repo-id rerun/droid_lerobot_full ^
-  --end-effector {gripper,hand} ^
-  --task-description TASK_DESCRIPTION ^
-  --strict
-```
+The tool treats `video/cameras.mp4` as a 2x2 frame and splits it into independent videos according to the mapping.
 
-The default output directory structure is:
+Available positions:
 
 ```text
-datasets/
-  mcap2rrd/
-  video2rrd/
-  lerobot_output/
+top_left       top_right
+bottom_left    bottom_right
 ```
 
-The final LeRobot dataset usually contains directories such as `data`, `meta`, and `videos`.
-
-## Run Step by Step
-
-For debugging or running only one stage, use the step-by-step commands.
-
-Split tiled videos:
-
-```powershell
-python -m km_data_converter split-video
-```
-
-Convert MCAP to RRD:
-
-```powershell
-python -m km_data_converter mcap-to-rrd ^
-  --bag-storage .\BAG_STORAGE ^
-  --output-dir .\datasets\mcap2rrd
-```
-
-Write video and robot state into a new RRD:
-
-```powershell
-python -m km_data_converter video-to-rrd ^
-  --bag-storage .\BAG_STORAGE ^
-  --dataset-dir .\datasets\mcap2rrd ^
-  --output-dir .\datasets\video2rrd
-```
-
-Export the LeRobot dataset:
-
-```powershell
-python -m km_data_converter rrd-to-lerobot ^
-  --input-dir .\datasets\video2rrd ^
-  --output-root .\datasets\lerobot_output\lerobot_datasets
-```
-
-To override the task description for all frames, pass a fixed text:
-
-```powershell
-python -m km_data_converter rrd-to-lerobot ^
-  --input-dir .\datasets\video2rrd ^
-  --output-root .\datasets\lerobot_output\lerobot_datasets ^
-  --task-description TASK_DESCRIPTION
-```
-
-## Main Commands
-
-| Command | Purpose |
-| --- | --- |
-| `python -m km_data_converter run-full` | Run the full conversion flow |
-| `python -m km_data_converter split-video` | Split `cameras.mp4` into four camera videos |
-| `python -m km_data_converter mcap-to-rrd` | Export `mcap2rrd.rrd` for each episode |
-| `python -m km_data_converter video-to-rrd` | Align video and robot state and generate `video2rrd` |
-| `python -m km_data_converter rrd-to-lerobot` | Merge multiple RRD files and export a LeRobot dataset |
-
-## Data Fields
-
-### Action
-
-The `action` vector has 56 dimensions in a fixed order:
+Available video roles:
 
 ```text
-action = [effort(14), position(14), velocity(14), control_A(7), control_B(7)]
+None / unused
+left_eye
+right_eye
+left_wrist
+right_wrist
 ```
 
-Where:
+Default mapping:
 
-- 0-13: joint torque `/joint_states/effort`
-- 14-27: joint position `/joint_states/position`
-- 28-41: joint velocity `/joint_states/velocity`
-- 42-48: left arm control command `/control/joint_cmd_A`
-- 49-55: right arm control command `/control/joint_cmd_B`
+```json
+{
+  "video_streams": [
+    { "grid": "top_left", "role": "left_eye" },
+    { "grid": "top_right", "role": "left_wrist" },
+    { "grid": "bottom_left", "role": "right_wrist" },
+    { "grid": "bottom_right", "role": "right_eye" }
+  ]
+}
+```
 
-### Observation State
+Notes:
 
-The `observation.state` vector has 26 dimensions in a fixed order:
+- `grid` cannot be duplicated.
+- `role` cannot be duplicated.
+- At least one video stream must be selected.
+- Unselected positions are not split, are not written to `video2rrd`, and are not included in the final LeRobot dataset.
+
+### 3. End Effector And LeRobot Schema
+
+![End Effector And LeRobot Schema](image/step8.png)
+
+First select the end-effector type:
+
+| Type | Use case | Related topic |
+| --- | --- | --- |
+| `gripper` | Default gripper mode | `gripper_feedback_L`, `gripper_feedback_R` |
+| `hand` | Dexterous hand mode | `/hand_left/*`, `/hand_right/*` |
+
+Then configure the LeRobot `action` and `observation.state`. The UI supports adding or removing topics from the available topic list and previews each segment's dimension range in the vector in real time.
+
+Default gripper schema:
+
+```json
+{
+  "action": [
+    "/control/joint_cmd_A",
+    "/control/joint_cmd_B",
+    "eef_left",
+    "eef_right",
+    "gripper_feedback_L",
+    "gripper_feedback_R"
+  ],
+  "observation": [
+    "/joint_states/position_L",
+    "/joint_states/position_R",
+    "eef_left",
+    "eef_right",
+    "gripper_feedback_L",
+    "gripper_feedback_R"
+  ]
+}
+```
+
+Default dexterous hand schema:
+
+```json
+{
+  "action": [
+    "/control/joint_cmd_A",
+    "/control/joint_cmd_B",
+    "eef_left",
+    "eef_right",
+    "/hand_left/joint_commands/position",
+    "/hand_right/joint_commands/position"
+  ],
+  "observation": [
+    "/joint_states/position_L",
+    "/joint_states/position_R",
+    "eef_left",
+    "eef_right",
+    "/hand_left/joint_states/position",
+    "/hand_right/joint_states/position",
+    "/hand_left/joint_states/effort",
+    "/hand_right/joint_states/effort"
+  ]
+}
+```
+
+Available topic dimensions:
+
+| Topic | Dimensions |
+| --- | ---: |
+| `/joint_states/effort_L`, `/joint_states/effort_R` | 7 |
+| `/joint_states/position_L`, `/joint_states/position_R` | 7 |
+| `/joint_states/velocity_L`, `/joint_states/velocity_R` | 7 |
+| `/control/joint_cmd_A`, `/control/joint_cmd_B` | 7 |
+| `eef_left`, `eef_right` | 7 |
+| `gripper_feedback_L`, `gripper_feedback_R` | 1 |
+| `/hand_left/joint_commands/position`, `/hand_right/joint_commands/position` | 20 |
+| `/hand_left/joint_states/position`, `/hand_right/joint_states/position` | 20 |
+| `/hand_left/joint_states/effort`, `/hand_right/joint_states/effort` | 20 |
+
+Implementation details:
+
+- `/joint_states/*_L` and `/joint_states/*_R` come from splitting a 14-dimensional joint state vector into left and right 7-dimensional parts.
+- `eef_left` and `eef_right` use position and quaternion, for 7 dimensions in total.
+- `gripper_feedback_L` and `gripper_feedback_R` use the gripper end travel, for 1 dimension in total.
+
+### 4. Start Conversion
+
+![Start Conversion](image/step9.png)
+
+Before starting, the UI displays:
+
+- Input path, output path, FPS, and task description.
+- Number of video stream mappings and the specific `role <- grid`.
+- Total Action / Observation dimensions.
+- Paths of the config files that will be written.
+
+After checking `I have confirmed the configuration above`, conversion can be started. The status panel on the right displays stage progress:
+
+1. Read raw data
+2. Parse rosbag / mcap / video
+3. Timestamp alignment
+4. Generate LeRobot Dataset
+5. Open Rerun visualization
+
+During conversion, you can use:
+
+- Pause: suspend the current conversion process.
+- Resume: resume the paused conversion.
+- Stop conversion: terminate the current conversion process tree.
+- Export logs: save the current live logs to `conversion_logs_*.txt` in the output directory.
+
+### 5. Rerun Visualization
+
+![Rerun Visualization](image/step10.png)
+
+After conversion succeeds, enter the `Rerun Visualization` page. It supports selecting or entering:
+
+- `.mcap`
+- `.rrd`
+- `.rbl`
+- LeRobot dataset directory
+
+After clicking `Start Viewer`, the desktop app starts the Rerun gRPC data service. The default data source address is similar to:
 
 ```text
-observation.state = [eef_left(7), eef_right(7), gripper_feedback_L(6), gripper_feedback_R(6)]
+rerun+http://localhost:9876/proxy
 ```
 
-Where:
+The UI embeds Rerun Web Viewer for inspection. You can also click `Native Rerun` to open it with the system `rerun` command.
 
-- `eef_left`: 7D left end-effector pose
-- `eef_right`: 7D right end-effector pose
-- `gripper_feedback_L`: 6D left gripper feedback
-- `gripper_feedback_R`: 6D right gripper feedback
+## Output Directory Structure
 
-The end-effector pose field order is:
+Assuming the output directory selected in the UI is `D:\output\km_dataset`, conversion generates:
 
 ```text
-pose.position.x, pose.position.y, pose.position.z,
-pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w
+D:\output\km_dataset\
+  lerobot_schema.json
+  video_stream_config.json
+  mcap2rrd\
+    mcap_to_rrd\
+      my_bag-yy-MM-dd-HH-mm-ss\
+        mcap2rrd.rrd
+  video2rrd\
+    video2rrd-yy-MM-dd-HH-mm-ss.rrd
+  lerobot_output\
+    lerobot_datasets-yy-MM-dd-HH-mm-ss\
+      data\
+      meta\
+        stats.json
+      videos\
 ```
 
-## Marvin_pro URDF
+Description:
 
-To append the Marvin URDF and aligned joint transforms to an existing `video2rrd` file, run:
+- `lerobot_schema.json` records the final `action` and `observation` topic order.
+- `video_stream_config.json` records the mapping from 2x2 video positions to cameras.
+- `mcap2rrd` stores intermediate results exported from the raw MCAP state.
+- `video2rrd` stores each episode RRD after video and robot state alignment.
+- `lerobot_output/lerobot_datasets-*` is the final trainable dataset.
+
+```text
+The final generated LeRobot-format dataset is named with the earliest episode timestamp.
+```
+
+## Rerun Command Line Viewing
+
+If you do not use the embedded desktop Viewer, you can also run:
 
 ```powershell
-python -m km_data_converter.urdf ^
-  --input-rrd .\datasets\video2rrd\video2rrd-yy-MM-dd-HH-mm-ss.rrd ^
-  --output-rrd .\datasets\video2rrd\video2rrd-yy-MM-dd-HH-mm-ss-with-urdf.rrd ^
-  --no-spawn
+rerun D:\output\km_dataset\lerobot_output\lerobot_datasets-yy-MM-dd-HH-mm-ss
 ```
 
-Common parameters:
+## Project Reference
 
-- `--input-rrd`: the `video2rrd` file to enhance
-- `--output-rrd`: output RRD path; if omitted, `-with-urdf.rrd` is generated next to the original file
-- `--xacro`: optional xacro file path; defaults to the Marvin M6 model in the repository
-- `--output-urdf`: optional expanded URDF output path
-- `--no-spawn`: do not automatically open the Rerun viewer
-
-## Rerun Visualization
-
-Install Rerun:
-
-```powershell
-pip install rerun-sdk[all]
-```
-
-Enter `datasets\lerobot_output` and open the dataset:
-
-```powershell
-rerun .\lerobot_datasets-yy-MM-dd-HH-mm-ss\
-```
-
-Replace `yy-MM-dd-HH-mm-ss` with the actual generated dataset timestamp directory.
-
-## Notes
-
-- Episode directory names must start with `my_bag-yy-MM-dd-HH-mm-ss`
-- `video-to-rrd` requires all four split camera videos to exist
-- `video-to-rrd` generates sensor dashboard videos under each episode's `video` directory
-- By default, scripts skip abnormal episodes and continue processing; with `--strict`, processing stops on the first error
-- Converting new data may overwrite old intermediate results under `datasets`; save any RRD or dataset that must be kept
-- Before converting a new batch of data, clean up or replace old acquisition directories in `BAG_STORAGE`
+- [KLMmotion/KM_data_converter (`data_converter` branch)](https://github.com/KLMmotion/KM_data_converter/tree/data_converter): converter source, desktop UI, and latest project documentation.

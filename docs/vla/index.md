@@ -60,5 +60,6 @@ VLA（Vision-Language-Action）是一类结合视觉感知、自然语言指令�
 | --- | --- |
 | [数据集转换](/vla/dataset-conversion) | LeRobot v3.0 → v2.1 格式转换 |
 | [数据集样例](/vla/dataset-sample) | 四路相机视频与目录结构说明 |
+| [环境与项目准备](/vla/environment) | OpenPI KMD、GPU、Docker 与机器人端 vlahost 环境 |
 | [模型训练](/vla/training) | PI0 / PI05 微调与 checkpoint 管理 |
 | [真机部署](/vla/deployment) | 策略服务器与机器人客户端联调 |

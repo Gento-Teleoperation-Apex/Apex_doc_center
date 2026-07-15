@@ -1,25 +1,20 @@
-# KM Data Converter
+# KernelMind Data Converter 工具说明
 
-面向机器人模仿学习数据集的转换工具链。它可以把原始采集目录 `BAG_STORAGE` 中的 MCAP 数据与四路相机视频，自动整理、对齐并导出为 LeRobot v3.0 数据集。
+KernelMind Data Converter 是面向遥操作与机器人数据集的转换工具。它将原始 `BAG_STORAGE/my_bag-*` 采集目录中的 MCAP、相机视频和时间戳信息整理为可训练的 LeRobot v3 数据集，并提供 Electron 桌面界面完成路径选择、视频流映射、末端执行器选择、LeRobot Schema 配置、转换进度查看和 Rerun 可视化。
 
-- 一键完成从原始采集数据到 LeRobot v3.0 数据集的转换
-- 支持 2x2 拼接相机视频拆分，默认包含左眼、右眼、左腕、右腕四路视角
-- 将 MCAP 机器人状态数据导出为 RRD，并与视频帧进行时间对齐
-- 可通过 Electron 桌面界面选择路径、设置 FPS、填写任务描述并查看实时日志
-- 支持在 Rerun 中查看转换后的数据集和机器人状态
+## 核心能力
 
-## 转换流程
+- 一键执行完整流水线：`cameras.mp4` 拆分、MCAP 转换、视频与机器人状态对齐、导出 LeRobot Dataset。
+- 支持 2x2 拼接视频的自定义映射，可选择 `left_eye`、`right_eye`、`left_wrist`、`right_wrist` 中的一个或多个视频流写入数据集。
+- 支持 `gripper` 夹爪模式和 `hand` 灵巧手模式。
+- 支持可配置 LeRobot `action` 与 `observation.state` 组成顺序，界面会实时显示 topic 数量和总维度。
+- 内置实时日志、日志导出、暂停、继续、停止转换。
+- 内置 Rerun Web Viewer，可查看 `.mcap`、`.rrd`、`.rbl` 或 LeRobot 数据集目录；也可打开原生 Rerun。
+- 提供原始数据质量检查命令 `quality-check`，可在转换前生成质量报告。
 
-```text
-BAG_STORAGE 原始数据
-  -> 拆分四路相机视频
-  -> MCAP 导出为 RRD
-  -> 视频与机器人状态对齐
-  -> 导出 LeRobot 数据集
-  -> 使用 Rerun 可视化检查
-```
+## 原始数据目录要求
 
-每个 episode 目录需要采用以下结构：
+输入目录需要包含一个或多个 `my_bag-*` episode 目录：
 
 ```text
 BAG_STORAGE/
@@ -31,217 +26,294 @@ BAG_STORAGE/
       cameras_first_frame.yaml
 ```
 
-默认的 `cameras.mp4` 画面布局为：
+关键文件说明：
 
-```text
-left_eye      right_eye
-left_wrist    right_wrist
+| 文件 | 作用 |
+| --- | --- |
+| `data/data_0.mcap` | 原始 ROS/机器人状态记录。 |
+| `video/cameras.mp4` | 2x2 相机视频。 |
+| `video/cameras_first_frame.yaml` | 第一帧绝对时间戳，字段需要包含 `first_frame_time.epoch_ns`。 |
+
+episode 目录名必须以 `my_bag-` 开头。最终生成使用最早的 episode 时间戳生成最终数据集目录名。
+
+## 转换前质量检查
+
+正式转换前，建议先检查每个 `my_bag-*` episode 的目录结构、原始记录和必要 topic，并将报告输出到指定目录：
+
+```powershell
+python -m km_data_converter quality-check ^
+  --input D:\BAG_STORAGE ^
+  --output D:\output\km_dataset
 ```
 
-## 环境准备
+报告会写入 `D:\output\km_dataset\quality_report`。如需增加必须存在的 topic，可多次传入 `--required-topic`：
 
-推荐使用 Python 3.10 至 3.12。
+```powershell
+python -m km_data_converter quality-check ^
+  --input D:\BAG_STORAGE ^
+  --output D:\output\km_dataset ^
+  --required-topic /joint_states ^
+  --required-topic /control/joint_cmd_A
+```
+
+工具也支持通过 `--rules <规则文件.yaml>` 加载自定义规则；添加 `--replace-rules` 时，自定义规则会完全替换默认规则。
+
+## 安装环境
+
+推荐 Python `3.10` 到 `3.12`。
 
 ```powershell
 pip install -e .
+```
+
+```powershell
 pip install rerun-sdk[all]
+```
+
+```powershell
 pip install -e .\examples\python\rerun_export
 ```
 
-如环境中缺少视频或 YAML 相关依赖，可额外安装：
+## 启动桌面界面
 
-```powershell
-pip install opencv-python pyyaml
-```
-
-## 使用桌面界面
-
-项目内置 Electron UI，适合日常转换时使用。
-
-![Electron UI 界面预览](image/img_v3_02125_5a1db36f-9785-40a1-a9ef-b49fd4240f0g.jpg)
+桌面端位于 `km_data_converter_UI`，使用 Electron + Vite + React。
 
 ```powershell
 cd .\km_data_converter_UI
 npm install
+npm run build
 npm run dev
 ```
 
-在界面中选择 `BAG_STORAGE` 源目录和输出目录，设置目标 FPS、任务描述以及高级选项后，即可启动完整转换流程。界面会显示进度、实时日志、最终数据集路径，并提供按钮用 Rerun 打开转换结果。
+执行 `npm install` 自动生成`node_modules/`；
+执行 `npm run build` 自动生成`dist/` 和 `dist-electron/`。
 
-![Electron UI 转换流程预览](image/img_v3_02125_6fb03327-ba42-4ab0-b605-35e36ddaf33g.jpg)
+界面启动后会打开 `KernelMind Data Converter` 窗口。
 
-## 使用命令行转换
+## 转换工具前端 5 步使用流程
 
-将所有采集目录放到 `BAG_STORAGE` 下后，运行：
+### 1. 输入路径
 
-```powershell
-python -m km_data_converter run-full
-```
+![输入路径](image/step1.png)
 
-也可以显式传入输入和输出路径：
+在「输入路径」中填写或选择：
 
-```powershell
-python -m km_data_converter run-full <bag_storage_path> [output_root_path]
-```
+- 原始数据目录：包含 `my_bag-*` 的 `BAG_STORAGE` 目录。
+- 输出目录：中间 RRD、配置文件和最终 LeRobot 数据集都会写入这里。
+- 视频帧率 FPS：拆分后的视频输出帧率。界面默认值为 `30`。建议将视频输出帧率设置为低于原始视频的帧率。
+- 任务描述：可选，写入最终数据集任务文本。
 
-常用参数示例：
+### 2. 视频流映射
 
-```powershell
-python -m km_data_converter run-full ^
-  --bag-storage BAG_STORAGE ^
-  --target-fps 10 ^
-  --output-dir OUTPUT_DIR ^
-  --repo-id rerun/droid_lerobot_full ^
-  --end-effector {gripper,hand} ^
-  --task-description TASK_DESCRIPTION ^
-  --strict
-```
+![视频流映射](image/step2.png)
 
-默认输出目录结构如下：
+工具会把 `video/cameras.mp4` 视为 2x2 画面，并根据映射关系拆分为独立视频。
+
+可用位置：
 
 ```text
-datasets/
-  mcap2rrd/
-  video2rrd/
-  lerobot_output/
+top_left       top_right
+bottom_left    bottom_right
 ```
 
-最终的 LeRobot 数据集通常包含 `data`、`meta` 和 `videos` 等目录。
-
-## 分步运行
-
-如果需要调试或只执行某个阶段，也可以分步运行。
-
-拆分拼接视频：
-
-```powershell
-python -m km_data_converter split-video
-```
-
-将 MCAP 转换为 RRD：
-
-```powershell
-python -m km_data_converter mcap-to-rrd ^
-  --bag-storage .\BAG_STORAGE ^
-  --output-dir .\datasets\mcap2rrd
-```
-
-将视频与机器人状态写入新的 RRD：
-
-```powershell
-python -m km_data_converter video-to-rrd ^
-  --bag-storage .\BAG_STORAGE ^
-  --dataset-dir .\datasets\mcap2rrd ^
-  --output-dir .\datasets\video2rrd
-```
-
-导出 LeRobot 数据集：
-
-```powershell
-python -m km_data_converter rrd-to-lerobot ^
-  --input-dir .\datasets\video2rrd ^
-  --output-root .\datasets\lerobot_output\lerobot_datasets
-```
-
-如果希望覆盖所有帧的任务描述，可以传入固定文本：
-
-```powershell
-python -m km_data_converter rrd-to-lerobot ^
-  --input-dir .\datasets\video2rrd ^
-  --output-root .\datasets\lerobot_output\lerobot_datasets ^
-  --task-description TASK_DESCRIPTION
-```
-
-## 主要命令
-
-| 命令 | 作用 |
-| --- | --- |
-| `python -m km_data_converter run-full` | 运行完整转换流程 |
-| `python -m km_data_converter split-video` | 将 `cameras.mp4` 拆分为四路相机视频 |
-| `python -m km_data_converter mcap-to-rrd` | 为每个 episode 导出 `mcap2rrd.rrd` |
-| `python -m km_data_converter video-to-rrd` | 对齐视频与机器人状态，生成 `video2rrd` |
-| `python -m km_data_converter rrd-to-lerobot` | 合并多个 RRD 并导出 LeRobot 数据集 |
-
-## 数据字段
-
-### Action
-
-`action` 向量共 56 维，顺序固定：
+可用视频角色：
 
 ```text
-action = [effort(14), position(14), velocity(14), control_A(7), control_B(7)]
+None / 不使用
+left_eye
+right_eye
+left_wrist
+right_wrist
 ```
 
-其中：
+默认映射为：
 
-- 0-13：关节力矩 `/joint_states/effort`
-- 14-27：关节位置 `/joint_states/position`
-- 28-41：关节速度 `/joint_states/velocity`
-- 42-48：左臂控制指令 `/control/joint_cmd_A`
-- 49-55：右臂控制指令 `/control/joint_cmd_B`
+```json
+{
+  "video_streams": [
+    { "grid": "top_left", "role": "left_eye" },
+    { "grid": "top_right", "role": "left_wrist" },
+    { "grid": "bottom_left", "role": "right_wrist" },
+    { "grid": "bottom_right", "role": "right_eye" }
+  ]
+}
+```
 
-### Observation State
+注意：
 
-`observation.state` 向量共 26 维，顺序固定：
+- `grid` 不能重复。
+- `role` 不能重复。
+- 至少选择一个视频流。
+- 未选择的位置不会被拆分、不会写入 `video2rrd`，也不会进入最终 LeRobot 数据集。
+
+### 3. 末端执行器与 LeRobot Schema
+
+![末端执行器与 LeRobot Schema](image/step3.png)
+
+先选择末端执行器类型：
+
+| 类型 | 使用场景 | 相关 topic |
+| --- | --- | --- |
+| `gripper` | 默认夹爪模式 | `gripper_feedback_L`、`gripper_feedback_R` |
+| `hand` | 灵巧手模式 | `/hand_left/*`、`/hand_right/*` |
+
+然后配置 LeRobot 的 `action` 和 `observation.state`。界面支持从可用 topic 列表中添加或移除 topic，并实时预览每一段在向量中的维度范围。
+
+夹爪模式默认 Schema：
+
+```json
+{
+  "action": [
+    "/control/joint_cmd_A",
+    "/control/joint_cmd_B",
+    "eef_left",
+    "eef_right",
+    "gripper_feedback_L",
+    "gripper_feedback_R"
+  ],
+  "observation": [
+    "/joint_states/position_L",
+    "/joint_states/position_R",
+    "eef_left",
+    "eef_right",
+    "gripper_feedback_L",
+    "gripper_feedback_R"
+  ]
+}
+```
+
+灵巧手模式默认 Schema：
+
+```json
+{
+  "action": [
+    "/control/joint_cmd_A",
+    "/control/joint_cmd_B",
+    "eef_left",
+    "eef_right",
+    "/hand_left/joint_commands/position",
+    "/hand_right/joint_commands/position"
+  ],
+  "observation": [
+    "/joint_states/position_L",
+    "/joint_states/position_R",
+    "eef_left",
+    "eef_right",
+    "/hand_left/joint_states/position",
+    "/hand_right/joint_states/position",
+    "/hand_left/joint_states/effort",
+    "/hand_right/joint_states/effort"
+  ]
+}
+```
+
+可用 topic 维度：
+
+| Topic | 维度 |
+| --- | ---: |
+| `/joint_states/effort_L`、`/joint_states/effort_R` | 7 |
+| `/joint_states/position_L`、`/joint_states/position_R` | 7 |
+| `/joint_states/velocity_L`、`/joint_states/velocity_R` | 7 |
+| `/control/joint_cmd_A`、`/control/joint_cmd_B` | 7 |
+| `eef_left`、`eef_right` | 7 |
+| `gripper_feedback_L`、`gripper_feedback_R` | 1 |
+| `/hand_left/joint_commands/position`、`/hand_right/joint_commands/position` | 20 |
+| `/hand_left/joint_states/position`、`/hand_right/joint_states/position` | 20 |
+| `/hand_left/joint_states/effort`、`/hand_right/joint_states/effort` | 20 |
+
+实现细节：
+
+- `/joint_states/*_L` 和 `/joint_states/*_R` 来自 14 维关节状态向量的左右 7 维拆分。
+- `eef_left`、`eef_right` 使用位置和四元数，共 7 维。
+- `gripper_feedback_L`、`gripper_feedback_R` 使用夹爪末端的行程， 共 1 维。
+
+### 4. 开始转换
+
+![开始转换](image/step4.png)
+
+开始前界面会展示：
+
+- 输入路径、输出路径、FPS、任务描述。
+- 视频流映射数量和具体 `role <- grid`。
+- Action / Observation 总维度。
+- 将写入的配置文件路径。
+
+勾选「我已确认以上配置」后即可启动转换。右侧状态面板会显示阶段进度：
+
+1. 读取原始数据
+2. 解析 rosbag / mcap / video
+3. 时间戳对齐
+4. 生成 LeRobot Dataset
+5. 打开 Rerun 可视化
+
+转换过程中可使用：
+
+- 暂停：挂起当前转换进程。
+- 继续：恢复已暂停的转换。
+- 停止转换：终止当前转换进程树。
+- 导出日志：保存当前实时日志到输出目录中的 `conversion_logs_*.txt`。
+
+### 5. Rerun 可视化
+
+![Rerun 可视化](image/step5.png)
+
+转换成功后可以进入「Rerun 可视化」页。它支持选择或输入：
+
+- `.mcap`
+- `.rrd`
+- `.rbl`
+- LeRobot 数据集目录
+
+点击「启动 Viewer」后，桌面端会启动 Rerun gRPC 数据服务，默认数据源地址类似：
 
 ```text
-observation.state = [eef_left(7), eef_right(7), gripper_feedback_L(6), gripper_feedback_R(6)]
+rerun+http://localhost:9876/proxy
 ```
 
-其中：
+界面会嵌入 Rerun Web Viewer 进行查看。也可以点击「原生 Rerun」用系统里的 `rerun` 命令打开。
 
-- `eef_left`：左末端执行器 7 维位姿
-- `eef_right`：右末端执行器 7 维位姿
-- `gripper_feedback_L`：左夹爪 6 维反馈
-- `gripper_feedback_R`：右夹爪 6 维反馈
+## 输出目录结构
 
-末端位姿字段顺序为：
+假设界面中选择输出目录为 `D:\output\km_dataset`，转换会生成：
 
 ```text
-pose.position.x, pose.position.y, pose.position.z,
-pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w
+D:\output\km_dataset\
+  lerobot_schema.json
+  video_stream_config.json
+  mcap2rrd\
+    mcap_to_rrd\
+      my_bag-yy-MM-dd-HH-mm-ss\
+        mcap2rrd.rrd
+  video2rrd\
+    video2rrd-yy-MM-dd-HH-mm-ss.rrd
+  lerobot_output\
+    lerobot_datasets-yy-MM-dd-HH-mm-ss\
+      data\
+      meta\
+        stats.json
+      videos\
 ```
 
-## Marvin_pro URDF
+说明：
 
-如果需要在已有 `video2rrd` 文件中追加 Marvin URDF 和对齐后的关节变换，可运行：
+- `lerobot_schema.json` 记录最终 `action` 和 `observation` topic 顺序。
+- `video_stream_config.json` 记录 2x2 视频位置到相机的映射。
+- `mcap2rrd` 保存 MCAP 原始状态导出的中间结果。
+- `video2rrd` 保存对齐视频和机器人状态后的每 episode RRD。
+- `lerobot_output/lerobot_datasets-*` 是最终可训练数据集。
+
+```
+最终生成的lerobot格式数据集是以最早 episode 的时间戳命名的。
+```
+
+## Rerun 命令行查看
+
+如果不使用桌面端嵌入 Viewer，也可以直接运行:
 
 ```powershell
-python -m km_data_converter.urdf ^
-  --input-rrd .\datasets\video2rrd\video2rrd-yy-MM-dd-HH-mm-ss.rrd ^
-  --output-rrd .\datasets\video2rrd\video2rrd-yy-MM-dd-HH-mm-ss-with-urdf.rrd ^
-  --no-spawn
+rerun D:\output\km_dataset\lerobot_output\lerobot_datasets-yy-MM-dd-HH-mm-ss
 ```
 
-常用参数：
+## 项目参考
 
-- `--input-rrd`：需要增强的 `video2rrd` 文件
-- `--output-rrd`：输出 RRD 路径，省略时会在原文件旁生成 `-with-urdf.rrd`
-- `--xacro`：可选 xacro 文件路径，默认使用仓库内的 Marvin M6 模型
-- `--output-urdf`：可选的展开后 URDF 输出路径
-- `--no-spawn`：不自动打开 Rerun 查看器
-
-## Rerun 可视化
-
-安装 Rerun：
-
-```powershell
-pip install rerun-sdk[all]
-```
-
-进入 `datasets\lerobot_output` 后打开数据集：
-
-```powershell
-rerun .\lerobot_datasets-yy-MM-dd-HH-mm-ss\
-```
-
-将 `yy-MM-dd-HH-mm-ss` 替换为实际生成的数据集时间戳目录名。
-
-## 使用注意
-
-- episode 目录名必须以 `my_bag-yy-MM-dd-HH-mm-ss` 开头
-- `video-to-rrd` 需要四路拆分视频全部存在
-- `video-to-rrd` 会在每个 episode 的 `video` 目录下生成传感器 dashboard 视频
-- 默认情况下脚本会跳过异常 episode 并继续处理；使用 `--strict` 后会在首次错误时停止
-- 转换新数据可能覆盖 `datasets` 下的旧中间结果，请提前保存需要保留的 RRD 或数据集
-- 转换新一批数据前，建议清理或替换 `BAG_STORAGE` 中的旧采集目录
+- [KLMmotion/KM_data_converter（data_converter 分支）](https://github.com/KLMmotion/KM_data_converter/tree/data_converter)：转换工具源码、桌面端界面和最新项目说明。

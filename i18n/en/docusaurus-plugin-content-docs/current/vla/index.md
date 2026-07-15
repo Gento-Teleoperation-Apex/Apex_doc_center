@@ -60,5 +60,6 @@ The model uses degrees internally. Robot-side `joint_states.positions` normally 
 | --- | --- |
 | [Dataset Conversion](/vla/dataset-conversion) | LeRobot v3.0 to v2.1 format conversion |
 | [Dataset Sample](/vla/dataset-sample) | Four-camera video and directory structure description |
+| [Environment and Project Setup](/vla/environment) | OpenPI KMD, GPU, Docker, and robot-side vlahost environment |
 | [Model Training](/vla/training) | PI0 / PI05 fine-tuning and checkpoint management |
 | [Real-Robot Deployment](/vla/deployment) | Policy server and robot client integration |
