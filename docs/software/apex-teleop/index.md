@@ -21,7 +21,8 @@ Apex Teleop 是 KernelMind Apex 产品线的上位机控制软件，用于连接
 
 - [Marvin Pro 当前版界面与操作](/software/apex-teleop/pro-current)
 - [Marvin Pro 历史版与 Skye/Luna 经典界面](/software/apex-teleop/classic)
-- [客户二次开发接口](/software/apex-teleop/customer-interfaces)
+- [Marvin Pro 客户二次开发接口](/software/apex-teleop/customer-interfaces)
+- [Gento（Skye/Luna）ROS 2 接口](/software/apex-teleop/gento-interfaces)
 - [Pico 头显操作说明](/xr-teleop/pico)
 - [Meta Quest 头显操作说明](/xr-teleop/meta)
 

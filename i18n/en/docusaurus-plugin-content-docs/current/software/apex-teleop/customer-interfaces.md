@@ -1,11 +1,13 @@
 ---
-title: Customer Integration Interfaces
+title: Marvin Pro Interfaces
 sidebar_position: 4
 ---
 
-# Customer Integration Interfaces
+# Marvin Pro Customer Integration Interfaces
 
-This page lists customer-facing ROS 2 state topics and external command inputs. It intentionally excludes internal control-chain interfaces.
+This page lists Marvin Pro customer-facing ROS 2 state topics and external command inputs. It intentionally excludes internal control-chain interfaces.
+
+Skye/Luna has a different whole-body joint layout and message structure. See [Gento (Skye/Luna) ROS 2 Interfaces](./gento-interfaces).
 
 ## Safety requirements
 

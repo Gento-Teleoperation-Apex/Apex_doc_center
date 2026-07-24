@@ -1,11 +1,13 @@
 ---
-title: 客户二次开发接口
+title: Marvin Pro 接口
 sidebar_position: 4
 ---
 
-# 客户二次开发接口
+# Marvin Pro 客户二次开发接口
 
-本页列出面向客户开放的 ROS 2 状态接口和外部控制入口。接口用于状态读取、数据采集和客户算法接入，不包含产品内部控制链路。
+本页列出 Marvin Pro 面向客户开放的 ROS 2 状态接口和外部控制入口。接口用于状态读取、数据采集和客户算法接入，不包含产品内部控制链路。
+
+Skye/Luna 的全身关节结构和消息定义不同，请使用 [Gento（Skye/Luna）ROS 2 接口](./gento-interfaces)。
 
 ## 安全要求
 

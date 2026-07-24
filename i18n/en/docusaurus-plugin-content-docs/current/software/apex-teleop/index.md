@@ -21,7 +21,8 @@ Software versions evolve over time. Always use host and controller packages from
 
 - [Current Marvin Pro interface](/software/apex-teleop/pro-current)
 - [Classic interface for historical Marvin Pro and Skye/Luna](/software/apex-teleop/classic)
-- [Customer integration interfaces](/software/apex-teleop/customer-interfaces)
+- [Marvin Pro customer integration interfaces](/software/apex-teleop/customer-interfaces)
+- [Gento (Skye/Luna) ROS 2 interfaces](/software/apex-teleop/gento-interfaces)
 - [Pico headset guide](/xr-teleop/pico)
 - [Meta Quest headset guide](/xr-teleop/meta)
 
