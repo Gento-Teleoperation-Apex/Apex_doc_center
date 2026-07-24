@@ -5,7 +5,7 @@ sidebar_position: 2
 
 # Current Marvin Pro Apex Teleop
 
-This page applies to the current Marvin Pro with a Tianzhun controller. The screenshots show the interface paired with Apex Teleop `1.0.7.6o`.
+This page applies to the current Marvin Pro with a Tianzhun controller and uses frontend `1.0.7.6o` in its screenshots. The current matching baseline uses robot controller / MarvinSDK `100343001` and Teleop service `1.0.18`. Use software from the same delivery release on site.
 
 ## Interface overview
 
@@ -81,10 +81,18 @@ The camera panel always uses a four-tile layout. In the example, `camera_sources
 
 ## Recording
 
-1. Connect the data drive and apply the required volume label.
+1. Connect the USB drive, set its volume label to `BAG_STORAGE`, and confirm that it is mounted at `/media/<user>/BAG_STORAGE`.
 2. Click **Start Recording**.
 3. Keep Robot, Teleop, and any required Camera module running.
 4. Stop recording and wait for writing to finish before removing the drive.
+
+Recordings are stored by default in:
+
+```text
+/media/<user>/BAG_STORAGE/recorded_bags
+```
+
+Each `my_bag-*` task directory should contain at least `data/*.mcap`, `data/metadata.yaml`, and `video/cameras.mp4`. If files are missing or MCAP cannot be read, first check for an interrupted recording and verify that the USB drive is writable.
 
 ## Playback
 

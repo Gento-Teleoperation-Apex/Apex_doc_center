@@ -60,7 +60,7 @@ Script flow:
 Recommended data preparation flow:
 
 ```text
-BAG_STORAGE raw acquisition
+BAG_STORAGE/recorded_bags raw acquisition
   -> python -m km_data_converter run-full
   -> datasets/lerobot_output/ (LeRobot v3.0)
   -> uv run convert_v3_to_v2.py --local-root <v3.0 dataset path>

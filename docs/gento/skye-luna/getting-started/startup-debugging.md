@@ -23,11 +23,11 @@ ping 6.6.7.100
 ssh nvidia@6.6.7.100
 ```
 
-启动遥操后端：
+启动 Apex 后端服务：
 
 ```bash
-cd /opt/kernelmind/apex
-./bringup_RM.sh
+sudo systemctl start apex-backend.service
+sudo systemctl status apex-backend.service --no-pager
 ```
 
 ## 3. 启动经典版 Apex Teleop
@@ -38,13 +38,13 @@ cd /opt/kernelmind/apex
 4. 启动 **Teleop** 和网络模块；Camera 按需启动。
 5. 点击机器人启动入口，使机器人 Ready。
 6. 进入 **Impedance Mode**，再执行 **Home**。
-7. 确认机器人双臂、膝关节和实体当前姿态正常。
+7. 确认机器人双臂和实体当前姿态正常；Skye 继续检查躯干与升降机构，Luna 继续检查躯干与膝式主体结构。
 
 ## 4. 连接 Pico 并遥操
 
 Skye/Luna 使用 Pico 头显及腰部、腿部追踪组件完成全身遥操。按 [Pico 头显操作说明](/xr-teleop/pico) 完成开发者模式、网络和 Apex 客户端设置。
 
-头显连接成功后，先进行小幅双臂动作，再逐步检查躯干和腿部映射。确认所有方向正确后再扩大动作范围。
+头显连接成功后，先进行小幅双臂动作，再逐步检查追踪映射。Skye 检查躯干与升降动作，Luna 检查躯干与腿部动作；确认所有方向正确后再扩大动作范围。
 
 ## 5. 快速检查
 
@@ -54,6 +54,6 @@ Skye/Luna 使用 Pico 头显及腰部、腿部追踪组件完成全身遥操。�
 | 3D 模型与实体不一致 | Robot 模块、机型配置和启动日志 |
 | Teleop 不可用 | Robot 是否运行并 Ready |
 | Pico 无法连接 | 网络模块、头显 IP、网线和客户端设置 |
-| 手臂正常但下肢不跟随 | 腰部/腿部传感器电量、佩戴位置和追踪状态 |
+| 手臂正常但 BODY/LIFT 或下肢不跟随 | 机型配置、腰部/腿部传感器电量、佩戴位置和追踪状态 |
 | 相机黑屏 | Camera 模块和相机连接 |
 | 遥操无动作 | Impedance Mode、Home 和头显连接状态 |

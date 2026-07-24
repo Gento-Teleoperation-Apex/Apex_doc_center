@@ -22,8 +22,8 @@ ping 6.6.7.100
 
 ## 软件配套
 
-- 天准控制器端 KernelMind Apex、Apex Teleop 和头显客户端应使用同一交付版本。
-- 当前 Pro 界面说明以 Apex Teleop `1.0.7.6o` 为例。
+- 机器人控制端 / MarvinSDK、Teleop 遥操服务、Apex 前端和头显客户端应使用同一交付批次的配套版本。
+- 当前文档基线中，机器人控制端 / MarvinSDK 为 `100343001`，Teleop 遥操服务为 `1.0.18`，Marvin Pro 前端为 `1.0.7.6o`。
 - 安装包名称随版本变化，以交付文件和发布说明为准。
 - 末端执行器和 Camera 均按实际选配启用。
 

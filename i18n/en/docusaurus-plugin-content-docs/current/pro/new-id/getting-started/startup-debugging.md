@@ -23,18 +23,18 @@ ping 6.6.7.100
 ssh nvidia@6.6.7.100
 ```
 
-After controller power-on, initialize the cameras according to the delivered configuration:
+After controller power-on, if the delivered system contains `~/cam_geac`, initialize the cameras according to the delivered configuration:
 
 ```bash
 cd ~/cam_geac
-./rb_camera.sh
+./rb_camera.sh init
 ```
 
-Wait about 20 seconds, then start the teleoperation backend:
+Start the Apex backend service:
 
 ```bash
-cd /opt/kernelmind/apex
-./bringup_RM.sh
+sudo systemctl start apex-backend.service
+sudo systemctl status apex-backend.service --no-pager
 ```
 
 > Disable `X11-Forwarding` in MobaXterm to avoid camera timeout or headset video issues.

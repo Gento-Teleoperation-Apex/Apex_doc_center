@@ -1,6 +1,6 @@
 # KernelMind Data Converter 工具说明
 
-KernelMind Data Converter 是面向遥操作与机器人数据集的转换工具。它将原始 `BAG_STORAGE/my_bag-*` 采集目录中的 MCAP、相机视频和时间戳信息整理为可训练的 LeRobot v3 数据集，并提供 Electron 桌面界面完成路径选择、视频流映射、末端执行器选择、LeRobot Schema 配置、转换进度查看和 Rerun 可视化。
+KernelMind Data Converter 是面向遥操作与机器人数据集的转换工具。遥操数据默认录制到卷标为 `BAG_STORAGE` 的 U 盘，并保存在 `/media/<user>/BAG_STORAGE/recorded_bags`。工具将其中 `my_bag-*` 目录内的 MCAP、相机视频和时间戳信息整理为可训练的 LeRobot v3 数据集，并提供 Electron 桌面界面完成路径选择、视频流映射、末端执行器选择、LeRobot Schema 配置、转换进度查看和 Rerun 可视化。
 
 ## 核心能力
 
@@ -14,16 +14,18 @@ KernelMind Data Converter 是面向遥操作与机器人数据集的转换工具
 
 ## 原始数据目录要求
 
-输入目录需要包含一个或多个 `my_bag-*` episode 目录：
+Linux 中 U 盘默认挂载路径为 `/media/<user>/BAG_STORAGE`，录制数据位于其 `recorded_bags` 子目录。Data Converter 的输入目录应选择 `recorded_bags`，该目录需要包含一个或多个 `my_bag-*` episode：
 
 ```text
 BAG_STORAGE/
-  my_bag-yy-MM-dd-HH-mm-ss/
-    data/
-      data_0.mcap
-    video/
-      cameras.mp4
-      cameras_first_frame.yaml
+  recorded_bags/
+    my_bag-yy-MM-dd-HH-mm-ss/
+      data/
+        data_0.mcap
+        metadata.yaml
+      video/
+        cameras.mp4
+        cameras_first_frame.yaml
 ```
 
 关键文件说明：
@@ -31,10 +33,13 @@ BAG_STORAGE/
 | 文件 | 作用 |
 | --- | --- |
 | `data/data_0.mcap` | 原始 ROS/机器人状态记录。 |
+| `data/metadata.yaml` | 本次录制的元数据；缺失时应先检查录制是否正常结束。 |
 | `video/cameras.mp4` | 2x2 相机视频。 |
 | `video/cameras_first_frame.yaml` | 第一帧绝对时间戳，字段需要包含 `first_frame_time.epoch_ns`。 |
 
 episode 目录名必须以 `my_bag-` 开头。最终生成使用最早的 episode 时间戳生成最终数据集目录名。
+
+在 Windows 中直接读取该 U 盘时，假设盘符为 `D:`，转换输入路径通常为 `D:\recorded_bags`，而不是 `D:\BAG_STORAGE`。
 
 ## 转换前质量检查
 
@@ -42,7 +47,7 @@ episode 目录名必须以 `my_bag-` 开头。最终生成使用最早的 episod
 
 ```powershell
 python -m km_data_converter quality-check ^
-  --input D:\BAG_STORAGE ^
+  --input D:\recorded_bags ^
   --output D:\output\km_dataset
 ```
 
@@ -50,7 +55,7 @@ python -m km_data_converter quality-check ^
 
 ```powershell
 python -m km_data_converter quality-check ^
-  --input D:\BAG_STORAGE ^
+  --input D:\recorded_bags ^
   --output D:\output\km_dataset ^
   --required-topic /joint_states ^
   --required-topic /control/joint_cmd_A
@@ -98,7 +103,7 @@ npm run dev
 
 在「输入路径」中填写或选择：
 
-- 原始数据目录：包含 `my_bag-*` 的 `BAG_STORAGE` 目录。
+- 原始数据目录：U 盘中包含 `my_bag-*` 的 `recorded_bags` 目录；Linux 默认路径为 `/media/<user>/BAG_STORAGE/recorded_bags`。
 - 输出目录：中间 RRD、配置文件和最终 LeRobot 数据集都会写入这里。
 - 视频帧率 FPS：拆分后的视频输出帧率。界面默认值为 `30`。建议将视频输出帧率设置为低于原始视频的帧率。
 - 任务描述：可选，写入最终数据集任务文本。

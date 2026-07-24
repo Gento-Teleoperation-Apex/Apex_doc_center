@@ -5,7 +5,7 @@ sidebar_position: 3
 
 # 经典版 Apex Teleop
 
-本页适用于 Marvin Pro 历史 Orin 版本以及当前 Skye/Luna。不同交付批次的按钮文字可能略有差异，以现场配套软件为准。
+本页适用于 Marvin Pro 历史 Orin 版本以及当前 Skye/Luna。当前 Gento 文档以前端 `1.0.6.81g` 为基线；不同交付批次的按钮文字可能略有差异，以现场配套软件为准。
 
 ![经典版 Apex Teleop 标注界面](/img/gento/luna/apex_teleop_overview_annotated.jpg)
 
@@ -35,7 +35,7 @@ Skye/Luna 使用 Pico 头显及全身追踪组件；Marvin Pro 历史版本按�
 
 ## 数据录制与回放
 
-录制前确认数据盘和 Camera 状态。填写录制名称后点击 **Start Recording**，任务完成后点击 **Stop Recording**。回放时选择记录文件，再使用 **Play**、**Stop** 和循环选项。
+录制前确认卷标为 `BAG_STORAGE` 的 U 盘已正确挂载，并检查 Camera 状态。填写录制名称后点击 **Start Recording**，任务完成后点击 **Stop Recording**。数据默认保存在 `/media/<user>/BAG_STORAGE/recorded_bags`。回放时选择记录文件，再使用 **Play**、**Stop** 和循环选项。
 
 实机回放具有运动风险，操作前应确认机器人起始姿态、工作空间和急停状态。
 

@@ -40,7 +40,7 @@ The Marvin Pro teleoperation system mainly consists of the robot body, robot con
 | Controllers (left/right) | 1 each | Control arm motion and gripper opening/closing |
 | Router | 1 | LAN core connecting Orin, controller, and headset |
 | Ethernet cables | Several | Wired connection for stable low-latency transmission |
-| USB drive (label `BAG_STORAGE`) | 1 | Stores ROS bag and MP4 recording data |
+| USB drive (label `BAG_STORAGE`) | 1 | Stores ROS bag and MP4 recording data under `recorded_bags` by default |
 | Type-C data cable | 1 | Used for ADB debugging or headset APK installation |
 | Type-C Ethernet adapter | 1 | Connects the headset to the wired LAN |
 

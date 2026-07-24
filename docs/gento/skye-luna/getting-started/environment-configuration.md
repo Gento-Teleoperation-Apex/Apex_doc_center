@@ -25,8 +25,8 @@ Pico 自身地址不能与天准003地址相同。调整现场网段时，应同
 2. 腰部传感器佩戴在规定方向。
 3. 腿部传感器按要求固定，避免松动和左右装反。
 4. 检查所有组件电量、连接和追踪状态。
-5. Home 后先进行小幅双臂测试，再检查躯干和膝关节映射。
+5. Home 后先进行小幅双臂测试；Skye 再检查躯干与升降映射，Luna 再检查躯干与腿部映射。
 
 ## 软件
 
-Skye/Luna 使用与控制器交付版本配套的经典版 Apex Teleop 和 Pico 客户端。详细界面说明见[经典版 Apex Teleop](/software/apex-teleop/classic)。
+Skye/Luna 使用与控制器交付版本配套的 Teleop 遥操服务、Apex 前端和 Pico 客户端。当前文档基线中，Teleop 遥操服务为 `1.0.18`，Gento 前端为 `1.0.6.81g`；版本持续更新，现场以同一交付批次的配套安装包为准。详细界面说明见[经典版 Apex Teleop](/software/apex-teleop/classic)。

@@ -23,18 +23,18 @@ ping 6.6.7.100
 ssh nvidia@6.6.7.100
 ```
 
-控制器重新上电后，按交付配置初始化相机：
+控制器重新上电后，如交付系统包含 `~/cam_geac`，按交付配置初始化相机：
 
 ```bash
 cd ~/cam_geac
-./rb_camera.sh
+./rb_camera.sh init
 ```
 
-等待约 20 秒，再启动遥操后端：
+启动 Apex 后端服务：
 
 ```bash
-cd /opt/kernelmind/apex
-./bringup_RM.sh
+sudo systemctl start apex-backend.service
+sudo systemctl status apex-backend.service --no-pager
 ```
 
 > 使用 MobaXterm 时关闭 `X11-Forwarding`，避免相机采集超时或头显画面异常。

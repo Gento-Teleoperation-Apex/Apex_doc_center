@@ -47,7 +47,7 @@ The Marvin Pro teleoperation system mainly consists of the robot body, robot con
 | Emergency stop box | 1 | Connects to the electric cabinet emergency stop interface |
 | Senyun camera | Standard | Mounted at the robot arm end; wiring is completed before delivery |
 | Ethernet cables | Several | Wired connection for stable low-latency transmission |
-| USB drive (label `BAG_STORAGE`) | 1 | Stores ROS bag and MP4 recording data |
+| USB drive (label `BAG_STORAGE`) | 1 | Stores ROS bag and MP4 recording data under `recorded_bags` by default |
 | Type-C data cable | 1 | Used for ADB debugging or headset APK installation |
 | Type-C Ethernet adapter | 1 | Connects the VR headset to the wired LAN |
 

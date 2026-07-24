@@ -7,7 +7,7 @@ sidebar_position: 5
 
 ## 升级前
 
-1. 记录当前控制器端、Apex Teleop 和头显客户端版本。
+1. 记录当前机器人控制端 / MarvinSDK、Teleop 遥操服务、Apex 前端和头显客户端版本。
 2. 备份现场网络、机器人、相机和末端执行器配置。
 3. 停止 Robot、Teleop、Camera 和 Tool，确保机器人处于安全状态。
 4. 使用同一交付版本中的配套安装包，不混用不同发布批次。
@@ -22,11 +22,13 @@ sudo apt install ./<controller-package>.deb
 
 ## 上位机端
 
-在上位机安装配套 Apex Teleop：
+在上位机安装同一交付批次的 Teleop 遥操服务和 Apex 前端。当前文档基线为 Teleop 遥操服务 `1.0.18`、Marvin Pro 前端 `1.0.7.6o`：
 
 ```bash
 sudo apt install ./<apex-teleop-package>.deb
 ```
+
+使用 `1.0.7.6` 及之后的拆包版本且交付配置包含夹爪或其他末端执行器时，还需安装同批次的 `kernelmind-apex-tool` 配套包；仅安装控制端主包时，Robot、Camera 和 Teleop 可以运行，但 Tool 模块及对应夹爪组件可能缺失。
 
 头显客户端安装和开发者模式操作见 [Apex XR 头显客户端](/xr-teleop/)。
 

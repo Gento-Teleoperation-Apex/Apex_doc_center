@@ -5,7 +5,7 @@ sidebar_position: 2
 
 # Marvin Pro 当前版 Apex Teleop
 
-本页适用于 Marvin Pro 当前天准控制器版本，以 Apex Teleop `1.0.7.6o` 界面为例。
+本页适用于 Marvin Pro 当前天准控制器版本，以前端 `1.0.7.6o` 界面为例。当前配套基线中，机器人控制端 / MarvinSDK 为 `100343001`，Teleop 遥操服务为 `1.0.18`；现场版本应以同一交付批次为准。
 
 ## 界面总览
 
@@ -81,10 +81,18 @@ sidebar_position: 2
 
 ## 数据录制
 
-1. 确认数据盘已正确连接，并按交付要求设置卷标。
+1. 确认 U 盘已正确连接，卷标为 `BAG_STORAGE`，并已挂载到 `/media/<user>/BAG_STORAGE`。
 2. 点击 **Start Recording** 开始录制。
 3. 录制期间保持 Robot、Teleop 及所需 Camera 模块运行。
 4. 点击停止录制，等待文件写入完成后再移除数据盘。
+
+录制数据默认保存在：
+
+```text
+/media/<user>/BAG_STORAGE/recorded_bags
+```
+
+每个 `my_bag-*` 任务目录至少应包含 `data/*.mcap`、`data/metadata.yaml` 和 `video/cameras.mp4`。文件缺失或 MCAP 无法读取时，应先检查录制是否异常中断以及 U 盘是否可写。
 
 ## 数据回放
 

@@ -22,8 +22,8 @@ No two devices may share an IP address. Before changing the site subnet, update 
 
 ## Software compatibility
 
-- Use controller-side KernelMind Apex, Apex Teleop, and headset client packages from the same delivery release.
-- The current Pro UI guide uses Apex Teleop `1.0.7.6o` as its example.
+- Use the robot controller / MarvinSDK, Teleop service, Apex frontend, and headset client from the same delivery release.
+- The current documentation baseline uses robot controller / MarvinSDK `100343001`, Teleop service `1.0.18`, and Marvin Pro frontend `1.0.7.6o`.
 - Package filenames change by release; use the delivered files and release notes.
 - Enable Tool and Camera according to the installed options.
 

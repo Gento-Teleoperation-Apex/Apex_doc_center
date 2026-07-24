@@ -5,17 +5,24 @@ sidebar_position: 1
 
 # Apex Teleop User Guide
 
-Apex Teleop is the host-side control application for KernelMind Apex products. It connects to the robot controller, manages teleoperation modules and control modes, displays camera streams, records and plays back data, and provides runtime logs.
+The Apex host software connects to the robot controller, manages teleoperation modules and control modes, displays camera streams, records and plays back data, and provides runtime logs. A delivered software set includes the robot controller layer, the Teleop service, and the frontend. Their version numbers refer to different components.
+
+| Software layer | Current documentation baseline | Purpose |
+|---|---|---|
+| Robot controller / MarvinSDK | `100343001` | Establishes the robot control link |
+| Teleop service | `1.0.18` | Processes teleoperation data and the control chain |
+| Marvin Pro frontend | `1.0.7.6o` | Host user interface |
+| Gento frontend | `1.0.6.81g` | Skye/Luna host user interface; versions marked with `g` belong to the Gento product line |
+
+Versions continue to evolve. These numbers identify the current documentation baseline; always use matching software from one delivery release.
 
 ## Compatibility
 
 | Product | Interface | Notes |
 |---|---|---|
-| Marvin Pro (current Tianzhun version) | [Current interface](/software/apex-teleop/pro-current) | Screenshots use the interface paired with Apex Teleop `1.0.7.6o` |
+| Marvin Pro (current Tianzhun version) | [Current interface](/software/apex-teleop/pro-current) | Screenshots use frontend `1.0.7.6o` |
 | Marvin Pro (historical Orin version) | [Classic interface](/software/apex-teleop/classic) | For previously delivered systems |
-| Skye / Luna | [Classic interface](/software/apex-teleop/classic) | Uses the classic UI and Pico full-body teleoperation kit |
-
-Software versions evolve over time. Always use host and controller packages from the same delivery release.
+| Skye / Luna | [Classic interface](/software/apex-teleop/classic) | Current documentation baseline is Gento frontend `1.0.6.81g` |
 
 ## Guides
 

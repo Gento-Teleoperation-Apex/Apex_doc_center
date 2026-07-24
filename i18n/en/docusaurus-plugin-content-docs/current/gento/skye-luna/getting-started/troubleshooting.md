@@ -11,7 +11,10 @@ sidebar_position: 4
 | Robot fails to start | E-stop, robot power, and Robot log |
 | 3D and physical poses differ | Model configuration, Robot state, and joint feedback |
 | Pico cannot connect | Pico address, target IP, network module, and Ethernet adapter |
-| Arms move but knees do not | Waist/leg tracker placement, charge, and tracking state |
+| Skye arms move but BODY/LIFT does not | Model configuration and waist/leg tracker placement, charge, and tracking state |
+| Luna arms move but torso/legs do not | Model configuration and waist/leg tracker placement, charge, and tracking state |
+| Skye does not show VR Connected | Current Skye releases must not be diagnosed from this state alone; also verify continuous target-pose and enable data |
+| Luna receives data but cannot teleoperate | Headset-to-controller TCP session, target IP, client version, and network state |
 | Motion direction is wrong | Left/right units, tracker orientation, and Home pose |
 | No camera image | Camera module, four-camera wiring, and log |
 | No teleoperation motion | Robot Ready, Impedance Mode, Home, and headset connection |

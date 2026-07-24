@@ -25,8 +25,8 @@ Pico must not use the same IP as Tianzhun 003. When changing the site subnet, up
 2. Wear the waist tracker in the specified orientation.
 3. Install leg trackers at the specified positions without swapping sides.
 4. Check charge, connection, and tracking for every component.
-5. After Home, test small arm motions first, then verify torso and knee mapping.
+5. After Home, test small arm motions first. Then verify BODY/LIFT mapping on Skye or torso/leg mapping on Luna.
 
 ## Software
 
-Skye/Luna uses the classic Apex Teleop and Pico client matched to the controller release. See [Classic Apex Teleop](/software/apex-teleop/classic).
+Skye/Luna uses the Teleop service, Apex frontend, and Pico client matched to the controller release. The current documentation baseline is Teleop service `1.0.18` and Gento frontend `1.0.6.81g`. Versions continue to evolve, so use packages from the same delivery release. See [Classic Apex Teleop](/software/apex-teleop/classic).

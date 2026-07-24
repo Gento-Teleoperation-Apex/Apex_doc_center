@@ -60,7 +60,7 @@ uv run convert_v3_to_v2.py \
 推荐的数据准备流程：
 
 ```text
-BAG_STORAGE 原始采集
+BAG_STORAGE/recorded_bags 原始采集
   -> python -m km_data_converter run-full
   -> datasets/lerobot_output/（LeRobot v3.0）
   -> uv run convert_v3_to_v2.py --local-root <v3.0 数据集路径>

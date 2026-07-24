@@ -1,6 +1,6 @@
 # KernelMind Data Converter Guide
 
-KernelMind Data Converter is a conversion tool for teleoperation and robot datasets. It organizes MCAP files, camera videos, and timestamp information from raw `BAG_STORAGE/my_bag-*` recording directories into trainable LeRobot v3 datasets. It also provides an Electron desktop UI for path selection, video stream mapping, end-effector selection, LeRobot Schema configuration, conversion progress, and Rerun visualization.
+KernelMind Data Converter is a conversion tool for teleoperation and robot datasets. Teleoperation data is recorded by default to a USB drive labeled `BAG_STORAGE` under `/media/<user>/BAG_STORAGE/recorded_bags`. The tool organizes MCAP files, camera videos, and timestamp information from the `my_bag-*` directories into trainable LeRobot v3 datasets. It also provides an Electron desktop UI for path selection, video stream mapping, end-effector selection, LeRobot Schema configuration, conversion progress, and Rerun visualization.
 
 ## Core Features
 
@@ -14,16 +14,18 @@ KernelMind Data Converter is a conversion tool for teleoperation and robot datas
 
 ## Raw Data Directory Requirements
 
-The input directory must contain one or more `my_bag-*` episode directories:
+On Linux, the USB drive is mounted by default at `/media/<user>/BAG_STORAGE`, and recordings are stored in its `recorded_bags` subdirectory. Select `recorded_bags` as the Data Converter input. It must contain one or more `my_bag-*` episode directories:
 
 ```text
 BAG_STORAGE/
-  my_bag-yy-MM-dd-HH-mm-ss/
-    data/
-      data_0.mcap
-    video/
-      cameras.mp4
-      cameras_first_frame.yaml
+  recorded_bags/
+    my_bag-yy-MM-dd-HH-mm-ss/
+      data/
+        data_0.mcap
+        metadata.yaml
+      video/
+        cameras.mp4
+        cameras_first_frame.yaml
 ```
 
 Key files:
@@ -31,10 +33,13 @@ Key files:
 | File | Purpose |
 | --- | --- |
 | `data/data_0.mcap` | Raw ROS / robot state recording. |
+| `data/metadata.yaml` | Recording metadata. If it is missing, first check whether recording ended normally. |
 | `video/cameras.mp4` | 2x2 camera video. |
 | `video/cameras_first_frame.yaml` | Absolute timestamp of the first frame. The file must contain `first_frame_time.epoch_ns`. |
 
 Episode directory names must start with `my_bag-`. The final generated dataset directory is named with the earliest episode timestamp.
+
+When reading the USB drive directly on Windows, if its drive letter is `D:`, the converter input is normally `D:\recorded_bags`, not `D:\BAG_STORAGE`.
 
 ## Pre-Conversion Quality Check
 
@@ -42,7 +47,7 @@ Before conversion, check the directory structure, raw recordings, and required t
 
 ```powershell
 python -m km_data_converter quality-check ^
-  --input D:\BAG_STORAGE ^
+  --input D:\recorded_bags ^
   --output D:\output\km_dataset
 ```
 
@@ -50,7 +55,7 @@ Reports are written to `D:\output\km_dataset\quality_report`. To require additio
 
 ```powershell
 python -m km_data_converter quality-check ^
-  --input D:\BAG_STORAGE ^
+  --input D:\recorded_bags ^
   --output D:\output\km_dataset ^
   --required-topic /joint_states ^
   --required-topic /control/joint_cmd_A
@@ -97,7 +102,7 @@ After startup, the UI opens the `KernelMind Data Converter` window.
 
 Fill in or select the following in `Input Paths`:
 
-- Raw data directory: the `BAG_STORAGE` directory containing `my_bag-*`.
+- Raw data directory: the `recorded_bags` directory on the USB drive containing `my_bag-*`. The default Linux path is `/media/<user>/BAG_STORAGE/recorded_bags`.
 - Output directory: intermediate RRD files, config files, and the final LeRobot dataset are written here.
 - Video FPS: output FPS for split videos. The UI default is `30`. It is recommended to set the output video FPS lower than the original video FPS.
 - Task description: optional task text written to the final dataset.
