@@ -18,7 +18,7 @@ ros2 interface list | grep marvin_msgs
 
 ## 1. 安全要求
 
-- 外部控制前，优先在 Apex 前端完成 **Start Robot → Impedance Mode → Home**。
+- 外部控制前，优先在 Apex 前端完成 **Start Robot → Impedance Mode → Home**。但机器人处于出厂打包姿态时禁止直接 Home，必须先通过 Planner 和 `/control/movej` 将双臂移动到 14 关节全零位。
 - 将 **Input Mode** 切换为 **Custom** 后，机器人会接收客户程序的关节指令。
 - 首次测试应清空工作空间、降低动作幅度，并保持急停可触及。
 - 客户程序必须持续发送平滑、时间连续且满足关节限制的目标。
@@ -139,6 +139,16 @@ ros2 interface show marvin_msgs/srv/MotorErrCode
 ros2 service call /control/set_ready std_srvs/srv/Trigger "{}"
 ros2 service call /control/set_mode marvin_msgs/srv/Int "{data: 3}"
 ```
+
+出厂打包姿态下，腕部相机靠近中间立柱，禁止直接调用 `/control/go_home`。应先启动 Robot 和 Teleop，使机器人 Ready，再切换到 Position Mode 与 Planner 输入，并将 14 个关节移动到全零位：
+
+```bash
+ros2 service call /control/set_mode marvin_msgs/srv/Int "{data: 1}"
+ros2 service call /control/set_input marvin_msgs/srv/Int "{data: 2}"
+ros2 service call /control/movej marvin_msgs/srv/MoveJ "{joint_values: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}"
+```
+
+确认双臂到达全零位且路径安全后，才可进入阻抗模式并执行 Home。首次操作建议使用 RQt Service Caller，以便核对 Service、字段和值。
 
 ## 7. 遥操链路诊断 Topic
 

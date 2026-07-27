@@ -31,12 +31,39 @@ This page applies to the current Marvin Pro with a Tianzhun controller and uses 
 4. Start **Teleop** and **dnsmasq**.
 5. Start **Camera** when video is required. Start **Tool** only when an end effector is configured.
 6. Click **Start Robot** to set the robot Ready.
-7. Select **Impedance Mode**.
-8. Click **Home** to move to the teleoperation initial pose.
-9. Set **Input Mode** to **Teleop**.
-10. Connect the headset, open the Apex headset client, connect, and begin teleoperation.
 
-> Keep the robot workspace clear and the emergency stop within reach. Watch the physical robot during mode changes and Homing.
+:::danger Do not Home directly from the factory packing pose
+If both arms hang vertically close to the center column, the robot is still in its factory packing pose. Calling Home directly can cause a wrist camera to collide with the column. First move all 14 arm joints to zero using the procedure below.
+:::
+
+### Move from the Packing Pose to All Zeros
+
+Confirm that **Robot** and **Teleop** are running and the robot is Ready. Start RQt from a desktop terminal with the Apex ROS environment loaded:
+
+```bash
+source /etc/apex/apex_ros_env.sh
+rqt
+```
+
+Open **Plugins → Services → Service Caller**, then:
+
+1. Call `/control/set_mode` with `data = 1` to select Position Mode.
+2. Call `/control/set_input` with `data = 2` to select Planner input.
+3. Call `/control/movej` with `joint_values` set to 14 zeros.
+
+```text
+[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+```
+
+After both arms reach the all-zero pose:
+
+1. Select **Impedance Mode**.
+2. Click **Home** to move to the teleoperation initial pose.
+3. Set **Input Mode** to **Teleop**.
+4. Connect the headset, open the Apex headset client, and begin teleoperation.
+
+If the robot has already left the packing pose and its path is known to be safe, proceed directly with the teleoperation-mode steps above. Watch the physical robot and wrist cameras throughout the motion and keep the emergency stop within reach.
 
 ## Module controls
 
@@ -60,7 +87,7 @@ Green indicates that a module is running. Dependent controls may remain unavaila
 | Standby Mode | Does not execute external motion commands |
 | Position Mode | Position control mode |
 | Impedance Mode | Compliant mode used for teleoperation |
-| Home | Moves to the configured teleoperation initial pose |
+| Home | Moves to the configured teleoperation initial pose; from the factory packing pose, first MoveJ to all zeros and never click Home directly |
 | Restart (Gripper) | Restarts a configured gripper |
 
 ### Input modes

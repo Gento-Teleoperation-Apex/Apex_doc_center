@@ -13,6 +13,7 @@ sidebar_position: 3
 - 急停已释放，机器人工作空间内无人和障碍物。
 - 上位机与天准控制器处于同一网段。
 - 头显已接入同一局域网。
+- 确认机器人是否仍处于出厂打包姿态。**打包姿态下禁止直接点击 Home，否则腕部相机可能与中间立柱碰撞。**
 
 ## 2. 连接天准控制器
 
@@ -39,7 +40,7 @@ sudo systemctl status apex-backend.service --no-pager
 
 > 使用 MobaXterm 时关闭 `X11-Forwarding`，避免相机采集超时或头显画面异常。
 
-## 3. 启动 Apex Teleop
+## 3. 启动 Apex Teleop 和机器人
 
 1. 打开 Apex Teleop。
 2. 在右上角填写天准控制器 IP，按 **Enter** 连接。
@@ -48,13 +49,43 @@ sudo systemctl status apex-backend.service --no-pager
 5. 启动 **Teleop** 和 **dnsmasq**。
 6. 需要视频时启动 **Camera**；配置了末端执行器时再启动 **Tool**。
 7. 在左下角点击 **Start Robot**。
-8. 点击 **Impedance Mode**。
-9. 点击 **Home**，等待机器人到达遥操初始位。
-10. 将 **Input Mode** 切换为 **Teleop**。
 
 ![Marvin Pro 当前版 Apex Teleop](/img/software/apex-teleop/pro-main.png)
 
-## 4. 连接头显并遥操
+## 4. 首次拆箱：先退出打包姿态
+
+:::danger 打包姿态禁止直接 Home
+机器人以双臂垂直靠近中间立柱的打包姿态交付。此姿态直接执行 Home 时，腕部相机存在碰撞立柱的风险。首次拆箱或每次人工恢复到打包姿态后，必须先将双臂 14 个关节移动到全零位。
+:::
+
+完成上一节并确保 **Robot**、**Teleop** 已启动且机器人 Ready 后，在已加载 Apex ROS 环境的桌面终端打开 RQt：
+
+```bash
+source /etc/apex/apex_ros_env.sh
+rqt
+```
+
+在 RQt 中依次打开 **Plugins → Services → Service Caller**，然后执行：
+
+1. 选择 `/control/set_mode`，将 `data` 设为 `1`，切换到 Position Mode。
+2. 选择 `/control/set_input`，将 `data` 设为 `2`，切换到 Planner 输入。
+3. 选择 `/control/movej`，将 `joint_values` 设置为以下 14 个零后点击 **Call**：
+
+```text
+[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+```
+
+移动期间持续观察实体机器人和腕部相机与立柱的距离，保持急停可触及。确认双臂均到达全零位后，再继续下一节。已经离开打包姿态且起始路径确认安全时，不需要重复执行本节。
+
+## 5. 进入遥操姿态
+
+1. 确认机器人已经离开打包姿态，双臂处于全零位或其他经确认的安全起始姿态。
+2. 点击 **Impedance Mode**。
+3. 点击 **Home**，等待机器人到达遥操初始位。
+4. 将 **Input Mode** 切换为 **Teleop**。
+
+## 6. 连接头显并遥操
 
 Marvin Pro 支持 Pico 和 Meta Quest：
 
@@ -63,7 +94,7 @@ Marvin Pro 支持 Pico 和 Meta Quest：
 
 连接头显网线，打开 Apex 头显客户端并连接控制器。确认前端 VR 状态正常后，在安全区域内以小幅动作开始遥操。
 
-## 5. 快速检查
+## 7. 快速检查
 
 | 现象 | 检查项 |
 |---|---|
@@ -74,5 +105,7 @@ Marvin Pro 支持 Pico 和 Meta Quest：
 | 头显无法连接 | dnsmasq、头显网线、头显连接 IP 和 VR 状态 |
 | 相机黑屏 | Camera 是否启动、相机初始化和 `camera_sources` 配置 |
 | 遥操无动作 | 是否进入 Impedance Mode、完成 Home、Input Mode 是否为 Teleop |
+| 打包姿态准备首次启动 | 禁止直接 Home；先通过 RQt 的 `/control/movej` 将双臂 14 关节移动到全零位 |
+| Home 路径接近立柱 | 立即停止并按需急停，检查是否遗漏全零位步骤和起始姿态 |
 
 需要进一步排查时，请查看 [Apex Teleop 日志说明](/software/apex-teleop/pro-current#日志查看)。

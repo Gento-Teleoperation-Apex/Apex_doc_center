@@ -34,6 +34,6 @@ For headset installation and developer mode, see [Apex XR Headset Client](/xr-te
 
 ## Validation
 
-Restart the controller and host application, verify network/model/camera/tool configuration, start Robot, confirm the URDF pose, then test Impedance Mode, Home, and small motions in a clear workspace. Also verify recording, video, and logs.
+Restart the controller and host application, verify network/model/camera/tool configuration, start Robot, and confirm the URDF pose. Then test Impedance Mode, Home, and small motions in a clear workspace. If the robot is in the factory packing pose, first use RQt MoveJ to move all 14 arm joints to zero; never Home directly. Also verify recording, video, and logs.
 
 Do not update the robot controller, servo, or camera firmware across versions without a package and procedure confirmed by technical support.

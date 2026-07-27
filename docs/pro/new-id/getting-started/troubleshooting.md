@@ -14,6 +14,8 @@ sidebar_position: 4
 | URDF 与实体姿态不一致 | Robot 模块、机型配置、关节状态是否更新 |
 | Teleop 或模式按钮不可用 | Robot 是否运行、是否点击 Start Robot |
 | 点击 Home 后不动作 | Ready 状态、控制模式、机器人是否存在报警 |
+| 打包姿态直接 Home 可能碰撞立柱 | 禁止继续 Home；先启动 Robot/Teleop，通过 RQt 调用 `/control/movej` 将双臂 14 关节移动到全零位 |
+| Home 过程中腕部相机接近立柱 | 立即停止并按需急停，重新确认起始姿态和全零位步骤 |
 | 头显无法连接 | dnsmasq、头显网线、连接 IP、VR 状态 |
 | 四宫格部分黑屏 | `camera_sources` 是否包含 `none`；启用路数是否符合交付配置 |
 | 全部相机黑屏 | Camera、上电后相机初始化、线束和 Camera 日志 |

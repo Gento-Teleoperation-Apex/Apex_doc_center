@@ -31,23 +31,20 @@ Wiring notes:
 - When using the system for the first time or after replacing the controller, confirm that the robot controller IP is `6.6.7.190`.
 - After the electric cabinet is powered on again, initialize the camera before starting the teleoperation system.
 
-## 2. Move the Robot to the Initial Horizontal End Pose
+## 2. First-Unpacking Pose Safety
 
-Use `MarvinPlatform` or robot motion control software version 43 to move both arms to the initial horizontal end pose before teleoperation.
+:::danger Do not Home directly from the packing pose
+The robot is delivered with both arms hanging vertically close to the center column. Calling Home directly from this pose can cause a wrist camera to collide with the column.
+:::
 
-![Robot zero-position preparation](/img/pro/new-id/zero-position-ui.png)
+After completing all wiring and starting **Robot** and **Teleop**, use RQt Service Caller to select Position Mode and Planner input. Then call `/control/movej` to move all 14 arm joints to zero:
 
-Procedure:
+```text
+[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+```
 
-1. Enter robot IP `6.6.7.190` in the connection screen and connect.
-2. After the connection succeeds, run `ClearServoErr` to clear servo errors.
-3. Click `Position` to switch the robot to position mode.
-4. Enter `0 0 0 0 0 0 0` in the joint position input field.
-5. Run the left arm to move it to the zero position.
-6. Repeat the same procedure for the right arm with the same joint values.
-7. After both arms are in the zero position, exit the host control software.
-
-> Before moving the robot, confirm that there are no people, devices, or obstacles within the arm motion range.
+Enter Impedance Mode and call Home only after both arms reach all zeros. See [Startup and Debugging: First Unpacking](./startup-debugging#4-first-unpacking-exit-the-packing-pose) for the complete procedure.
 
 ## 3. Tianzhun Electric Cabinet Interface Check
 
@@ -104,6 +101,7 @@ Default network parameters:
 | 3 | Connect the headset wired network | Headset is connected through the Ethernet-to-Type-C adapter |
 | 4 | Turn on the electric cabinet `POWER` | Wait for the system to boot and check the `DC48V` / `DC12V` indicators |
 | 5 | Initialize the camera | Run the camera initialization script after the cabinet is powered on again |
-| 6 | Start the teleoperation system | Confirm that the headset or host PC can display the camera view after startup |
+| 6 | Check the packing pose | If the arms hang vertically near the column, do not Home directly; use RQt MoveJ to move all 14 arm joints to zero |
+| 7 | Start the teleoperation system | Confirm that the headset or host PC can display the camera view after startup |
 
 If there is no camera view, first check the Senyun camera-end connector, exposed arm cable, camera initialization status, and network signaling address.

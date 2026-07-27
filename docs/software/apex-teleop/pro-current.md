@@ -31,12 +31,39 @@ sidebar_position: 2
 4. 启动 **Teleop** 和 **dnsmasq**。
 5. 根据需要启动 **Camera**；仅配置了末端执行器时启动 **Tool**。
 6. 在左下角点击 **Start Robot**，使机器人进入 Ready 状态。
-7. 点击 **Impedance Mode**，进入阻抗模式。
-8. 点击 **Home**，让机器人回到遥操初始位。
-9. 将 **Input Mode** 切换为 **Teleop**。
-10. 连接头显，在 Apex 头显客户端中建立连接并开始遥操。
 
-> 操作前确认机器人周围无人、急停可触及。切换模式和执行 Home 时，应随时观察实体机器人，而不只查看 3D 模型。
+:::danger 出厂打包姿态禁止直接 Home
+如果机器人双臂垂直靠近中间立柱，说明设备仍处于出厂打包姿态。此时直接 Home 可能使腕部相机碰撞立柱，必须先按下方步骤将双臂 14 个关节移动到全零位。
+:::
+
+### 打包姿态全零位操作
+
+确保 **Robot**、**Teleop** 已启动且机器人 Ready，在已加载 Apex ROS 环境的桌面终端启动 RQt：
+
+```bash
+source /etc/apex/apex_ros_env.sh
+rqt
+```
+
+打开 **Plugins → Services → Service Caller**，依次执行：
+
+1. `/control/set_mode`：`data = 1`，切换到 Position Mode。
+2. `/control/set_input`：`data = 2`，切换到 Planner 输入。
+3. `/control/movej`：将 `joint_values` 设置为 14 个零并点击 **Call**。
+
+```text
+[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+```
+
+确认双臂均到达全零位后，继续执行：
+
+1. 点击 **Impedance Mode**，进入阻抗模式。
+2. 点击 **Home**，让机器人回到遥操初始位。
+3. 将 **Input Mode** 切换为 **Teleop**。
+4. 连接头显，在 Apex 头显客户端中建立连接并开始遥操。
+
+已经离开打包姿态且路径确认安全时，可以直接执行上述遥操模式步骤。操作期间应持续观察实体机器人和腕部相机，保持急停可触及。
 
 ## 模块控制
 
@@ -60,7 +87,7 @@ sidebar_position: 2
 | Standby Mode | 待机，不执行外部运动指令 |
 | Position Mode | 位置控制模式 |
 | Impedance Mode | 遥操使用的阻抗控制模式 |
-| Home | 回到配置的遥操初始位 |
+| Home | 回到配置的遥操初始位；出厂打包姿态必须先通过 MoveJ 到全零位，禁止直接点击 |
 | Restart (Gripper) | 重启已配置的夹爪 |
 
 ### 输入模式

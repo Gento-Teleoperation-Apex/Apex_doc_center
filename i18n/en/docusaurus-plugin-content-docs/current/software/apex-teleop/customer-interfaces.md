@@ -18,7 +18,7 @@ ros2 interface list | grep marvin_msgs
 
 ## 1. Safety Requirements
 
-- In the Apex frontend, complete **Start Robot → Impedance Mode → Home** before external control.
+- In the Apex frontend, complete **Start Robot → Impedance Mode → Home** before external control. However, never call Home directly from the factory packing pose. First use Planner and `/control/movej` to move all 14 arm joints to zero.
 - Set **Input Mode** to **Custom** before the robot accepts customer joint commands.
 - Clear the workspace, begin with small motions, and keep the emergency stop within reach.
 - Publish smooth, time-continuous targets that stay within the robot joint limits.
@@ -139,6 +139,16 @@ The following calls set Ready and joint impedance mode. Use the Apex frontend fo
 ros2 service call /control/set_ready std_srvs/srv/Trigger "{}"
 ros2 service call /control/set_mode marvin_msgs/srv/Int "{data: 3}"
 ```
+
+In the factory packing pose, the wrist cameras are close to the center column. Do not call `/control/go_home` directly. Start Robot and Teleop, set the robot Ready, select Position Mode and Planner input, then move all 14 joints to zero:
+
+```bash
+ros2 service call /control/set_mode marvin_msgs/srv/Int "{data: 1}"
+ros2 service call /control/set_input marvin_msgs/srv/Int "{data: 2}"
+ros2 service call /control/movej marvin_msgs/srv/MoveJ "{joint_values: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}"
+```
+
+Enter Impedance Mode and call Home only after both arms reach all zeros and the path is clear. RQt Service Caller is recommended for the first operation so that the service, field, and values can be checked visually.
 
 ## 7. Teleoperation Chain Diagnostic Topics
 

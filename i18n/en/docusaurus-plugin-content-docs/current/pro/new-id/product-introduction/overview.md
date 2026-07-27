@@ -68,7 +68,9 @@ Foot pedal key functions:
 | Key | Function |
 |---|---|
 | Key 1 (left key) | Enables both left and right controllers together |
-| Key 3 (right key) | Moves both arms back to the Home position |
+| Key 3 (right key) | Moves both arms back to the Home position; prohibited in the factory packing pose |
+
+From the packing pose, first follow [Startup and Debugging](../getting-started/startup-debugging#4-first-unpacking-exit-the-packing-pose) to move all 14 arm joints to zero before using any Home function.
 
 ![Foot pedal connection example](/img/pro/pro_accessories_foot_pedal.png)
 
