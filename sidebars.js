@@ -62,6 +62,7 @@ const sidebars = {
         'vla/dataset-sample',
         'vla/training',
         'vla/deployment',
+        'vla/vla-host',
       ],
     },
   ],
