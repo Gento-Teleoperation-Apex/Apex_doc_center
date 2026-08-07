@@ -29,6 +29,10 @@ The rear interface positions and appearance of Skye and Luna are slightly differ
 
 Connect the network as follows:
 
+:::warning Headset Ethernet Port
+For wired headset networking, connect a **Tianzhun controller to Ethernet port 1**, whose default connection address is `6.6.7.100`. For a **Lingjing Thor controller, use Ethernet port 2**, whose default connection address is `6.6.8.100`. Do not interchange the two ports. If the site network was changed, follow the delivered configuration.
+:::
+
 1. Connect the robot rear Ethernet port to the router / switch.
 2. Connect the host PC to the same router / switch.
 3. Connect the headset to the same router / switch through the Type-C Ethernet adapter.
@@ -51,5 +55,6 @@ Before powering on and starting the system, check each item:
 ## 5. Notes
 
 - Headset Wi-Fi is not recommended for teleoperation. Use the wired network connection first.
+- Connect the headset cable to port 1 for a Tianzhun controller and port 2 for a Lingjing Thor controller.
 - After wiring is complete, proceed to environment configuration and startup debugging.
 - If the host PC cannot connect to the robot, first check the Ethernet cable, router / switch, power, and IP subnet.

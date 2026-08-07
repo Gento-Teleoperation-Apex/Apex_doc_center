@@ -12,6 +12,10 @@ sidebar_position: 0
 
 Welcome to the Teleoperation Client usage guide.
 
+:::warning Wired Headset Connection
+Use **Ethernet port 1** when connecting the headset to a Tianzhun controller; its default connection address is `6.6.7.100`. Use **Ethernet port 2** with a Lingjing Thor controller; its default connection address is `6.6.8.100`. Follow the delivered configuration if the site network parameters have been changed.
+:::
+
 Please select the manual that corresponds to the headset you are currently using:
 
 * [**PICO User Manual**](./pico.md)

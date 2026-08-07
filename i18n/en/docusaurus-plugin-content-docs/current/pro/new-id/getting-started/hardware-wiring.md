@@ -69,6 +69,10 @@ The Senyun camera and deserializer-related wiring are integrated inside the robo
 
 The host PC, Tianzhun electric cabinet, and VR headset must be on the same `6.6.7.x` subnet.
 
+:::warning Headset Ethernet Port
+For wired headset networking, connect a **Tianzhun controller to Ethernet port 1**, whose default connection address is `6.6.7.100`. For a **Lingjing Thor controller, use Ethernet port 2**, whose default connection address is `6.6.8.100`. Do not interchange the two ports. If the site network was changed, follow the delivered configuration.
+:::
+
 | Item | Requirement |
 |---|---|
 | Host PC | Connect to the electric cabinet by Ethernet; set the network adapter IP to `6.6.7.xxx`, for example `6.6.7.165` |
@@ -78,7 +82,7 @@ The host PC, Tianzhun electric cabinet, and VR headset must be on the same `6.6.
 
 Headset connection method:
 
-1. Connect one end of the Ethernet cable to the robot electric cabinet.
+1. Connect one end of the Ethernet cable to port 1 on the robot electric cabinet. For a Lingjing Thor controller, connect it to port 2 instead.
 2. Connect the other end to the Ethernet-to-Type-C adapter.
 3. Insert the Type-C connector into the left-side port of the headset.
 4. Do not enable Wi-Fi on the teleoperation headset. Use the wired network connection first.
