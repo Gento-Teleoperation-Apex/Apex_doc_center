@@ -30,6 +30,8 @@ Versions continue to evolve. These numbers identify the current documentation ba
 - [Classic interface for historical Marvin Pro and Skye/Luna](/software/apex-teleop/classic)
 - [Marvin Pro customer integration interfaces](/software/apex-teleop/customer-interfaces)
 - [Gento (Skye/Luna) ROS 2 interfaces](/software/apex-teleop/gento-interfaces)
+- [Configuration changes](/software/apex-teleop/configuration)
+- [FAQ and quick reference](/software/apex-teleop/troubleshooting)
 - [Pico headset guide](/xr-teleop/pico)
 - [Meta Quest headset guide](/xr-teleop/meta)
 

@@ -30,6 +30,8 @@ Apex 上位机软件用于连接机器人控制器、管理遥操模块、切换
 - [Marvin Pro 历史版与 Skye/Luna 经典界面](/software/apex-teleop/classic)
 - [Marvin Pro 客户二次开发接口](/software/apex-teleop/customer-interfaces)
 - [Gento（Skye/Luna）ROS 2 接口](/software/apex-teleop/gento-interfaces)
+- [配置修改](/software/apex-teleop/configuration)
+- [常见问题与速查](/software/apex-teleop/troubleshooting)
 - [Pico 头显操作说明](/xr-teleop/pico)
 - [Meta Quest 头显操作说明](/xr-teleop/meta)
 
