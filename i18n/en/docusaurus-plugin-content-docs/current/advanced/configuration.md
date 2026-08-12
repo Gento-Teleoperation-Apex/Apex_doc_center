@@ -1,6 +1,6 @@
 ---
 title: Configuration Changes
-sidebar_position: 6
+sidebar_position: 1
 ---
 
 # Apex Teleoperation Configuration Changes
@@ -217,4 +217,4 @@ The following items affect stability, safety limits, or calibration and may only
 
 For these changes, provide technical support with the product model, controller, end-effector type, software versions, intended change, service logs, and a backup of the original configuration.
 
-For startup, network, or device-detection issues, see [FAQ and Quick Reference](/software/apex-teleop/troubleshooting).
+For startup, network, or device-detection issues, see [FAQ and Quick Reference](/advanced/troubleshooting).

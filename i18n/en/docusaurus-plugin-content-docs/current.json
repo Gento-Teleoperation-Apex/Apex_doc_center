@@ -15,6 +15,10 @@
     "message": "Software Guides",
     "description": "The label for category 软件使用说明 in sidebar mainSidebar"
   },
+  "sidebar.mainSidebar.category.进阶配置及检测": {
+    "message": "Advanced Configuration and Diagnostics",
+    "description": "The label for category 进阶配置及检测 in sidebar mainSidebar"
+  },
   "sidebar.mainSidebar.category.Apex XR 头显客户端": {
     "message": "Apex XR Headset Client",
     "description": "The label for category Apex XR 头显客户端 in sidebar mainSidebar"

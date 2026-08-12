@@ -20,8 +20,8 @@ KernelMind Apex 文档中心是 Marvin Pro、Gento Skye/Luna 及其遥操软件�
 
 | 内容 | 数量 |
 |---|---:|
-| 中文 Markdown/MDX 页面 | 38 |
-| 英文 Markdown/MDX 页面 | 38 |
+| 中文 Markdown/MDX 页面 | 41 |
+| 英文 Markdown/MDX 页面 | 41 |
 | 已纳入 Git 管理的 `static/img` 图片资源 | 150 |
 | 支持语言 | 中文、English |
 
@@ -29,15 +29,16 @@ KernelMind Apex 文档中心是 Marvin Pro、Gento Skye/Luna 及其遥操软件�
 
 ## 2. 网站一级结构
 
-网站左侧导航当前分为五个主要板块：
+网站左侧导航当前分为六个主要板块：
 
-1. **产品文档**
-2. **软件使用说明**
-3. **末端夹爪**
-4. **VLA 入门**
-5. **首页**
+1. **首页**
+2. **产品文档**
+3. **软件使用说明**
+4. **进阶配置及检测**
+5. **末端夹爪**
+6. **VLA 入门**
 
-其中产品文档按机器人型号区分，软件使用说明按软件模块区分，末端夹爪和 VLA 则提供面向开发和集成的独立说明。
+其中产品文档按机器人型号区分，软件使用说明提供基础操作和接口资料；进阶配置及检测用于参数调整、现场排障和模块验证；末端夹爪和 VLA 提供面向开发和集成的独立说明。
 
 ## 3. 首页
 
@@ -133,16 +134,13 @@ Skye 和 Luna 归入同一产品栏目。产品介绍以 Skye/Luna 系列为对�
 | 经典版界面 | 历史 Pro 和当前 Skye/Luna 经典界面的连接、主要区域、录制回放和日志 | `/software/apex-teleop/classic` |
 | Marvin Pro 接口 | 客户二次开发使用的状态、反馈、控制、录制、相机、VLA、端口及诊断接口 | `/software/apex-teleop/customer-interfaces` |
 | Gento ROS 2 接口 | Skye/Luna 关节差异、状态、遥操、全身控制、Service、末端、相机和采集 Topic | `/software/apex-teleop/gento-interfaces` |
-| 配置修改 | 客户可修改的网络、机器人地址、相机、录制目录和末端配置，以及备份、重启和验证方法 | `/software/apex-teleop/configuration` |
-| 常见问题与速查 | 启动、网络、相机、WebRTC、遥操、末端、ROS、依赖、录制、授权等现场问题 | `/software/apex-teleop/troubleshooting` |
 
 #### 配置和接口的边界
 
 - 产品快速入门回答“设备如何接线和启动”。
 - 上位机界面说明回答“按钮和模块如何使用”。
 - ROS 2 接口回答“客户程序可以读取或控制什么”。
-- 配置修改回答“哪些参数允许客户调整以及如何生效”。
-- 常见问题与速查回答“出现异常时如何定位”。
+- 进阶配置及检测回答“哪些参数允许调整、出现异常时如何定位，以及如何分段验证链路”。
 
 控制增益、QP 参数、碰撞模型、机器人模型和相机标定不属于客户常规配置。
 
@@ -177,15 +175,33 @@ Skye 和 Luna 归入同一产品栏目。产品介绍以 Skye/Luna 系列为对�
 - Marvin Pro 支持 Pico 和 Meta Quest，具体以交付版本为准。
 - Skye/Luna 全身遥操使用 Pico，并包含腰部和腿部追踪组件。
 
-## 6. 末端夹爪
+## 6. 进阶配置及检测
+
+目录：`docs/advanced/`
+
+该一级栏目独立于基础产品和软件使用说明，用于客户工程师、测试人员和技术支持进行配置调整、现场排障和链路验证。
+
+| 页面 | 主要内容 | 中文路由 |
+|---|---|---|
+| 配置修改 | 客户可修改的网络、机器人地址、相机、录制目录和末端配置，以及备份、重启和验证方法 | `/advanced/configuration` |
+| 常见问题与速查 | 启动、网络、相机、WebRTC、遥操、末端、ROS、依赖、录制、授权等现场问题 | `/advanced/troubleshooting` |
+| Marvin Pro 模块化通讯排查 | Pro 环境、ROS 图、机器人、头显、双臂、末端、相机、录制和日志的分层诊断 | `/advanced/pro-communication-diagnostics` |
+| Skye/Luna 模块化通讯排查 | Gento L1 SDK、双臂、身体、头部、末端、相机和录制链路的分层诊断 | `/advanced/gento-communication-diagnostics` |
+
+四个页面按“先配置、再查已知问题、最后按产品分段验证”的思路组织。两份模块化通讯排查手册中的每个 Bash 代码块都可在控制器终端独立整段粘贴，不依赖外部脚本，并会自动保存对应模块的排查结果；Gento 手册在形成正式验收标准前仍需分别在健康 Skye 和 Luna 上建立实机基线。
+
+## 7. 末端夹爪
 
 目录：`docs/end-effectors/`
 
-当前页面：`docs/end-effectors/apex-tool.md`
+当前包含两个页面：
 
-中文路由：`/end-effectors/apex-tool`
+| 页面 | 主要内容 | 中文路由 |
+|---|---|---|
+| ApexTool 使用与二次开发 | 末端配置、服务、ROS 2 接口、DM/ZY 驱动、客户输入、独立例程、测试和排障 | `/end-effectors/apex-tool` |
+| DM 夹爪 CAN 协议 | DM4310 MIT 帧、SocketCAN、反馈解析、状态码、抓帧、通信检查和安全边界 | `/end-effectors/dm-can-protocol` |
 
-该页面是 ApexTool 末端执行器的完整使用和二次开发手册，包含：
+`docs/end-effectors/apex-tool.md` 是 ApexTool 末端执行器的完整使用和二次开发手册，包含：
 
 - ApexTool 的模块定位和接入边界。
 - 完整 Apex 系统、独立夹爪和开发例程的接入路线选择。
@@ -199,7 +215,10 @@ Skye 和 Luna 归入同一产品栏目。产品介绍以 Skye/Luna 系列为对�
 
 该页面内容较深入，既用于客户集成，也可作为现场技术支持的参考手册。
 
-## 7. VLA 入门
+`docs/end-effectors/dm-can-protocol.md` 面向需要理解 DM4310 底层链路的开发人员。它以标准 ROS 2 接口为推荐控制方式，同时提供当前生产版本的 MIT 帧格式、常用帧表和反馈协议。直接发帧、设置零位及电机参数写入均按高风险操作限制。
+
+
+## 8. VLA 入门
 
 目录：`docs/vla/`
 
@@ -223,7 +242,7 @@ VLA 板块覆盖从遥操数据到 LeRobot 数据集、模型训练和真机部�
 - 将其加入“数据集样例”和“模型训练”之间；或
 - 把其中不重复的环境准备内容合并到“模型训练”和“真机部署”。
 
-## 8. 推荐阅读路径
+## 9. 推荐阅读路径
 
 ### 8.1 首次使用 Marvin Pro 当前版本
 
@@ -264,7 +283,7 @@ VLA 板块覆盖从遥操数据到 LeRobot 数据集、模型训练和真机部�
 6. 部署 vlahost、策略服务器和推理客户端。
 7. 先无动作验证反馈，再进行低速真机测试。
 
-## 9. 中英文文件对应关系
+## 10. 中英文文件对应关系
 
 中文页面位于：
 
@@ -281,8 +300,8 @@ i18n/en/docusaurus-plugin-content-docs/current/
 例如：
 
 ```text
-docs/software/apex-teleop/configuration.md
-i18n/en/docusaurus-plugin-content-docs/current/software/apex-teleop/configuration.md
+docs/advanced/configuration.md
+i18n/en/docusaurus-plugin-content-docs/current/advanced/configuration.md
 ```
 
 后续修改客户文档时应同步修改中英文页面，并保持：
@@ -292,7 +311,7 @@ i18n/en/docusaurus-plugin-content-docs/current/software/apex-teleop/configuratio
 - 相同的章节结构、命令、Topic、Service 和参数名。
 - 中文站使用 `/...`，英文站由 Docusaurus 自动添加 `/en/` 前缀。
 
-## 10. 图片与静态资源
+## 11. 图片与静态资源
 
 客户页面使用的图片统一放在：
 
@@ -319,7 +338,7 @@ Markdown 中引用静态图片时使用站点绝对路径，例如：
 
 图片中的操作说明应尽量转写为 Markdown 正文，图片主要保留设备、接口、接线位置和界面状态，便于后续搜索、翻译和维护。
 
-## 11. 导航和页面排序
+## 12. 导航和页面排序
 
 主导航由根目录的 `sidebars.js` 控制。
 
@@ -344,7 +363,7 @@ sidebar_position: 1
 4. 中英文文件是否同步存在。
 5. 页面内链接是否同时适用于中文和英文站点。
 
-## 12. 本地预览与构建
+## 13. 本地预览与构建
 
 安装依赖：
 
@@ -378,7 +397,7 @@ npm run serve
 
 项目要求 Node.js 18 或更高版本，GitHub Actions 当前使用 Node.js 22。
 
-## 13. 发布方式
+## 14. 发布方式
 
 发布工作流：
 
@@ -403,7 +422,7 @@ git push origin main
 
 线上更新通常需要等待 GitHub Actions 构建和 Pages 缓存刷新。若网站未立即变化，应先检查仓库 Actions 页面中的 Deploy 工作流是否成功。
 
-## 14. 维护原则
+## 15. 维护原则
 
 ### 内容维护
 
@@ -430,7 +449,7 @@ git status --short
 
 提交时只添加本次修改涉及的文件，避免把临时图片、备份目录、安装包或本地测试文件一并提交。
 
-## 15. 当前内容状态摘要
+## 16. 当前内容状态摘要
 
 当前文档中心已经具备以下完整链路：
 

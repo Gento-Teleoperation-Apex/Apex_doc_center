@@ -1,6 +1,6 @@
 ---
 title: 配置修改
-sidebar_position: 6
+sidebar_position: 1
 ---
 
 # Apex 遥操系统配置修改
@@ -217,4 +217,4 @@ ros2 topic echo /info/gripper_feedback_L --once
 
 需要修改上述项目时，请向技术支持提供产品型号、控制器、末端类型、软件版本、目标配置、服务日志和原配置备份。
 
-遇到启动、网络或设备识别问题，可继续查看[常见问题与速查](/software/apex-teleop/troubleshooting)。
+遇到启动、网络或设备识别问题，可继续查看[常见问题与速查](/advanced/troubleshooting)。
