@@ -203,6 +203,8 @@ ros2 topic echo /info/arm_state --once
 
 ## 8. Recording and Playback Interfaces
 
+Recording, playback, WebSocket forwarding, and rolling diagnostic logs use four independent whitelists. See [Topic whitelist configuration and diagnostics](/advanced/topic-whitelist) for configuration boundaries and validation.
+
 | Service | Type | Purpose |
 |---|---|---|
 | `/recorder/control` | `marvin_msgs/srv/JsonCommand` | Recording `start`, `stop`, `status`, `get_topics`, `storage_status`, and `clear_storage_error` |

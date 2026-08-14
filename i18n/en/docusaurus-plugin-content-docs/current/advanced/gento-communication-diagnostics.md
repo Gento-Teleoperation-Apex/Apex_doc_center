@@ -1,6 +1,6 @@
 ---
 title: Skye/Luna Modular Diagnostics
-sidebar_position: 4
+sidebar_position: 5
 ---
 
 # Gento Skye/Luna Direct-Paste Communication Diagnostics

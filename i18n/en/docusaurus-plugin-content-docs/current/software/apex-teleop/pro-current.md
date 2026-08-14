@@ -121,6 +121,8 @@ Recordings are stored by default in:
 
 Each `my_bag-*` task directory should contain at least `data/*.mcap`, `data/metadata.yaml`, and `video/cameras.mp4`. If files are missing or MCAP cannot be read, first check for an interrupted recording and verify that the USB drive is writable.
 
+To determine whether a topic is permitted for recording, playback, or frontend forwarding, see [Topic whitelist configuration and diagnostics](/advanced/topic-whitelist).
+
 ## Playback
 
 1. Click **Select File** and choose a recording.

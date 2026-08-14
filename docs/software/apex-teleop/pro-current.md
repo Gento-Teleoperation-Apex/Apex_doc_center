@@ -121,6 +121,8 @@ rqt
 
 每个 `my_bag-*` 任务目录至少应包含 `data/*.mcap`、`data/metadata.yaml` 和 `video/cameras.mp4`。文件缺失或 MCAP 无法读取时，应先检查录制是否异常中断以及 U 盘是否可写。
 
+需要确认某个 Topic 是否允许录制、回放或发送到前端时，参见 [Topic 白名单配置与排查](/advanced/topic-whitelist)。
+
 ## 数据回放
 
 1. 点击 **Select File** 选择录制文件。

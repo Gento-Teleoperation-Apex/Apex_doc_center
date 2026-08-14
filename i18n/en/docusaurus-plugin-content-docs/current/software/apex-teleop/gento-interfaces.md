@@ -254,6 +254,8 @@ ros2 topic list -t | grep -Ei "camera|image|compressed|quad|usb_cam"
 
 Before recording, use `ros2 topic info -v`, `ros2 topic echo --once`, and `ros2 topic hz` to verify that each topic exists and carries valid data.
 
+To add body, head, or end-effector topics to recording, playback, or frontend forwarding, see [Topic whitelist configuration and diagnostics](/advanced/topic-whitelist).
+
 ## 10. Minimum diagnostic set
 
 ```bash

@@ -256,6 +256,8 @@ ros2 topic list -t | grep -Ei "camera|image|compressed|quad|usb_cam"
 
 录制前使用 `ros2 topic info -v`、`ros2 topic echo --once` 和 `ros2 topic hz` 确认 Topic 实际存在且有有效数据。
 
+如需将新的身体、头部或末端 Topic 纳入录制、回放或前端转发，参见 [Topic 白名单配置与排查](/advanced/topic-whitelist)。
+
 ## 10. 最小诊断清单
 
 ```bash

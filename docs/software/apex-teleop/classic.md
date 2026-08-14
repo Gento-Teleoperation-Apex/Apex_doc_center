@@ -37,6 +37,8 @@ Skye/Luna 使用 Pico 头显及全身追踪组件；Marvin Pro 历史版本按�
 
 录制前确认卷标为 `BAG_STORAGE` 的 U 盘已正确挂载，并检查 Camera 状态。填写录制名称后点击 **Start Recording**，任务完成后点击 **Stop Recording**。数据默认保存在 `/media/<user>/BAG_STORAGE/recorded_bags`。回放时选择记录文件，再使用 **Play**、**Stop** 和循环选项。
 
+需要确认某个 Topic 是否允许录制、回放或发送到前端时，参见 [Topic 白名单配置与排查](/advanced/topic-whitelist)。
+
 实机回放具有运动风险，操作前应确认机器人起始姿态、工作空间和急停状态。
 
 ## 日志

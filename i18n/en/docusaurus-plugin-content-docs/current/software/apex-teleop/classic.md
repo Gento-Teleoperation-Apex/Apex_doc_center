@@ -37,6 +37,8 @@ Skye/Luna uses Pico with full-body trackers. Historical Marvin Pro systems use P
 
 Before recording, confirm that the USB drive labeled `BAG_STORAGE` is mounted and check Camera state. Enter a recording name, click **Start Recording**, then click **Stop Recording** when finished. Data is stored by default in `/media/<user>/BAG_STORAGE/recorded_bags`. For playback, select a recording and use **Play**, **Stop**, and the loop option.
 
+To determine whether a topic is permitted for recording, playback, or frontend forwarding, see [Topic whitelist configuration and diagnostics](/advanced/topic-whitelist).
+
 Physical playback can move the robot. Verify the initial pose, workspace, and emergency stop first.
 
 ## Logs

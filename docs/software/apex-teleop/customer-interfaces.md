@@ -203,6 +203,8 @@ ros2 topic echo /info/arm_state --once
 
 ## 8. 数据录制与回放接口
 
+录制白名单、回放白名单、WebSocket 转发和滚动诊断日志是四套独立机制。配置和验证方法参见 [Topic 白名单配置与排查](/advanced/topic-whitelist)。
+
 | Service | 类型 | 作用 |
 |---|---|---|
 | `/recorder/control` | `marvin_msgs/srv/JsonCommand` | 录制 `start`、`stop`、`status`、`get_topics`、`storage_status` 和 `clear_storage_error` |

@@ -1,6 +1,6 @@
 ---
 title: 常见问题与速查
-sidebar_position: 2
+sidebar_position: 3
 ---
 
 # Apex 遥操系统常见问题 Q&A 与速查手册

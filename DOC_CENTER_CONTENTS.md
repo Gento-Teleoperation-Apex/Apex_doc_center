@@ -1,6 +1,6 @@
 # KernelMind Apex 文档中心内容说明
 
-> 更新时间：2026-08-11  
+> 更新时间：2026-08-14
 > 线上地址：https://klmmotion.github.io/Apex_doc_center/  
 > GitHub 仓库：https://github.com/KLMmotion/Apex_doc_center
 
@@ -20,8 +20,8 @@ KernelMind Apex 文档中心是 Marvin Pro、Gento Skye/Luna 及其遥操软件�
 
 | 内容 | 数量 |
 |---|---:|
-| 中文 Markdown/MDX 页面 | 41 |
-| 英文 Markdown/MDX 页面 | 41 |
+| 中文 Markdown/MDX 页面 | 42 |
+| 英文 Markdown/MDX 页面 | 42 |
 | 已纳入 Git 管理的 `static/img` 图片资源 | 150 |
 | 支持语言 | 中文、English |
 
@@ -184,11 +184,12 @@ Skye 和 Luna 归入同一产品栏目。产品介绍以 Skye/Luna 系列为对�
 | 页面 | 主要内容 | 中文路由 |
 |---|---|---|
 | 配置修改 | 客户可修改的网络、机器人地址、相机、录制目录和末端配置，以及备份、重启和验证方法 | `/advanced/configuration` |
+| Topic 白名单配置与排查 | 录制、回放、WebSocket 和滚动诊断日志四类白名单的配置边界、运行值检查和验证流程 | `/advanced/topic-whitelist` |
 | 常见问题与速查 | 启动、网络、相机、WebRTC、遥操、末端、ROS、依赖、录制、授权等现场问题 | `/advanced/troubleshooting` |
 | Marvin Pro 模块化通讯排查 | Pro 环境、ROS 图、机器人、头显、双臂、末端、相机、录制和日志的分层诊断 | `/advanced/pro-communication-diagnostics` |
 | Skye/Luna 模块化通讯排查 | Gento L1 SDK、双臂、身体、头部、末端、相机和录制链路的分层诊断 | `/advanced/gento-communication-diagnostics` |
 
-四个页面按“先配置、再查已知问题、最后按产品分段验证”的思路组织。两份模块化通讯排查手册中的每个 Bash 代码块都可在控制器终端独立整段粘贴，不依赖外部脚本，并会自动保存对应模块的排查结果；Gento 手册在形成正式验收标准前仍需分别在健康 Skye 和 Luna 上建立实机基线。
+五个页面按“先配置、再确认数据边界、接着查询已知问题、最后按产品分段验证”的思路组织。两份模块化通讯排查手册中的每个 Bash 代码块都可在控制器终端独立整段粘贴，不依赖外部脚本，并会自动保存对应模块的排查结果；Gento 手册在形成正式验收标准前仍需分别在健康 Skye 和 Luna 上建立实机基线。
 
 ## 7. 末端夹爪
 
@@ -302,6 +303,9 @@ i18n/en/docusaurus-plugin-content-docs/current/
 ```text
 docs/advanced/configuration.md
 i18n/en/docusaurus-plugin-content-docs/current/advanced/configuration.md
+
+docs/advanced/topic-whitelist.md
+i18n/en/docusaurus-plugin-content-docs/current/advanced/topic-whitelist.md
 ```
 
 后续修改客户文档时应同步修改中英文页面，并保持：
