@@ -1,8 +1,8 @@
 # KernelMind Apex 文档中心内容说明
 
-> 更新时间：2026-08-14
-> 线上地址：https://klmmotion.github.io/Apex_doc_center/  
-> GitHub 仓库：https://github.com/KLMmotion/Apex_doc_center
+> 更新时间：2026-08-18
+> 线上地址：https://gento-teleoperation-apex.github.io/Apex_doc_center/
+> GitHub 仓库：https://github.com/Gento-Teleoperation-Apex/Apex_doc_center
 
 ## 1. 文档中心概述
 

@@ -6,10 +6,10 @@ const config = {
   title: 'KernelMind Apex 文档',
   tagline: '安装、配置和现场使用说明',
 
-  url: 'https://klmmotion.github.io',
+  url: 'https://gento-teleoperation-apex.github.io',
   baseUrl: '/Apex_doc_center/',
 
-  organizationName: 'KLMmotion',
+  organizationName: 'Gento-Teleoperation-Apex',
   projectName: 'Apex_doc_center',
   trailingSlash: false,
 
@@ -71,7 +71,7 @@ const config = {
             position: 'right',
           },
           {
-            href: 'https://github.com/KLMmotion/Apex_doc_center',
+            href: 'https://github.com/Gento-Teleoperation-Apex/Apex_doc_center',
             label: 'GitHub',
             position: 'right',
           },
