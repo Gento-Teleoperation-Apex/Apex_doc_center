@@ -3,7 +3,7 @@ const { themes: prismThemes } = require('prism-react-renderer');
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'KernelMind Apex 文档',
+  title: 'Gento Teleoperation Apex 文档',
   tagline: '安装、配置和现场使用说明',
 
   url: 'https://gento-teleoperation-apex.github.io',
@@ -54,10 +54,10 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       navbar: {
-        title: 'KernelMind Apex',
+        title: 'Gento Teleoperation Apex',
         logo: {
-          alt: 'Tianji Logo',
-          src: 'img/tianji_logo.jpg',
+          alt: 'Gento Teleoperation Apex Logo',
+          src: 'img/gento-symbol.png',
         },
         items: [
           {
@@ -79,7 +79,7 @@ const config = {
       },
       footer: {
         style: 'dark',
-        copyright: `Copyright © ${new Date().getFullYear()} KernelMind. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} Gento Teleoperation Apex. Built with Docusaurus.`,
       },
       prism: {
         theme: prismThemes.github,
