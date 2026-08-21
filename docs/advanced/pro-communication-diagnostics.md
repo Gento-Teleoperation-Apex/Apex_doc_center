@@ -1,6 +1,6 @@
 ---
 title: Marvin Pro 模块化通讯排查
-sidebar_position: 4
+sidebar_position: 5
 ---
 
 # Marvin Pro 终端直贴式通讯排查手册

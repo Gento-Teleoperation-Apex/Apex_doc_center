@@ -1,6 +1,6 @@
 ---
 title: Skye/Luna 模块化通讯排查
-sidebar_position: 5
+sidebar_position: 6
 ---
 
 # Gento Skye / Luna 终端直贴式通讯排查手册

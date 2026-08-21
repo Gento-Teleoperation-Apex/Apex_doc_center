@@ -5,7 +5,7 @@ sidebar_position: 2
 
 # Apex Topic Whitelist Configuration and Diagnostics
 
-Updated: August 13, 2026
+Updated: August 20, 2026
 Applies to: Marvin Pro, Gento Skye, and Gento Luna
 Audience: customer developers, testers, and technical-support engineers
 
@@ -20,13 +20,13 @@ Apex uses several independent topic whitelists. They determine:
 
 A topic appearing in `ros2 topic list` does not mean that it is automatically recorded, replayed, sent to the frontend, or included in a diagnostic bag.
 
-This page is based on the Apex Deploy implementation reviewed on August 13, 2026. Always verify the installed release and runtime parameters on the target controller.
+This page has been updated for the current `/tj` interface rules as of August 20, 2026. Always verify the installed release and runtime parameters on the target controller. See the [Marvin Pro ROS Topic List](./ros-topic-list) for the consolidated reference.
 
 :::warning Scope and safety
 
 - Topic, parameter, and runtime-state queries are read-only.
 - Confirm the installed version and back up the original file before changing a whitelist, an installed file, or a systemd service.
-- Contact KernelMind technical support when a release requires changes to a Python hard-coded whitelist. Customers should not edit installed Python files without confirmation.
+- Contact Gento Teleoperation Apex technical support when a release requires changes to a Python hard-coded whitelist. Customers should not edit installed Python files without confirmation.
 - Restarting services or replaying command topics can interrupt control or move the physical robot. Stop the robot, clear the workspace, and keep the emergency stop accessible.
 
 :::
@@ -101,13 +101,13 @@ Typical configuration:
 data_bag_recorder:
   ros__parameters:
     allowed_topics:
-      - "/joint_states"
-      - "/info/gripper_feedback_L"
-      - "/info/gripper_feedback_R"
-      - "/info/eef_left"
-      - "/info/eef_right"
-      - "/control/joint_cmd_A"
-      - "/control/joint_cmd_B"
+      - "/tj/joint_states"
+      - "/tj/info/gripper_feedback_L"
+      - "/tj/info/gripper_feedback_R"
+      - "/tj/info/eef_left"
+      - "/tj/info/eef_right"
+      - "/tj/control/joint_cmd_A"
+      - "/tj/control/joint_cmd_B"
       - "/hand_left/joint_commands"
       - "/hand_left/joint_states"
       - "/hand_right/joint_commands"
@@ -157,7 +157,7 @@ Prefer the product recorder interface instead of reading YAML alone:
 
 ```bash
 source /etc/apex/apex_ros_env.sh
-ros2 service list -t | grep 'recorder/control'
+ros2 service list -t | grep '/tj/recorder/control'
 ```
 
 When the service type is `marvin_msgs/srv/JsonCommand`, query it directly:
@@ -165,7 +165,7 @@ When the service type is `marvin_msgs/srv/JsonCommand`, query it directly:
 ```bash
 source /etc/apex/apex_ros_env.sh
 
-SERVICE=$(ros2 service list | grep '/recorder/control$' | head -n 1)
+SERVICE=$(ros2 service list | grep '/tj/recorder/control$' | head -n 1)
 echo "Recorder service: ${SERVICE:-未找到}"
 
 if [ -n "$SERVICE" ]; then
@@ -187,9 +187,9 @@ Example selection:
 ```bash
 source /etc/apex/apex_ros_env.sh
 
-SERVICE=$(ros2 service list | grep '/recorder/control$' | head -n 1)
+SERVICE=$(ros2 service list | grep '/tj/recorder/control$' | head -n 1)
 ros2 service call "$SERVICE" marvin_msgs/srv/JsonCommand \
-  '{command_json: "{\"action\":\"start\",\"topics\":[\"/joint_states\",\"/info/gripper_feedback_L\",\"/info/gripper_feedback_R\"]}"}'
+  '{command_json: "{\"action\":\"start\",\"topics\":[\"/tj/joint_states\",\"/tj/info/gripper_feedback_L\",\"/tj/info/gripper_feedback_R\"]}"}'
 ```
 
 Stop the recording:
@@ -197,7 +197,7 @@ Stop the recording:
 ```bash
 source /etc/apex/apex_ros_env.sh
 
-SERVICE=$(ros2 service list | grep '/recorder/control$' | head -n 1)
+SERVICE=$(ros2 service list | grep '/tj/recorder/control$' | head -n 1)
 ros2 service call "$SERVICE" marvin_msgs/srv/JsonCommand \
   '{command_json: "{\"action\":\"stop\"}"}'
 ```
@@ -215,7 +215,7 @@ The preferred product implementation is:
 
 This keeps the actual list in YAML and avoids editing installed Python packages.
 
-If KernelMind technical support confirms that a temporary hard-coded change is required:
+If Gento Teleoperation Apex technical support confirms that a temporary hard-coded change is required:
 
 1. Record the installed package version.
 2. Back up the target Python file.
@@ -242,9 +242,9 @@ Typical configuration:
 playback_node:
   ros__parameters:
     topic_whitelist:
-      - "/joint_states"
-      - "/info/gripper_feedback_L"
-      - "/info/gripper_feedback_R"
+      - "/tj/joint_states"
+      - "/tj/info/gripper_feedback_L"
+      - "/tj/info/gripper_feedback_R"
       - "/hand_left/joint_commands"
       - "/hand_right/joint_commands"
 ```
@@ -278,14 +278,14 @@ fi
 `topic_websocket_server` serializes ROS messages to JSON and sends them to the web frontend. The main default set in the reviewed source is:
 
 ```text
-/control/input_mode
-/info/arm_state
-/info/robot_state
-/info/vr_connected
-/joint_states
+/tj/control/input_mode
+/tj/info/arm_state
+/tj/info/robot_state
+/tj/info/vr_connected
+/tj/joint_states
 ```
 
-`/info/robot_info` uses a separate subscription path and is not fully governed by the main set.
+`/tj/info/robot_info` uses a separate subscription path and is not fully governed by the main set.
 
 The default forwarding limit is approximately:
 
@@ -330,30 +330,30 @@ Evaluate JSON serialization, CPU, network, and browser load before adding high-r
 The reviewed default set is:
 
 ```text
-/joint_states
-/info/gripper_feedback_L
-/info/gripper_feedback_R
-/info/eef_left
-/info/eef_right
-/control/eef_cmd_A
-/control/eef_cmd_B
-/control/enableL
-/control/enableR
-/control/gripperValueL
-/control/gripperValueR
-/control/ik_cmd_A
-/control/ik_cmd_B
-/control/ik_request
-/control/ik_result
-/control/joint_cmd_A
-/control/joint_cmd_B
-/control/joint_cmd_plan_A
-/control/joint_cmd_plan_B
-/control/qp_controller/joint_cmd_A
-/control/qp_controller/joint_cmd_B
-/control/playback_control
-/control/target_poseL
-/control/target_poseR
+/tj/joint_states
+/tj/info/gripper_feedback_L
+/tj/info/gripper_feedback_R
+/tj/info/eef_left
+/tj/info/eef_right
+/tj/control/eef_cmd_A
+/tj/control/eef_cmd_B
+/tj/control/enableL
+/tj/control/enableR
+/tj/control/gripperValueL
+/tj/control/gripperValueR
+/tj/control/ik_cmd_A
+/tj/control/ik_cmd_B
+/tj/control/ik_request
+/tj/control/ik_result
+/tj/control/joint_cmd_A
+/tj/control/joint_cmd_B
+/tj/control/joint_cmd_plan_A
+/tj/control/joint_cmd_plan_B
+/tj/control/qp_controller/joint_cmd_A
+/tj/control/qp_controller/joint_cmd_B
+/tj/control/playback_control
+/tj/control/target_poseL
+/tj/control/target_poseR
 /hand_left/joint_commands
 /hand_left/joint_states
 /hand_right/joint_commands
@@ -399,16 +399,16 @@ Do not add every system topic. High-rate feedback, images, point clouds, and ver
 ### 8.1 Common Marvin Pro data
 
 ```text
-/joint_states
-/info/joint_feedback
-/info/eef_left
-/info/eef_right
-/info/gripper_feedback_L
-/info/gripper_feedback_R
-/control/joint_cmd_A
-/control/joint_cmd_B
-/control/gripperValueL
-/control/gripperValueR
+/tj/joint_states
+/tj/info/joint_feedback
+/tj/info/eef_left
+/tj/info/eef_right
+/tj/info/gripper_feedback_L
+/tj/info/gripper_feedback_R
+/tj/control/joint_cmd_A
+/tj/control/joint_cmd_B
+/tj/control/gripperValueL
+/tj/control/gripperValueR
 ```
 
 ### 8.2 Possible Gento Skye/Luna additions
@@ -416,12 +416,12 @@ Do not add every system topic. High-rate feedback, images, point clouds, and ver
 Gento may include body, head, waist, lift, or leg data in addition to both arms. Candidate names include:
 
 ```text
-/control/joint_cmd_body
-/control/joint_cmd_head
-/control/qp_controller/joint_cmd_body
-/control/qp_controller/joint_cmd_head
-/info/robot_cmd_state
-/control/teleop/ik_request
+/tj/control/joint_cmd_body
+/tj/control/joint_cmd_head
+/tj/control/qp_controller/joint_cmd_body
+/tj/control/qp_controller/joint_cmd_head
+/tj/info/robot_cmd_state
+/tj/control/teleop/ik_request
 ```
 
 These are candidates, not guaranteed interfaces. Inspect the target controller before adding anything:
@@ -520,7 +520,7 @@ Replace `TOPIC` with the topic under test:
 
 ```bash
 source /etc/apex/apex_ros_env.sh
-TOPIC=/info/eef_left
+TOPIC=/tj/info/eef_left
 
 ros2 topic info "$TOPIC" -v
 timeout 5 ros2 topic echo "$TOPIC" --once
@@ -534,7 +534,7 @@ Expected result: publisher count is greater than zero, one message can be receiv
 ```bash
 source /etc/apex/apex_ros_env.sh
 
-SERVICE=$(ros2 service list | grep '/recorder/control$' | head -n 1)
+SERVICE=$(ros2 service list | grep '/tj/recorder/control$' | head -n 1)
 ros2 service call "$SERVICE" marvin_msgs/srv/JsonCommand \
   '{command_json: "{\"action\":\"get_topics\"}"}'
 ```

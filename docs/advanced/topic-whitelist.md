@@ -5,7 +5,7 @@ sidebar_position: 2
 
 # Apex Topic 白名单配置与排查说明
 
-更新日期：2026-08-13
+更新日期：2026-08-20
 适用范围：Marvin Pro、Gento Skye、Gento Luna
 适用对象：客户开发人员、测试人员、技术支持工程师
 
@@ -20,13 +20,13 @@ Apex 中不止有一套 Topic 白名单。不同白名单分别控制：
 
 这些白名单互相独立。某个 Topic 出现在 `ros2 topic list` 中，不代表它一定会被录制、回放、发送到前端或写入诊断包。
 
-本文依据 2026-08-13 检查到的 Apex Deploy 源码整理。不同发布版本可能已经修改实现，现场必须以目标机安装产物和运行参数为准。
+本文已按 2026-08-20 当前版本的 `/tj` 接口规则更新。不同发布版本可能已经修改实现，现场必须以目标机安装产物和运行参数为准。完整接口速查参见 [Marvin Pro ROS Topic 列表](./ros-topic-list)。
 
 :::warning 使用边界
 
 - 查询 Topic、参数和运行状态的命令可直接用于只读排查。
 - 修改白名单、安装目录文件或 systemd 服务前，应先确认设备版本并备份原文件。
-- 需要修改 Python 硬编码白名单的版本，应联系 KernelMind 技术支持确认，不建议客户直接修改安装产物。
+- 需要修改 Python 硬编码白名单的版本，应联系 Gento Teleoperation Apex 技术支持确认，不建议客户直接修改安装产物。
 - 回放控制 Topic 或重启服务可能中断控制并引起机器人动作，必须在机器人停止、工作空间清空且急停可触及时进行。
 
 :::
@@ -103,13 +103,13 @@ ros2 topic list -t | sort
 data_bag_recorder:
   ros__parameters:
     allowed_topics:
-      - "/joint_states"
-      - "/info/gripper_feedback_L"
-      - "/info/gripper_feedback_R"
-      - "/info/eef_left"
-      - "/info/eef_right"
-      - "/control/joint_cmd_A"
-      - "/control/joint_cmd_B"
+      - "/tj/joint_states"
+      - "/tj/info/gripper_feedback_L"
+      - "/tj/info/gripper_feedback_R"
+      - "/tj/info/eef_left"
+      - "/tj/info/eef_right"
+      - "/tj/control/joint_cmd_A"
+      - "/tj/control/joint_cmd_B"
       - "/hand_left/joint_commands"
       - "/hand_left/joint_states"
       - "/hand_right/joint_commands"
@@ -164,7 +164,7 @@ bag_recorder_nodes_py
 
 ```bash
 source /etc/apex/apex_ros_env.sh
-ros2 service list -t | grep 'recorder/control'
+ros2 service list -t | grep '/tj/recorder/control'
 ```
 
 若服务类型为 `marvin_msgs/srv/JsonCommand`，可直接查询：
@@ -172,7 +172,7 @@ ros2 service list -t | grep 'recorder/control'
 ```bash
 source /etc/apex/apex_ros_env.sh
 
-SERVICE=$(ros2 service list | grep '/recorder/control$' | head -n 1)
+SERVICE=$(ros2 service list | grep '/tj/recorder/control$' | head -n 1)
 echo "Recorder service: ${SERVICE:-未找到}"
 
 if [ -n "$SERVICE" ]; then
@@ -194,9 +194,9 @@ fi
 ```bash
 source /etc/apex/apex_ros_env.sh
 
-SERVICE=$(ros2 service list | grep '/recorder/control$' | head -n 1)
+SERVICE=$(ros2 service list | grep '/tj/recorder/control$' | head -n 1)
 ros2 service call "$SERVICE" marvin_msgs/srv/JsonCommand \
-  '{command_json: "{\"action\":\"start\",\"topics\":[\"/joint_states\",\"/info/gripper_feedback_L\",\"/info/gripper_feedback_R\"]}"}'
+  '{command_json: "{\"action\":\"start\",\"topics\":[\"/tj/joint_states\",\"/tj/info/gripper_feedback_L\",\"/tj/info/gripper_feedback_R\"]}"}'
 ```
 
 停止录制：
@@ -204,7 +204,7 @@ ros2 service call "$SERVICE" marvin_msgs/srv/JsonCommand \
 ```bash
 source /etc/apex/apex_ros_env.sh
 
-SERVICE=$(ros2 service list | grep '/recorder/control$' | head -n 1)
+SERVICE=$(ros2 service list | grep '/tj/recorder/control$' | head -n 1)
 ros2 service call "$SERVICE" marvin_msgs/srv/JsonCommand \
   '{command_json: "{\"action\":\"stop\"}"}'
 ```
@@ -222,7 +222,7 @@ ros2 service call "$SERVICE" marvin_msgs/srv/JsonCommand \
 
 这样可以避免直接修改 `site-packages` 中的 Python 文件。
 
-如经 KernelMind 技术支持确认，现场必须临时修改硬编码版本：
+如经 Gento Teleoperation Apex 技术支持确认，现场必须临时修改硬编码版本：
 
 1. 记录安装包版本。
 2. 备份目标 Python 文件。
@@ -249,9 +249,9 @@ ros2 service call "$SERVICE" marvin_msgs/srv/JsonCommand \
 playback_node:
   ros__parameters:
     topic_whitelist:
-      - "/joint_states"
-      - "/info/gripper_feedback_L"
-      - "/info/gripper_feedback_R"
+      - "/tj/joint_states"
+      - "/tj/info/gripper_feedback_L"
+      - "/tj/info/gripper_feedback_R"
       - "/hand_left/joint_commands"
       - "/hand_right/joint_commands"
 ```
@@ -287,14 +287,14 @@ fi
 当前检查源码默认开放：
 
 ```text
-/control/input_mode
-/info/arm_state
-/info/robot_state
-/info/vr_connected
-/joint_states
+/tj/control/input_mode
+/tj/info/arm_state
+/tj/info/robot_state
+/tj/info/vr_connected
+/tj/joint_states
 ```
 
-`/info/robot_info` 使用独立订阅和独立消息路径，不完全依赖主白名单。
+`/tj/info/robot_info` 使用独立订阅和独立消息路径，不完全依赖主白名单。
 
 默认转发频率上限为约 `30 Hz`。因此：
 
@@ -337,30 +337,30 @@ fi
 当前检查源码默认写入：
 
 ```text
-/joint_states
-/info/gripper_feedback_L
-/info/gripper_feedback_R
-/info/eef_left
-/info/eef_right
-/control/eef_cmd_A
-/control/eef_cmd_B
-/control/enableL
-/control/enableR
-/control/gripperValueL
-/control/gripperValueR
-/control/ik_cmd_A
-/control/ik_cmd_B
-/control/ik_request
-/control/ik_result
-/control/joint_cmd_A
-/control/joint_cmd_B
-/control/joint_cmd_plan_A
-/control/joint_cmd_plan_B
-/control/qp_controller/joint_cmd_A
-/control/qp_controller/joint_cmd_B
-/control/playback_control
-/control/target_poseL
-/control/target_poseR
+/tj/joint_states
+/tj/info/gripper_feedback_L
+/tj/info/gripper_feedback_R
+/tj/info/eef_left
+/tj/info/eef_right
+/tj/control/eef_cmd_A
+/tj/control/eef_cmd_B
+/tj/control/enableL
+/tj/control/enableR
+/tj/control/gripperValueL
+/tj/control/gripperValueR
+/tj/control/ik_cmd_A
+/tj/control/ik_cmd_B
+/tj/control/ik_request
+/tj/control/ik_result
+/tj/control/joint_cmd_A
+/tj/control/joint_cmd_B
+/tj/control/joint_cmd_plan_A
+/tj/control/joint_cmd_plan_B
+/tj/control/qp_controller/joint_cmd_A
+/tj/control/qp_controller/joint_cmd_B
+/tj/control/playback_control
+/tj/control/target_poseL
+/tj/control/target_poseR
 /hand_left/joint_commands
 /hand_left/joint_states
 /hand_right/joint_commands
@@ -406,16 +406,16 @@ find "$HOME/.ros/log" -maxdepth 1 -type d -name 'topic_log-*' -printf '%TY-%Tm-%
 ### 8.1 Marvin Pro 常见数据
 
 ```text
-/joint_states
-/info/joint_feedback
-/info/eef_left
-/info/eef_right
-/info/gripper_feedback_L
-/info/gripper_feedback_R
-/control/joint_cmd_A
-/control/joint_cmd_B
-/control/gripperValueL
-/control/gripperValueR
+/tj/joint_states
+/tj/info/joint_feedback
+/tj/info/eef_left
+/tj/info/eef_right
+/tj/info/gripper_feedback_L
+/tj/info/gripper_feedback_R
+/tj/control/joint_cmd_A
+/tj/control/joint_cmd_B
+/tj/control/gripperValueL
+/tj/control/gripperValueR
 ```
 
 ### 8.2 Gento Skye/Luna 可能新增的数据
@@ -423,12 +423,12 @@ find "$HOME/.ros/log" -maxdepth 1 -type d -name 'topic_log-*' -printf '%TY-%Tm-%
 Gento 除双臂外还可能包含头部、身体、腰部、升降或腿部数据。常见候选包括：
 
 ```text
-/control/joint_cmd_body
-/control/joint_cmd_head
-/control/qp_controller/joint_cmd_body
-/control/qp_controller/joint_cmd_head
-/info/robot_cmd_state
-/control/teleop/ik_request
+/tj/control/joint_cmd_body
+/tj/control/joint_cmd_head
+/tj/control/qp_controller/joint_cmd_body
+/tj/control/qp_controller/joint_cmd_head
+/tj/info/robot_cmd_state
+/tj/control/teleop/ik_request
 ```
 
 以上是候选名称，不是所有版本都会发布。加入白名单前必须先在目标机执行：
@@ -527,7 +527,7 @@ pgrep -af 'topic_websocket_server'
 
 ```bash
 source /etc/apex/apex_ros_env.sh
-TOPIC=/info/eef_left
+TOPIC=/tj/info/eef_left
 
 ros2 topic info "$TOPIC" -v
 timeout 5 ros2 topic echo "$TOPIC" --once
@@ -545,7 +545,7 @@ timeout 8 ros2 topic hz "$TOPIC"
 ```bash
 source /etc/apex/apex_ros_env.sh
 
-SERVICE=$(ros2 service list | grep '/recorder/control$' | head -n 1)
+SERVICE=$(ros2 service list | grep '/tj/recorder/control$' | head -n 1)
 ros2 service call "$SERVICE" marvin_msgs/srv/JsonCommand \
   '{command_json: "{\"action\":\"get_topics\"}"}'
 ```

@@ -5,330 +5,229 @@ sidebar_position: 4
 
 # Marvin Pro Customer Integration Interfaces
 
-This page documents the customer-facing ROS 2 topics, services, input sources, and network ports for the current Marvin Pro. It covers state access, data acquisition, customer control integration, and diagnostics. The content has been checked against the KernelMind Apex `1.0.7.6` development baseline, but the software installed on the delivered device remains authoritative. Skye/Luna has a different whole-body joint layout and message structure. See [Gento (Skye/Luna) ROS 2 Interfaces](./gento-interfaces).
+This page documents the customer-facing ROS 2 topics, services, input sources, and network ports for the current Marvin Pro. It applies to Apex Humble `v1.0.7.74o` / Jazzy `v1.0.7.74t` (2026-08-17) and later releases using the same interface contract. The software installed on the delivered device remains authoritative. For Skye/Luna, see [Gento (Skye/Luna) ROS 2 Interfaces](./gento-interfaces).
 
-The interfaces installed on the target device are authoritative. Load the controller environment and inspect them before development:
+## 1. Namespace and Compatibility
+
+Robot, Teleop, QP, Planner, VLA, Recorder, and Playback run in the `tj` namespace by default. For example, the relative name `control/joint_cmd_A` resolves to `/tj/control/joint_cmd_A`.
 
 ```bash
 source /etc/apex/apex_ros_env.sh
-ros2 topic list
-ros2 service list
-ros2 interface list | grep marvin_msgs
+echo "APEX_ROS_NAMESPACE=${APEX_ROS_NAMESPACE:-tj}"
+ros2 topic list | grep '^/tj/' | sort
+ros2 service list | grep '^/tj/' | sort
 ```
 
-## 1. Safety Requirements
+:::warning Legacy paths are not compatible
 
-- In the Apex frontend, complete **Start Robot → Impedance Mode → Home** before external control. However, never call Home directly from the factory packing pose. First use Planner and `/control/movej` to move all 14 arm joints to zero.
-- Set **Input Mode** to **Custom** before the robot accepts customer joint commands.
-- Clear the workspace, begin with small motions, and keep the emergency stop within reach.
-- Publish smooth, time-continuous targets that stay within the robot joint limits.
-- Switch Input Mode back to **None** before stopping the command process.
-- Do not publish to QP, planner, replay, or final-command topics marked as read-only diagnostics.
-- Message fields are defined by the installed `marvin_msgs` package. Inspect them with `ros2 interface show` before writing an application.
+Core control and gripper interfaces have moved to `/tj`. Applications that still use `/control/...` or `/info/...` may fail to find topics, command the gripper, or receive feedback.
 
-Interfaces are classified by purpose: **customer input** interfaces may be published or called by customer applications; **read-only** and **read-only diagnostic** interfaces are for subscription, recording, and troubleshooting only; **optional** interfaces appear only when the corresponding Camera, Tool, Recorder, Playback, or VLA module is running.
+:::
 
-## 2. Joint Order and Runtime State
+The following interfaces remain global:
 
-Marvin Pro dual-arm arrays always place the seven left-arm joints before the seven right-arm joints:
+- `/hand_left/*` and `/hand_right/*`: Wuji hands;
+- `/quad_tile/jpeg/compressed`: tiled JPEG camera image;
+- `/recorder/set_recording`: camera recording service;
+- `/info/apex_package_info`: Apex package version;
+- `/tf`, `/tf_static`, `/rosout`, and `/parameter_events`: ROS system interfaces.
 
-```text
-Joint1_L ... Joint7_L, Joint1_R ... Joint7_R
-```
+## 2. Safety Requirements
 
-Both `/info/arm_state` and `/info/robot_state` describe arm state. In the current baseline, the QP chain considers the robot movable when both arm state entries are `2`. Confirm the state definition on the delivered release.
+- Start Robot in Apex and verify Ready state, operating mode, and a safe initial pose before external control.
+- Never call Home directly from the factory packing pose. Use Planner and `/tj/control/movej` to move all 14 arm joints safely to zero first.
+- For direct joint commands, select `Custom/User` (`set_input=3`).
+- For Cartesian IK commands, select the VLA IK source (`set_ik_input=2`) and keep Joint Input on Teleop/QP (`set_input=1`).
+- Clear the workspace, start with small motions, and keep the emergency stop within reach.
+- Publish smooth, time-continuous targets within joint limits.
+- Switch the relevant source to Idle before stopping the publisher.
+- Never publish to topics marked **read-only**.
+- Inspect the installed `marvin_msgs` definitions with `ros2 interface show` before integration.
 
-## 3. State and Feedback Topics
+## 3. Input Arbitration
 
-| Topic | Type | Description |
-|---|---|---|
-| `/joint_states` | `sensor_msgs/msg/JointState` | Positions, velocities, and efforts for all 14 arm joints; suitable for visualization, recording, and lower-rate state access |
-| `/info/joint_feedback` | `marvin_msgs/msg/Jointfeedback` | High-rate dual-arm feedback, with seven left-arm joints followed by seven right-arm joints |
-| `/info/arm_state` | `std_msgs/msg/Int16MultiArray` | `[stateA, stateB]`; values may be `-1` before Ready |
-| `/info/robot_state` | `std_msgs/msg/Int16MultiArray` | Dual-arm movable state used by the control chain |
-| `/info/robot_info` | `marvin_msgs/msg/RobotInfo` | Robot model, controller, and software-version text |
-| `/info/eef_left` | `geometry_msgs/msg/PoseStamped` | Left end-effector forward-kinematics pose |
-| `/info/eef_right` | `geometry_msgs/msg/PoseStamped` | Right end-effector forward-kinematics pose |
-| `/info/wrench_left` | `geometry_msgs/msg/WrenchStamped` | Estimated left end-effector wrench |
-| `/info/wrench_right` | `geometry_msgs/msg/WrenchStamped` | Estimated right end-effector wrench |
-| `/info/vr_connected` | `std_msgs/msg/Bool` | Headset TCP heartbeat and connection state |
-| `/info/apex_package_info` | `std_msgs/msg/String` | Installed controller package version and package state |
-| `/info/gripper_feedback_L` | `std_msgs/msg/Float32MultiArray` | Left gripper feedback; fields vary with the Tool release; optional |
-| `/info/gripper_feedback_R` | `std_msgs/msg/Float32MultiArray` | Right gripper feedback; fields vary with the Tool release; optional |
-| `/info/gripper_feedback_L_err` | `std_msgs/msg/Int32MultiArray` | Left gripper error codes provided by the Tool module; optional |
-| `/info/gripper_feedback_R_err` | `std_msgs/msg/Int32MultiArray` | Right gripper error codes provided by the Tool module; optional |
-| `/quad_tile/compressed` | `sensor_msgs/msg/CompressedImage` | Optional four-tile JPEG; it may be absent when ROS image output is disabled even if WebRTC video works |
+The current release has two arbitration layers. Publishing an input topic alone does not command the robot.
 
-Common checks:
+### 3.1 IK source
 
-```bash
-ros2 topic echo /info/robot_info --once
-ros2 topic echo /info/arm_state --once
-ros2 topic echo /joint_states --once
-ros2 topic hz /info/joint_feedback
-```
-
-High-rate feedback and target topics generally use Sensor Data QoS (Best Effort). Mode and state topics may use Reliable with Transient Local durability. If a subscriber receives no data, run `ros2 topic info <topic> -v` and match the publisher QoS on the delivered release.
-
-## 4. Input Sources and Input Mode
-
-`/control/set_input` selects the active joint-command source. `/control/input_mode` publishes the current selection.
-
-| Value | Frontend meaning | Command source |
+| Value | Source | Input topic |
 |---:|---|---|
-| `0` | None / Idle | No external motion command |
-| `1` | Teleop | Teleoperation QP output `/control/qp_controller/joint_cmd_A/B` |
-| `2` | Planner | Home and MoveJ planner output `/control/joint_cmd_plan_A/B` |
-| `3` | Custom / User | Customer input `/control/user/joint_cmd_A/B` |
-| `4` | Replay | Playback input `/control/replay/joint_cmd_A/B` |
+| `0` | Idle | No IK forwarding |
+| `1` | VR | `/tj/control/ik_request/vr` |
+| `2` | VLA / customer Cartesian input | `/tj/control/ik_request/vla` |
 
-Switch to Custom:
+Switch with `/tj/control/set_ik_input`. Read the current source from `/tj/info/ik_request_mux/active_source`.
 
-```bash
-ros2 service call /control/set_input marvin_msgs/srv/Int "{data: 3}"
-ros2 topic echo /control/input_mode --once
-```
+### 3.2 Joint source
 
-Exit Custom:
+| Value | Source | Input topic |
+|---:|---|---|
+| `0` | Idle | No joint forwarding |
+| `1` | Teleop / QP | `/tj/control/qp_controller/joint_cmd_A/B` |
+| `2` | Planner | `/tj/control/joint_cmd_plan_A/B` |
+| `3` | Custom / User | `/tj/control/user/joint_cmd_A/B` |
+| `4` | Replay | `/tj/control/replay/joint_cmd_A/B` |
 
-```bash
-ros2 service call /control/set_input marvin_msgs/srv/Int "{data: 0}"
-```
+Switch with `/tj/control/set_input`. Read the current source from `/tj/control/input_mode`.
 
-Use the Apex frontend for normal input-mode switching. Command-line calls are intended for integration testing.
+## 4. State and Feedback Topics
 
-## 5. Custom Command Inputs
+Marvin Pro arrays place the seven left-arm joints before the seven right-arm joints.
 
-| Topic | Type | Description |
+| Topic | Type | Access | Description |
+|---|---|---|---|
+| `/tj/joint_states` | `sensor_msgs/msg/JointState` | Read-only | Standard joint state, approximately 100 Hz by default |
+| `/tj/info/joint_feedback` | `marvin_msgs/msg/Jointfeedback` | Read-only | High-rate position, velocity, and torque feedback |
+| `/tj/info/arm_state` | `std_msgs/msg/Int16MultiArray` | Read-only | Dual-arm state codes |
+| `/tj/info/robot_state` | `std_msgs/msg/Int16MultiArray` | Read-only | Whole-robot control state |
+| `/tj/info/robot_info` | `marvin_msgs/msg/RobotInfo` | Read-only | Robot model and controller version |
+| `/tj/info/eef_left` | `geometry_msgs/msg/PoseStamped` | Read-only | Left end-effector pose |
+| `/tj/info/eef_right` | `geometry_msgs/msg/PoseStamped` | Read-only | Right end-effector pose |
+| `/tj/info/wrench_left` | `geometry_msgs/msg/WrenchStamped` | Read-only | Left end-effector wrench |
+| `/tj/info/wrench_right` | `geometry_msgs/msg/WrenchStamped` | Read-only | Right end-effector wrench |
+| `/tj/info/vr_connected` | `std_msgs/msg/Bool` | Read-only | Headset connection state |
+| `/tj/info/go_home_status` | `std_msgs/msg/String` | Read-only | Home / Planner state |
+| `/info/apex_package_info` | `std_msgs/msg/String` | Read-only, global | Apex package information |
+
+## 5. Customer Control Inputs
+
+| Topic | Type | Requirement |
 |---|---|---|
-| `/control/user/joint_cmd_A` | `marvin_msgs/msg/JointcmdArm` | Seven left-arm joint targets in radians |
-| `/control/user/joint_cmd_B` | `marvin_msgs/msg/JointcmdArm` | Seven right-arm joint targets in radians |
-| `/control/gripperValueL` | `std_msgs/msg/Float32` | Left gripper target when a supported end effector is configured |
-| `/control/gripperValueR` | `std_msgs/msg/Float32` | Right gripper target when a supported end effector is configured |
-| `/control/footkey` | `std_msgs/msg/Bool` | Optional foot-pedal or glove-mode gate; use only when enabled in the delivered configuration |
-
-Inspect message fields and topic subscriptions first:
+| `/tj/control/user/joint_cmd_A` | `marvin_msgs/msg/JointcmdArm` | Left seven-joint target in rad; `set_input=3` |
+| `/tj/control/user/joint_cmd_B` | `marvin_msgs/msg/JointcmdArm` | Right seven-joint target in rad; `set_input=3` |
+| `/tj/control/ik_request/vla` | `marvin_msgs/msg/IKRequest` | Cartesian target; `set_ik_input=2`, `set_input=1` |
+| `/tj/control/gripperValueL` | `std_msgs/msg/Float32` | Left Tool running |
+| `/tj/control/gripperValueR` | `std_msgs/msg/Float32` | Right Tool running |
+| `/tj/control/footkey` | `std_msgs/msg/Bool` | Optional; only when `glove_mode=true` |
 
 ```bash
 ros2 interface show marvin_msgs/msg/JointcmdArm
-ros2 topic info /control/user/joint_cmd_A -v
-ros2 topic info /control/user/joint_cmd_B -v
+ros2 interface show marvin_msgs/msg/IKRequest
+ros2 topic info /tj/control/user/joint_cmd_A -v
+ros2 topic info /tj/control/ik_request/vla -v
 ```
-
-Maintain time-continuous targets for both arms. The robot control chain rejects stale final joint commands, so do not use low-rate, intermittent one-shot publication for continuous motion.
 
 ## 6. Robot Control Services
 
 | Service | Type | Purpose |
 |---|---|---|
-| `/control/set_input` | `marvin_msgs/srv/Int` | Select None, Teleop, Planner, Custom, or Replay input |
-| `/control/set_mode` | `marvin_msgs/srv/Int` | `0` Idle, `1` position mode, `3` joint impedance mode |
-| `/control/set_ready` | `std_srvs/srv/Trigger` | Set Ready; live joint commands are accepted only after Ready |
-| `/control/set_drag` | `marvin_msgs/srv/Int` | `0` exit joint drag, `1` enter joint drag |
-| `/control/set_vel_ratio` | `marvin_msgs/srv/Int` | Request level `0/1/2/3`, corresponding to approximately `30/50/80/100%` planner velocity/acceleration; it may not affect streaming PD/feed-forward control |
-| `/control/clear_fault` | `std_srvs/srv/Trigger` | Clear controller or servo faults |
-| `/control/get_motor_err_code` | `marvin_msgs/srv/MotorErrCode` | Read servo error codes for all 14 arm joints |
-| `/control/go_home` | `std_srvs/srv/Trigger` | Plan to the configured Home joint values |
-| `/control/movej` | `marvin_msgs/srv/MoveJ` | Execute a point-to-point plan for 14 arm joints |
-| `/control/reset_grippers` | `std_srvs/srv/Trigger` | Reset configured DM/ZY grippers; may be absent without the Tool package |
-
-Inspect request fields on the target release:
-
-```bash
-ros2 interface show marvin_msgs/srv/Int
-ros2 interface show marvin_msgs/srv/MoveJ
-ros2 interface show marvin_msgs/srv/MotorErrCode
-```
-
-The following calls set Ready and joint impedance mode. Use the Apex frontend for routine customer operation:
+| `/tj/control/set_ready` | `std_srvs/srv/Trigger` | Enter Ready state |
+| `/tj/control/set_mode` | `marvin_msgs/srv/Int` | Set robot mode |
+| `/tj/control/set_drag` | `marvin_msgs/srv/Int` | Set drag/teaching mode |
+| `/tj/control/set_vel_ratio` | `marvin_msgs/srv/Int` | Set planner velocity ratio |
+| `/tj/control/clear_fault` | `std_srvs/srv/Trigger` | Clear faults |
+| `/tj/control/get_motor_err_code` | `marvin_msgs/srv/MotorErrCode` | Read motor error codes |
+| `/tj/control/set_ik_input` | `marvin_msgs/srv/Int` | Select IK source `0/1/2` |
+| `/tj/control/set_input` | `marvin_msgs/srv/Int` | Select joint source `0/1/2/3/4` |
+| `/tj/control/movej` | `marvin_msgs/srv/MoveJ` | Plan a 14-joint point-to-point move |
+| `/tj/control/go_home` | `std_srvs/srv/Trigger` | Plan both arms to Home |
+| `/tj/control/reset_grippers` | `std_srvs/srv/Trigger` | Reset/enable DM or ZY grippers when Tool is running |
 
 ```bash
-ros2 service call /control/set_ready std_srvs/srv/Trigger "{}"
-ros2 service call /control/set_mode marvin_msgs/srv/Int "{data: 3}"
+# Customer joint input
+ros2 service call /tj/control/set_input marvin_msgs/srv/Int "{data: 3}"
+
+# Customer Cartesian IK input
+ros2 service call /tj/control/set_ik_input marvin_msgs/srv/Int "{data: 2}"
+ros2 service call /tj/control/set_input marvin_msgs/srv/Int "{data: 1}"
+
+# Stop joint forwarding
+ros2 service call /tj/control/set_input marvin_msgs/srv/Int "{data: 0}"
 ```
 
-In the factory packing pose, the wrist cameras are close to the center column. Do not call `/control/go_home` directly. Start Robot and Teleop, set the robot Ready, select Position Mode and Planner input, then move all 14 joints to zero:
-
-```bash
-ros2 service call /control/set_mode marvin_msgs/srv/Int "{data: 1}"
-ros2 service call /control/set_input marvin_msgs/srv/Int "{data: 2}"
-ros2 service call /control/movej marvin_msgs/srv/MoveJ "{joint_values: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}"
-```
-
-Enter Impedance Mode and call Home only after both arms reach all zeros and the path is clear. RQt Service Caller is recommended for the first operation so that the service, field, and values can be checked visually.
-
-## 7. Teleoperation Chain Diagnostic Topics
-
-The following topics expose the teleoperation, QP, planner, replay, and final command chain. Except for the documented Custom and gripper inputs, customer applications must not publish to these topics.
+## 7. Read-Only Teleop and Control-Chain Topics
 
 | Topic | Type | Description |
 |---|---|---|
-| `/control/target_poseL` | `geometry_msgs/msg/PoseStamped` | Left-arm end-effector target mapped from the left controller |
-| `/control/target_poseR` | `geometry_msgs/msg/PoseStamped` | Right-arm end-effector target mapped from the right controller |
-| `/control/vr_joy_L` | `sensor_msgs/msg/Joy` | Raw left-controller axes and buttons; read-only diagnostics |
-| `/control/vr_joy_R` | `sensor_msgs/msg/Joy` | Raw right-controller axes and buttons; read-only diagnostics |
-| `/control/Elbow_left` | `geometry_msgs/msg/PoseStamped` | Left-elbow input/debug pose; may be disabled in the current configuration |
-| `/control/Elbow_right` | `geometry_msgs/msg/PoseStamped` | Right-elbow input/debug pose; may be disabled in the current configuration |
-| `/control/enableL` | `std_msgs/msg/Bool` | Left-arm teleoperation enable state |
-| `/control/enableR` | `std_msgs/msg/Bool` | Right-arm teleoperation enable state |
-| `/control/ik_request` | `marvin_msgs/msg/IKRequest` | End-effector targets, validity flags, and joint seed |
-| `/control/ik_result` | `marvin_msgs/msg/IKResult` | QP solve result |
-| `/control/eef_cmd_A` | `geometry_msgs/msg/PoseStamped` | Internal left-arm end-effector target; read-only diagnostics |
-| `/control/eef_cmd_B` | `geometry_msgs/msg/PoseStamped` | Internal right-arm end-effector target; read-only diagnostics |
-| `/control/ik_cmd_A` | `marvin_msgs/msg/Jointcmd` | Legacy-compatible left IK output outside the current primary command chain; read-only diagnostics |
-| `/control/ik_cmd_B` | `marvin_msgs/msg/Jointcmd` | Legacy-compatible right IK output outside the current primary command chain; read-only diagnostics |
-| `/joint_state_cmd` | `sensor_msgs/msg/JointState` | Full QP joint solution; read-only diagnostics |
-| `/control/qp_controller/joint_cmd_A` | `marvin_msgs/msg/JointcmdArm` | Left teleoperation QP output; read-only diagnostics |
-| `/control/qp_controller/joint_cmd_B` | `marvin_msgs/msg/JointcmdArm` | Right teleoperation QP output; read-only diagnostics |
-| `/control/joint_cmd_plan_A` | `marvin_msgs/msg/Jointcmd` | Left planner output; read-only diagnostics |
-| `/control/joint_cmd_plan_B` | `marvin_msgs/msg/Jointcmd` | Right planner output; read-only diagnostics |
-| `/control/replay/joint_cmd_A` | `marvin_msgs/msg/JointcmdArm` | Left playback output; read-only diagnostics |
-| `/control/replay/joint_cmd_B` | `marvin_msgs/msg/JointcmdArm` | Right playback output; read-only diagnostics |
-| `/control/joint_cmd_A` | `marvin_msgs/msg/JointcmdArm` | Selected final left-arm command; read-only diagnostics |
-| `/control/joint_cmd_B` | `marvin_msgs/msg/JointcmdArm` | Selected final right-arm command; read-only diagnostics |
-| `/control/input_mode` | `std_msgs/msg/Int32` | Current input-source value |
+| `/tj/control/target_poseL` | `geometry_msgs/msg/PoseStamped` | VR left target pose |
+| `/tj/control/target_poseR` | `geometry_msgs/msg/PoseStamped` | VR right target pose |
+| `/tj/control/enableL` | `std_msgs/msg/Bool` | Left teleoperation enable |
+| `/tj/control/enableR` | `std_msgs/msg/Bool` | Right teleoperation enable |
+| `/tj/control/vr_joy_L` | `sensor_msgs/msg/Joy` | Raw left controller input |
+| `/tj/control/vr_joy_R` | `sensor_msgs/msg/Joy` | Raw right controller input |
+| `/tj/control/Elbow_left` | `geometry_msgs/msg/PoseStamped` | Left elbow tracking pose |
+| `/tj/control/Elbow_right` | `geometry_msgs/msg/PoseStamped` | Right elbow tracking pose |
+| `/tj/control/eef_cmd_A` | `geometry_msgs/msg/PoseStamped` | Mapped left Cartesian target |
+| `/tj/control/eef_cmd_B` | `geometry_msgs/msg/PoseStamped` | Mapped right Cartesian target |
+| `/tj/control/ik_request/vr` | `marvin_msgs/msg/IKRequest` | VR IK request |
+| `/tj/control/ik_request` | `marvin_msgs/msg/IKRequest` | Arbitrated QP IK request |
+| `/tj/control/ik_cmd_A` | `marvin_msgs/msg/Jointcmd` | Compatibility left IK diagnostic output; not in the primary command path |
+| `/tj/control/ik_cmd_B` | `marvin_msgs/msg/Jointcmd` | Compatibility right IK diagnostic output; not in the primary command path |
+| `/tj/info/ik_request_mux/active_source` | `std_msgs/msg/Int32` | Active IK source |
+| `/tj/control/ik_result` | `marvin_msgs/msg/IKResult` | IK result |
+| `/tj/joint_state_cmd` | `sensor_msgs/msg/JointState` | Full-model QP target |
+| `/tj/control/qp_controller/joint_cmd_A` | `marvin_msgs/msg/JointcmdArm` | QP left output |
+| `/tj/control/qp_controller/joint_cmd_B` | `marvin_msgs/msg/JointcmdArm` | QP right output |
+| `/tj/control/joint_cmd_plan_A` | `marvin_msgs/msg/Jointcmd` | Planner left output |
+| `/tj/control/joint_cmd_plan_B` | `marvin_msgs/msg/Jointcmd` | Planner right output |
+| `/tj/control/replay/joint_cmd_A` | `marvin_msgs/msg/JointcmdArm` | Playback left output |
+| `/tj/control/replay/joint_cmd_B` | `marvin_msgs/msg/JointcmdArm` | Playback right output |
+| `/tj/control/joint_cmd_A` | `marvin_msgs/msg/JointcmdArm` | Final left command |
+| `/tj/control/joint_cmd_B` | `marvin_msgs/msg/JointcmdArm` | Final right command |
+| `/tj/control/input_mode` | `std_msgs/msg/Int32` | Active joint source |
 
-If headset input is present but the robot does not move, inspect the chain in this order:
+## 8. End-Effector Topics
 
-```bash
-ros2 topic echo /info/vr_connected --once
-ros2 topic echo /control/target_poseL --once
-ros2 topic echo /control/enableL --once
-ros2 topic echo /control/ik_request --once
-ros2 topic echo /control/qp_controller/joint_cmd_A --once
-ros2 topic echo /control/input_mode --once
-ros2 topic echo /control/joint_cmd_A --once
-ros2 topic echo /info/arm_state --once
-```
+### 8.1 DM / ZY grippers
 
-## 8. Recording and Playback Interfaces
-
-Recording, playback, WebSocket forwarding, and rolling diagnostic logs use four independent whitelists. See [Topic whitelist configuration and diagnostics](/advanced/topic-whitelist) for configuration boundaries and validation.
-
-| Service | Type | Purpose |
+| Topic | Type | Access |
 |---|---|---|
-| `/recorder/control` | `marvin_msgs/srv/JsonCommand` | Recording `start`, `stop`, `status`, `get_topics`, `storage_status`, and `clear_storage_error` |
-| `/playback/control` | `marvin_msgs/srv/JsonCommand` | Playback `load`, `play`, `pause`, `stop`, `seek`, and `set_rate` |
-| `/recorder/set_recording` | `marvin_msgs/srv/VideoCapture` | Start or stop camera video recording with the data recorder |
+| `/tj/control/gripperValueL` | `std_msgs/msg/Float32` | Customer input |
+| `/tj/control/gripperValueR` | `std_msgs/msg/Float32` | Customer input |
+| `/tj/info/gripper_feedback_L` | `std_msgs/msg/Float32MultiArray` | Read-only |
+| `/tj/info/gripper_feedback_R` | `std_msgs/msg/Float32MultiArray` | Read-only |
+| `/tj/info/gripper_feedback_L_err` | `std_msgs/msg/Int32MultiArray` | Read-only |
+| `/tj/info/gripper_feedback_R_err` | `std_msgs/msg/Int32MultiArray` | Read-only |
 
-The recording and playback modules also publish these read-only status topics:
+### 8.2 Wuji hands (global)
 
-| Topic | Type | Purpose |
+| Topic | Type | Access |
 |---|---|---|
-| `/recorder/status` | `std_msgs/msg/Int32` | Recording state, published at approximately 1 Hz |
-| `/playback_status` | `std_msgs/msg/String` | Playback state encoded as JSON |
-| `/playback_key` | `std_msgs/msg/Bool` | Playback key/state using latched or Transient Local semantics |
+| `/hand_left/joint_commands` | `sensor_msgs/msg/JointState` | Customer input |
+| `/hand_left/joint_states` | `sensor_msgs/msg/JointState` | Read-only |
+| `/hand_right/joint_commands` | `sensor_msgs/msg/JointState` | Customer input |
+| `/hand_right/joint_states` | `sensor_msgs/msg/JointState` | Read-only |
+| `/hand_left/joint_commands_playback` | `sensor_msgs/msg/JointState` | Read-only |
+| `/hand_right/joint_commands_playback` | `sensor_msgs/msg/JointState` | Read-only |
 
-Some compatibility releases also subscribe to `/control/playback_control` (`std_msgs/msg/String`, JSON). Prefer the `/playback/control` service for customer integration, and verify availability with `ros2 topic list` on the target device.
-
-Inspect the JSON and video request fields on the target release:
-
-```bash
-ros2 interface show marvin_msgs/srv/JsonCommand
-ros2 interface show marvin_msgs/srv/VideoCapture
-```
-
-The current recording set includes these key topics:
-
-| Topic | Purpose |
-|---|---|
-| `/joint_states` | Core dual-arm motion and playback data |
-| `/info/eef_left`, `/info/eef_right` | End-effector poses |
-| `/control/joint_cmd_A`, `/control/joint_cmd_B` | Final dual-arm commands |
-| `/info/gripper_feedback_L`, `/info/gripper_feedback_R` | Gripper feedback |
-| `/hand_left/joint_commands`, `/hand_right/joint_commands` | Dexterous-hand or glove commands when configured |
-| `/hand_left/joint_states`, `/hand_right/joint_states` | Dexterous-hand state when configured |
-
-Recordings are stored by default on the USB drive labeled `BAG_STORAGE`:
-
-```text
-/media/<user>/BAG_STORAGE/recorded_bags
-```
-
-## 9. Camera Interfaces
+## 9. Recorder, Playback, and Camera
 
 | Topic / Service | Type | Purpose |
 |---|---|---|
-| `/quad_tile/compressed` | `sensor_msgs/msg/CompressedImage` | Compressed four-camera composite for preview, recording, and customer algorithms |
-| `/recorder/set_recording` | `marvin_msgs/srv/VideoCapture` | Start or stop camera video recording |
+| `/tj/recorder/status` | `std_msgs/msg/Int32` | Recording state topic |
+| `/tj/recorder/control` | `marvin_msgs/srv/JsonCommand` | Recording control service |
+| `/tj/control/playback_control` | `std_msgs/msg/String` | Compatibility playback topic |
+| `/tj/playback/control` | `marvin_msgs/srv/JsonCommand` | Main playback service |
+| `/tj/playback_status` | `std_msgs/msg/String` | Playback state topic |
+| `/tj/playback_key` | `std_msgs/msg/Bool` | Playback key/state topic |
+| `/quad_tile/jpeg/compressed` | `sensor_msgs/msg/CompressedImage` | Global tiled JPEG image |
+| `/recorder/set_recording` | `marvin_msgs/srv/VideoCapture` | Global camera recording service |
 
-```bash
-ros2 topic info /quad_tile/compressed -v
-ros2 topic hz /quad_tile/compressed
-```
+See [Topic Whitelist Configuration and Troubleshooting](/advanced/topic-whitelist) for recording, playback, WebSocket, and diagnostic-log allowlists.
 
-## 10. Optional VLA Interfaces
+## 10. Optional VLA API
 
-When the integrated `vlahost` service is running, customer applications can read robot observations and submit VLA actions over HTTP or WebSocket. The module consumes these ROS inputs:
-
-| ROS input | Purpose |
-|---|---|
-| `/info/joint_feedback` | Dual-arm joint state |
-| `/info/eef_left`, `/info/eef_right` | End-effector poses |
-| `/info/gripper_feedback_L`, `/info/gripper_feedback_R` | Gripper state |
-| `/info/gripper_feedback_L_err`, `/info/gripper_feedback_R_err` | Gripper error codes |
-| `/quad_tile/compressed` | Optional four-tile camera image |
-
-The default service port is `8000`:
-
-| Interface | Purpose |
-|---|---|
-| `GET /health` | Service health check |
-| `GET /state` | Read one current observation |
-| `WS /ws/state?rate_hz=30` | Stream state at the requested rate |
-| `GET /stream/quad.mjpg` | Read the four-tile MJPEG stream when the ROS image topic is available |
-| `POST /action` | Submit one action |
-| `WS /ws/action` | Submit a continuous action stream |
-
-The integrated action schema uses separate seven-joint arrays for the two arms, in radians:
-
-```json
-{
-  "jointcmd_left": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-  "jointcmd_right": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-  "gripper_left": 0.0,
-  "gripper_right": 0.0
-}
-```
-
-`vlahost` publishes arm actions to `/control/user/joint_cmd_A/B` and gripper actions to `/control/gripperValueL/R`. The robot must be Ready and movable, with Input Mode set to Custom (`data: 3` on `/control/set_input`). Standalone `openpi-kmd`, standalone `vlahost`, and the integrated delivered release may use different fields. Always verify the API shipped on the target device.
+Integrated `vlahost` consumes robot state, end-effector poses, gripper feedback, and `/quad_tile/jpeg/compressed`. It publishes actions through the customer input topics above and exposes `GET /health`, `GET /state`, `WS /ws/state`, `POST /action`, `WS /ws/action`, and `GET /stream/quad.mjpg` on TCP port `8000` by default.
 
 ## 11. Network Ports
 
-Allow the following headset teleoperation ports when a firewall or routed network is used:
-
 | Port | Protocol | Direction | Purpose |
 |---:|---|---|---|
-| `9000` | UDP | Headset → controller | Left teleoperation pose and button data |
-| `9001` | UDP | Headset → controller | Right teleoperation pose and button data |
+| `9000` | UDP | Headset → controller | Left teleoperation data |
+| `9001` | UDP | Headset → controller | Right teleoperation data |
 | `9002` | UDP | Controller → headset | Left end-effector feedback |
 | `9003` | UDP | Controller → headset | Right end-effector feedback |
 | `9004` | UDP | Headset → controller | Auxiliary tracking data |
-| `9010` | TCP | Bidirectional | Headset connection, heartbeat, and protocol handshake |
-| `8888` | UDP | Broadcast/discovery | Host and headset discovery |
-| `8000` | TCP | Client ↔ controller | Optional VLA HTTP/WebSocket service; open only while `vlahost` is running |
+| `9010` | TCP | Bidirectional | Connection, heartbeat, and handshake |
+| `8888` | UDP | Broadcast | Host/headset discovery |
+| `8000` | TCP | Bidirectional | Optional VLA HTTP/WebSocket |
 
-When TCP gating is enabled on the target release, receiving UDP packets alone does not mean that the teleoperation link is established. Also check `/info/vr_connected`.
-
-## 12. Custom Input Troubleshooting
+## 12. Minimum Verification
 
 ```bash
-ros2 topic echo /info/robot_info --once
-ros2 topic echo /info/robot_state --once
-ros2 topic echo /control/input_mode --once
-ros2 topic info /control/user/joint_cmd_A -v
-ros2 topic info /control/user/joint_cmd_B -v
-ros2 topic hz /control/user/joint_cmd_A
-ros2 topic hz /control/user/joint_cmd_B
+source /etc/apex/apex_ros_env.sh
+ros2 topic list | grep -E '^/tj/(joint_states|info/joint_feedback|control/joint_cmd_A|control/gripperValueL|info/gripper_feedback_L)$'
+ros2 service list | grep -E '^/tj/control/(set_ready|set_input|set_ik_input|reset_grippers)$'
 ```
 
-If Custom input produces no motion, verify:
-
-1. Robot is running and the URDF pose matches the physical robot.
-2. The robot is Ready and in Impedance Mode.
-3. Home has completed and the robot has no active fault.
-4. `/control/input_mode` is `3`.
-5. `JointcmdArm` fields, arm order, timestamps, and units are correct.
-6. The customer application publishes continuously without long gaps.
-
-For a reproducible VLA setup, ensure that the delivered `vlahost`, model service, and interface versions match. JSON fields from different repositories or releases are not interchangeable.
+Gripper topics and `reset_grippers` are absent when Tool is stopped. `/quad_tile/jpeg/compressed` is absent when Camera is stopped. See the [Marvin Pro ROS Topic List](/advanced/ros-topic-list) for the consolidated reference.

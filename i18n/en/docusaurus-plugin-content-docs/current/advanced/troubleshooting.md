@@ -1,6 +1,6 @@
 ---
 title: FAQ and Quick Reference
-sidebar_position: 3
+sidebar_position: 4
 ---
 
 # Apex Teleoperation FAQ and Quick Reference

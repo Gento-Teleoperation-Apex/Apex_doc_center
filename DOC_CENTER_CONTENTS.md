@@ -1,12 +1,12 @@
-# KernelMind Apex 文档中心内容说明
+# Gento Teleoperation Apex 文档中心导读
 
-> 更新时间：2026-08-18
+> 更新时间：2026-08-21
 > 线上地址：https://gento-teleoperation-apex.github.io/Apex_doc_center/
 > GitHub 仓库：https://github.com/Gento-Teleoperation-Apex/Apex_doc_center
 
 ## 1. 文档中心概述
 
-KernelMind Apex 文档中心是 Marvin Pro、Gento Skye/Luna 及其遥操软件、头显客户端、末端夹爪和 VLA 功能的统一客户文档站点。
+Gento Teleoperation Apex 文档中心是 Marvin Pro、Gento Skye/Luna 及其遥操软件、头显客户端、末端夹爪和 VLA 功能的统一客户文档站点。
 
 当前文档中心主要面向以下人员：
 
@@ -20,14 +20,44 @@ KernelMind Apex 文档中心是 Marvin Pro、Gento Skye/Luna 及其遥操软件�
 
 | 内容 | 数量 |
 |---|---:|
-| 中文 Markdown/MDX 页面 | 42 |
-| 英文 Markdown/MDX 页面 | 42 |
-| 已纳入 Git 管理的 `static/img` 图片资源 | 150 |
+| 中文 Markdown/MDX 页面 | 43 |
+| 英文 Markdown/MDX 页面 | 43 |
+| 已纳入 Git 管理的 `static/img` 图片资源 | 151 |
 | 支持语言 | 中文、English |
 
 中文是默认语言，英文页面位于 `/en/` 路径下。中文和英文使用同一套导航结构。
 
-## 2. 网站一级结构
+## 2. 按需求快速查找
+
+如果不熟悉网站结构，可以先按当前任务选择入口：
+
+| 需求 | 建议先看 | 所在栏目 |
+|---|---|---|
+| 第一次认识产品、核对配件 | 对应机型的“产品概述” | 产品文档 |
+| 新设备拆箱、供电和接线 | 对应机型的“硬件接线” | 产品文档 → 快速入门 |
+| 配置控制器、头显和网络 | 对应机型的“环境配置” | 产品文档 → 快速入门 |
+| 第一次启动和进入遥操 | 对应机型的“启动与调试” | 产品文档 → 快速入门 |
+| 查机器人不能启动、相机无画面等问题 | 对应机型“故障排查”或“常见问题与速查” | 产品文档 / 进阶配置及检测 |
+| 学习 Apex Teleop 按钮、录制和回放 | “Marvin Pro 当前版”或“经典版界面” | 软件使用说明 |
+| 安装和使用 Pico / Meta Quest | 对应头显用户手册 | 软件使用说明 → Apex XR 头显客户端 |
+| 开发 Marvin Pro ROS 2 程序 | “Marvin Pro 接口” | 软件使用说明 → Apex Teleop 上位机 |
+| 快速查询 Marvin Pro Topic 名称和类型 | “Marvin Pro ROS Topic 列表” | 进阶配置及检测 |
+| 开发 Skye/Luna ROS 2 程序 | “Gento（Skye/Luna）ROS 2 接口” | 软件使用说明 → Apex Teleop 上位机 |
+| 修改网络、相机、存储和产品配置 | “配置修改” | 进阶配置及检测 |
+| 修改或排查录制、回放 Topic 范围 | “Topic 白名单配置与排查” | 进阶配置及检测 |
+| 分模块检测机器人、头显、相机和末端链路 | 对应产品的“模块化通讯排查” | 进阶配置及检测 |
+| 使用或二次开发 DM/ZY 夹爪 | “ApexTool 使用与二次开发” | 末端夹爪 |
+| 查询 DM 夹爪 CAN 报文 | “DM 夹爪 CAN 协议” | 末端夹爪 |
+| 转换遥操数据 | “数据转换” | 软件使用说明 |
+| 训练和部署 VLA | 从“VLA 概述”按顺序阅读 | VLA 入门 |
+
+版本选择原则：
+
+- 当前 Marvin Pro 天准控制器使用“当前版本（天准）”。
+- 已出货的 Jetson Orin 控制器使用“历史版本（Orin）”。
+- Skye 和 Luna 使用统一的“Skye/Luna”栏目，并在具体页面中核对机型差异。
+
+## 3. 网站一级结构
 
 网站左侧导航当前分为六个主要板块：
 
@@ -40,7 +70,7 @@ KernelMind Apex 文档中心是 Marvin Pro、Gento Skye/Luna 及其遥操软件�
 
 其中产品文档按机器人型号区分，软件使用说明提供基础操作和接口资料；进阶配置及检测用于参数调整、现场排障和模块验证；末端夹爪和 VLA 提供面向开发和集成的独立说明。
 
-## 3. 首页
+## 4. 首页
 
 ### 页面作用
 
@@ -65,11 +95,11 @@ KernelMind Apex 文档中心是 Marvin Pro、Gento Skye/Luna 及其遥操软件�
 | 中文路由 | `/` |
 | 英文路由 | `/en/` |
 
-## 4. 产品文档
+## 5. 产品文档
 
 产品文档分为 **Marvin Pro** 和 **Skye/Luna** 两个产品入口。
 
-### 4.1 Marvin Pro
+### 5.1 Marvin Pro
 
 Marvin Pro 下保留两套文档，以兼容不同出货批次：
 
@@ -104,7 +134,7 @@ Marvin Pro 下保留两套文档，以兼容不同出货批次：
 | 故障排查 | 历史版本常见故障 | `/pro/old-id/getting-started/troubleshooting` |
 | 软件与固件升级 | 历史版本升级入口 | `/pro/old-id/getting-started/software-update` |
 
-### 4.2 Skye/Luna
+### 5.2 Skye/Luna
 
 Skye 和 Luna 归入同一产品栏目。产品介绍以 Skye/Luna 系列为对象，快速入门采用当前统一的天准 003 控制与 Apex Teleop 流程，同时保留两种机器人背部接口和机型差异。
 
@@ -119,11 +149,11 @@ Skye 和 Luna 归入同一产品栏目。产品介绍以 Skye/Luna 系列为对�
 | 故障排查 | Skye/Luna 常见问题 | `/gento/skye-luna/getting-started/troubleshooting` |
 | 软件与固件升级 | Skye/Luna 升级入口 | `/gento/skye-luna/getting-started/software-update` |
 
-## 5. 软件使用说明
+## 6. 软件使用说明
 
 软件使用说明由 Apex Teleop 上位机、数据转换工具和 Apex XR 头显客户端组成。
 
-### 5.1 Apex Teleop 上位机
+### 6.1 Apex Teleop 上位机
 
 目录：`docs/software/apex-teleop/`
 
@@ -144,7 +174,7 @@ Skye 和 Luna 归入同一产品栏目。产品介绍以 Skye/Luna 系列为对�
 
 控制增益、QP 参数、碰撞模型、机器人模型和相机标定不属于客户常规配置。
 
-### 5.2 KernelMind Data Converter
+### 6.2 KernelMind Data Converter
 
 目录：`docs/data-converter/`
 
@@ -160,7 +190,7 @@ Skye 和 Luna 归入同一产品栏目。产品介绍以 Skye/Luna 系列为对�
 - 数据转换、输出目录和 Rerun 可视化。
 - 与 VLA 数据流程相关的项目参考。
 
-### 5.3 Apex XR 头显客户端
+### 6.3 Apex XR 头显客户端
 
 目录：`docs/xr-teleop/`
 
@@ -175,7 +205,7 @@ Skye 和 Luna 归入同一产品栏目。产品介绍以 Skye/Luna 系列为对�
 - Marvin Pro 支持 Pico 和 Meta Quest，具体以交付版本为准。
 - Skye/Luna 全身遥操使用 Pico，并包含腰部和腿部追踪组件。
 
-## 6. 进阶配置及检测
+## 7. 进阶配置及检测
 
 目录：`docs/advanced/`
 
@@ -185,13 +215,20 @@ Skye 和 Luna 归入同一产品栏目。产品介绍以 Skye/Luna 系列为对�
 |---|---|---|
 | 配置修改 | 客户可修改的网络、机器人地址、相机、录制目录和末端配置，以及备份、重启和验证方法 | `/advanced/configuration` |
 | Topic 白名单配置与排查 | 录制、回放、WebSocket 和滚动诊断日志四类白名单的配置边界、运行值检查和验证流程 | `/advanced/topic-whitelist` |
+| Marvin Pro ROS Topic 列表 | 当前 `/tj` 命名空间下客户可见 Topic、消息类型、读写权限、启用条件和全局接口速查 | `/advanced/ros-topic-list` |
 | 常见问题与速查 | 启动、网络、相机、WebRTC、遥操、末端、ROS、依赖、录制、授权等现场问题 | `/advanced/troubleshooting` |
 | Marvin Pro 模块化通讯排查 | Pro 环境、ROS 图、机器人、头显、双臂、末端、相机、录制和日志的分层诊断 | `/advanced/pro-communication-diagnostics` |
 | Skye/Luna 模块化通讯排查 | Gento L1 SDK、双臂、身体、头部、末端、相机和录制链路的分层诊断 | `/advanced/gento-communication-diagnostics` |
 
-五个页面按“先配置、再确认数据边界、接着查询已知问题、最后按产品分段验证”的思路组织。两份模块化通讯排查手册中的每个 Bash 代码块都可在控制器终端独立整段粘贴，不依赖外部脚本，并会自动保存对应模块的排查结果；Gento 手册在形成正式验收标准前仍需分别在健康 Skye 和 Luna 上建立实机基线。
+六个页面按“先配置、确认数据边界、查询接口、查看已知问题、最后按产品分段验证”的思路组织。两份模块化通讯排查手册中的每个 Bash 代码块都可在控制器终端独立整段粘贴，不依赖外部脚本，并会自动保存对应模块的排查结果；Gento 手册在形成正式验收标准前仍需分别在健康 Skye 和 Luna 上建立实机基线。
 
-## 7. 末端夹爪
+接口相关页面的分工：
+
+- “Marvin Pro 接口”解释接口如何使用、控制源如何切换以及安全边界。
+- “Marvin Pro ROS Topic 列表”用于快速查找 Topic、消息类型和读写权限。
+- “Topic 白名单配置与排查”说明哪些 Topic 可以被录制、回放、转发或写入诊断日志。
+
+## 8. 末端夹爪
 
 目录：`docs/end-effectors/`
 
@@ -219,7 +256,7 @@ Skye 和 Luna 归入同一产品栏目。产品介绍以 Skye/Luna 系列为对�
 `docs/end-effectors/dm-can-protocol.md` 面向需要理解 DM4310 底层链路的开发人员。它以标准 ROS 2 接口为推荐控制方式，同时提供当前生产版本的 MIT 帧格式、常用帧表和反馈协议。直接发帧、设置零位及电机参数写入均按高风险操作限制。
 
 
-## 8. VLA 入门
+## 9. VLA 入门
 
 目录：`docs/vla/`
 
@@ -243,9 +280,9 @@ VLA 板块覆盖从遥操数据到 LeRobot 数据集、模型训练和真机部�
 - 将其加入“数据集样例”和“模型训练”之间；或
 - 把其中不重复的环境准备内容合并到“模型训练”和“真机部署”。
 
-## 9. 推荐阅读路径
+## 10. 推荐阅读路径
 
-### 8.1 首次使用 Marvin Pro 当前版本
+### 10.1 首次使用 Marvin Pro 当前版本
 
 1. 产品概述。
 2. 硬件接线。
@@ -255,7 +292,7 @@ VLA 板块覆盖从遥操数据到 LeRobot 数据集、模型训练和真机部�
 6. Pico 或 Meta Quest 头显说明。
 7. 故障排查与软件升级。
 
-### 8.2 首次使用 Skye/Luna
+### 10.2 首次使用 Skye/Luna
 
 1. Skye/Luna 产品概述。
 2. 硬件接线并确认机器人、头显和 Thor/其他设备使用正确网口。
@@ -265,16 +302,17 @@ VLA 板块覆盖从遥操数据到 LeRobot 数据集、模型训练和真机部�
 6. Pico 用户手册。
 7. 故障排查与软件升级。
 
-### 8.3 客户 ROS 2 二次开发
+### 10.3 客户 ROS 2 二次开发
 
 1. 阅读对应产品的启动与安全要求。
 2. Marvin Pro 使用“Marvin Pro 接口”。
-3. Skye/Luna 使用“Gento ROS 2 接口”。
-4. 末端开发使用“ApexTool 使用与二次开发”。
-5. 修改网络、相机或存储路径时使用“配置修改”。
-6. 使用最小幅度、单模块测试验证后再联调整机。
+3. 需要快速查询 Marvin Pro Topic 时使用“Marvin Pro ROS Topic 列表”。
+4. Skye/Luna 使用“Gento ROS 2 接口”。
+5. 末端开发使用“ApexTool 使用与二次开发”。
+6. 修改网络、相机或存储路径时使用“配置修改”。
+7. 使用最小幅度、单模块测试验证后再联调整机。
 
-### 8.4 VLA 数据闭环
+### 10.4 VLA 数据闭环
 
 1. 使用 Apex Teleop 录制遥操数据。
 2. 使用 KernelMind Data Converter 整理并检查数据。
@@ -284,7 +322,7 @@ VLA 板块覆盖从遥操数据到 LeRobot 数据集、模型训练和真机部�
 6. 部署 vlahost、策略服务器和推理客户端。
 7. 先无动作验证反馈，再进行低速真机测试。
 
-## 10. 中英文文件对应关系
+## 11. 中英文文件对应关系
 
 中文页面位于：
 
@@ -306,6 +344,9 @@ i18n/en/docusaurus-plugin-content-docs/current/advanced/configuration.md
 
 docs/advanced/topic-whitelist.md
 i18n/en/docusaurus-plugin-content-docs/current/advanced/topic-whitelist.md
+
+docs/advanced/ros-topic-list.md
+i18n/en/docusaurus-plugin-content-docs/current/advanced/ros-topic-list.md
 ```
 
 后续修改客户文档时应同步修改中英文页面，并保持：
@@ -315,7 +356,7 @@ i18n/en/docusaurus-plugin-content-docs/current/advanced/topic-whitelist.md
 - 相同的章节结构、命令、Topic、Service 和参数名。
 - 中文站使用 `/...`，英文站由 Docusaurus 自动添加 `/en/` 前缀。
 
-## 11. 图片与静态资源
+## 12. 图片与静态资源
 
 客户页面使用的图片统一放在：
 
@@ -342,7 +383,7 @@ Markdown 中引用静态图片时使用站点绝对路径，例如：
 
 图片中的操作说明应尽量转写为 Markdown 正文，图片主要保留设备、接口、接线位置和界面状态，便于后续搜索、翻译和维护。
 
-## 12. 导航和页面排序
+## 13. 导航和页面排序
 
 主导航由根目录的 `sidebars.js` 控制。
 
@@ -367,7 +408,7 @@ sidebar_position: 1
 4. 中英文文件是否同步存在。
 5. 页面内链接是否同时适用于中文和英文站点。
 
-## 13. 本地预览与构建
+## 14. 本地预览与构建
 
 安装依赖：
 
@@ -401,7 +442,7 @@ npm run serve
 
 项目要求 Node.js 18 或更高版本，GitHub Actions 当前使用 Node.js 22。
 
-## 14. 发布方式
+## 15. 发布方式
 
 发布工作流：
 
@@ -426,12 +467,12 @@ git push origin main
 
 线上更新通常需要等待 GitHub Actions 构建和 Pages 缓存刷新。若网站未立即变化，应先检查仓库 Actions 页面中的 Deploy 工作流是否成功。
 
-## 15. 维护原则
+## 16. 维护原则
 
 ### 内容维护
 
 - 当前版本与历史版本必须明确区分，不能直接删除仍有客户使用的旧版本。
-- 产品名称统一使用 Marvin Pro、Skye、Luna 和 KernelMind。
+- 产品名称统一使用 Marvin Pro、Skye、Luna 和 Gento Teleoperation Apex。
 - 同一条命令、IP、Topic 或安装包名称在不同页面中应保持一致。
 - 现场不确定的硬件参数不得根据其他机型推断，应先向产品或研发确认。
 - 客户页面只公开经过确认的接口和可修改参数。
@@ -453,14 +494,14 @@ git status --short
 
 提交时只添加本次修改涉及的文件，避免把临时图片、备份目录、安装包或本地测试文件一并提交。
 
-## 16. 当前内容状态摘要
+## 17. 当前内容状态摘要
 
 当前文档中心已经具备以下完整链路：
 
 - 三个机器人型号的产品说明、接线、配置、启动、排障和升级入口。
 - 当前版和历史版 Marvin Pro 的独立维护。
 - 当前版与经典版 Apex Teleop 界面说明。
-- Marvin Pro 与 Gento 的客户 ROS 2 接口说明。
+- Marvin Pro 与 Gento 的客户 ROS 2 接口说明，以及 Marvin Pro `/tj` Topic 独立速查表。
 - 面向客户的配置修改和大型现场 QA 速查手册。
 - Pico 和 Meta Quest 头显操作说明。
 - DM/OmniGripper、ZY 等末端夹爪使用和二次开发说明。

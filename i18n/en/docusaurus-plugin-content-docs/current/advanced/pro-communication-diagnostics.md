@@ -1,6 +1,6 @@
 ---
 title: Marvin Pro Modular Diagnostics
-sidebar_position: 4
+sidebar_position: 5
 ---
 
 # Marvin Pro Direct-Paste Communication Diagnostics
