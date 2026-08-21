@@ -1,20 +1,27 @@
-# KernelMind Data Converter Guide
+---
+title: Data-Processing-Tool
+sidebar_position: 1
+---
 
-KernelMind Data Converter is a conversion tool for teleoperation and robot datasets. Teleoperation data is recorded by default to a USB drive labeled `BAG_STORAGE` under `/media/<user>/BAG_STORAGE/recorded_bags`. The tool organizes MCAP files, camera videos, and timestamp information from the `my_bag-*` directories into trainable LeRobot v3 datasets. It also provides an Electron desktop UI for path selection, video stream mapping, end-effector selection, LeRobot Schema configuration, conversion progress, and Rerun visualization.
+# Data-Processing-Tool Guide
 
-## Core Features
+Data-Processing-Tool is a Windows desktop application for Apex teleoperation datasets. It validates dual-MCAP recordings, configures video streams and robot fields, and exports LeRobot v3 datasets. The Windows `.exe` installer includes the required runtime, so customers do not need to install Python, Conda, or Node.js.
 
-- Run the full pipeline in one click: split `cameras.mp4`, convert MCAP, align video with robot state, and export a LeRobot Dataset.
-- Support custom mapping for 2x2 stitched videos. One or more video streams from `left_eye`, `right_eye`, `left_wrist`, and `right_wrist` can be written to the dataset.
-- Support `gripper` gripper mode and `hand` dexterous hand mode.
-- Support configurable LeRobot `action` and `observation.state` composition order. The UI displays topic count and total dimensions in real time.
-- Built-in live logs, log export, pause, resume, and stop conversion.
-- Built-in Rerun Web Viewer for `.mcap`, `.rrd`, `.rbl`, or LeRobot dataset directories. Native Rerun can also be opened.
-- Provides the raw data quality check command `quality-check`, which can generate quality reports before conversion.
+Repository: [Gento-Teleoperation-Apex/Data-Processing-Tool](https://github.com/Gento-Teleoperation-Apex/Data-Processing-Tool)
 
-## Raw Data Directory Requirements
+## 1. Download and Install
 
-On Linux, the USB drive is mounted by default at `/media/<user>/BAG_STORAGE`, and recordings are stored in its `recorded_bags` subdirectory. Select `recorded_bags` as the Data Converter input. It must contain one or more `my_bag-*` episode directories:
+1. Open the repository [Releases](https://github.com/Gento-Teleoperation-Apex/Data-Processing-Tool/releases) page.
+2. Download the latest Windows x64 installer, such as `Data-Processing-Tools-<version>-Setup.exe`.
+3. Run the installer and follow the prompts, then launch Data-Processing-Tool from the desktop or Start menu.
+
+:::note Windows security notice
+Early releases may not be code-signed. If Windows displays an unknown-publisher warning, first verify that the installer came from the official repository above, then select **More info** to continue.
+:::
+
+## 2. Dual-MCAP Input Format
+
+Each episode must contain both a state MCAP and a video MCAP:
 
 ```text
 BAG_STORAGE/
@@ -22,302 +29,106 @@ BAG_STORAGE/
     my_bag-yy-MM-dd-HH-mm-ss/
       data/
         data_0.mcap
-        metadata.yaml
       video/
-        cameras.mp4
-        cameras_first_frame.yaml
+        record_<timestamp>/
+          record_<timestamp>_0.mcap
 ```
 
-Key files:
+| File | Purpose | Requirement |
+|---|---|---|
+| `data/data_0.mcap` | Arm state, action, and end-effector data | One per episode |
+| `video/**/*.mcap` | 2x2 camera video streams | Exactly one per episode |
 
-| File | Purpose |
-| --- | --- |
-| `data/data_0.mcap` | Raw ROS / robot state recording. |
-| `data/metadata.yaml` | Recording metadata. If it is missing, first check whether recording ended normally. |
-| `video/cameras.mp4` | 2x2 camera video. |
-| `video/cameras_first_frame.yaml` | Absolute timestamp of the first frame. The file must contain `first_frame_time.epoch_ns`. |
+The new format no longer uses `cameras.mp4` or `cameras_first_frame.yaml`. The video MCAP `log_time` is the primary video timeline. Robot states are aligned to video frames by absolute timestamp while preserving the native frame rate and all recorded frames.
 
-Episode directory names must start with `my_bag-`. The final generated dataset directory is named with the earliest episode timestamp.
+## 3. Conversion Workflow
 
-When reading the USB drive directly on Windows, if its drive letter is `D:`, the converter input is normally `D:\recorded_bags`, not `D:\BAG_STORAGE`.
+### 3.1 Select Input and Output Directories
 
-## Pre-Conversion Quality Check
+Select the directory that contains one or more `my_bag-*` episodes, then choose the LeRobot dataset output directory. The task description is optional, but a concise description of the recorded task is recommended.
 
-Before conversion, check the directory structure, raw recordings, and required topics in each `my_bag-*` episode and write reports to the selected output directory:
+![Select input and output directories](image/step15.png)
 
-```powershell
-python -m km_data_converter quality-check ^
-  --input D:\recorded_bags ^
-  --output D:\output\km_dataset
-```
+### 3.2 Configure Video Stream Mapping
 
-Reports are written to `D:\output\km_dataset\quality_report`. To require additional topics, pass `--required-topic` more than once:
+Map each position in the 2x2 video frame to its camera role:
 
-```powershell
-python -m km_data_converter quality-check ^
-  --input D:\recorded_bags ^
-  --output D:\output\km_dataset ^
-  --required-topic /joint_states ^
-  --required-topic /control/joint_cmd_A
-```
+- `left_eye`: left eye camera
+- `right_eye`: right eye camera
+- `left_wrist`: left wrist camera
+- `right_wrist`: right wrist camera
 
-Use `--rules <rules.yaml>` to load custom rules. Add `--replace-rules` when the custom rule file should completely replace the default rules.
+Use the actual frame positions. Each role must be assigned only once.
 
-## Installation
+![Configure video stream mapping](image/step16.png)
 
-Python `3.10` to `3.12` is recommended.
+### 3.3 Select the End Effector and Schema
 
-```powershell
-pip install -e .
-```
+Select the installed end-effector type, then verify the Action and Observation topics, order, and dimensions. Grippers and dexterous hands use different fields, so this configuration must match both the recording and the downstream training configuration.
 
-```powershell
-pip install rerun-sdk[all]
-```
+![Configure the end effector and LeRobot Schema](image/step17.png)
 
-```powershell
-pip install -e .\examples\python\rerun_export
-```
+### 3.4 Review and Start Conversion
 
-## Start The Desktop UI
+Review the input path, video mapping, end-effector type, and Schema. Confirm the settings and start conversion. The status panel reports the current stage, progress, and live logs for input validation, MCAP parsing, timestamp alignment, and dataset generation.
 
-The desktop app is located in `km_data_converter_UI` and uses Electron + Vite + React.
+![Review settings and start conversion](image/step18.png)
 
-```powershell
-cd .\km_data_converter_UI
-npm install
-npm run build
-npm run dev
-```
+### 3.5 Inspect the Rerun Visualization
 
-`node_modules/` is created by `npm install`. `dist/`.
-`dist-electron/` are build outputs created by commands such as `npm run build`.
-After startup, the UI opens the `KernelMind Data Converter` window.
+After conversion, open the Rerun visualization and verify that all four camera streams, robot states, actions, and end-effector data are aligned correctly on the timeline.
 
-## 5-Step Frontend Workflow
+![Rerun visualization](image/step10.png)
 
-### 1. Input Paths
+## 4. Data Quality Check
 
-![Input Paths](image/step6.png)
+Data-Processing-Tool also includes a data-quality module. Before converting a large batch, verify that:
 
-Fill in or select the following in `Input Paths`:
+- every episode contains both a state MCAP and exactly one video MCAP;
+- all required topics exist and contain a reasonable number of messages;
+- timestamps are continuous and state data covers the video time range;
+- all four camera views are complete and mapped to the correct physical cameras;
+- Action, Observation, and end-effector dimensions match the training configuration.
 
-- Raw data directory: the `recorded_bags` directory on the USB drive containing `my_bag-*`. The default Linux path is `/media/<user>/BAG_STORAGE/recorded_bags`.
-- Output directory: intermediate RRD files, config files, and the final LeRobot dataset are written here.
-- Video FPS: output FPS for split videos. The UI default is `30`. It is recommended to set the output video FPS lower than the original video FPS.
-- Task description: optional task text written to the final dataset.
+Quality checking and conversion cannot run at the same time. Wait for the active task to finish, or stop it before switching modules.
 
-### 2. Video Stream Mapping
+## 5. Output Layout
 
-![Video Stream Mapping](image/step7.png)
-
-The tool treats `video/cameras.mp4` as a 2x2 frame and splits it into independent videos according to the mapping.
-
-Available positions:
+The output directory contains:
 
 ```text
-top_left       top_right
-bottom_left    bottom_right
-```
-
-Available video roles:
-
-```text
-None / unused
-left_eye
-right_eye
-left_wrist
-right_wrist
-```
-
-Default mapping:
-
-```json
-{
-  "video_streams": [
-    { "grid": "top_left", "role": "left_eye" },
-    { "grid": "top_right", "role": "left_wrist" },
-    { "grid": "bottom_left", "role": "right_wrist" },
-    { "grid": "bottom_right", "role": "right_eye" }
-  ]
-}
-```
-
-Notes:
-
-- `grid` cannot be duplicated.
-- `role` cannot be duplicated.
-- At least one video stream must be selected.
-- Unselected positions are not split, are not written to `video2rrd`, and are not included in the final LeRobot dataset.
-
-### 3. End Effector And LeRobot Schema
-
-![End Effector And LeRobot Schema](image/step8.png)
-
-First select the end-effector type:
-
-| Type | Use case | Related topic |
-| --- | --- | --- |
-| `gripper` | Default gripper mode | `gripper_feedback_L`, `gripper_feedback_R` |
-| `hand` | Dexterous hand mode | `/hand_left/*`, `/hand_right/*` |
-
-Then configure the LeRobot `action` and `observation.state`. The UI supports adding or removing topics from the available topic list and previews each segment's dimension range in the vector in real time.
-
-Default gripper schema:
-
-```json
-{
-  "action": [
-    "/control/joint_cmd_A",
-    "/control/joint_cmd_B",
-    "eef_left",
-    "eef_right",
-    "gripper_feedback_L",
-    "gripper_feedback_R"
-  ],
-  "observation": [
-    "/joint_states/position_L",
-    "/joint_states/position_R",
-    "eef_left",
-    "eef_right",
-    "gripper_feedback_L",
-    "gripper_feedback_R"
-  ]
-}
-```
-
-Default dexterous hand schema:
-
-```json
-{
-  "action": [
-    "/control/joint_cmd_A",
-    "/control/joint_cmd_B",
-    "eef_left",
-    "eef_right",
-    "/hand_left/joint_commands/position",
-    "/hand_right/joint_commands/position"
-  ],
-  "observation": [
-    "/joint_states/position_L",
-    "/joint_states/position_R",
-    "eef_left",
-    "eef_right",
-    "/hand_left/joint_states/position",
-    "/hand_right/joint_states/position",
-    "/hand_left/joint_states/effort",
-    "/hand_right/joint_states/effort"
-  ]
-}
-```
-
-Available topic dimensions:
-
-| Topic | Dimensions |
-| --- | ---: |
-| `/joint_states/effort_L`, `/joint_states/effort_R` | 7 |
-| `/joint_states/position_L`, `/joint_states/position_R` | 7 |
-| `/joint_states/velocity_L`, `/joint_states/velocity_R` | 7 |
-| `/control/joint_cmd_A`, `/control/joint_cmd_B` | 7 |
-| `eef_left`, `eef_right` | 7 |
-| `gripper_feedback_L`, `gripper_feedback_R` | 1 |
-| `/hand_left/joint_commands/position`, `/hand_right/joint_commands/position` | 20 |
-| `/hand_left/joint_states/position`, `/hand_right/joint_states/position` | 20 |
-| `/hand_left/joint_states/effort`, `/hand_right/joint_states/effort` | 20 |
-
-Implementation details:
-
-- `/joint_states/*_L` and `/joint_states/*_R` come from splitting a 14-dimensional joint state vector into left and right 7-dimensional parts.
-- `eef_left` and `eef_right` use position and quaternion, for 7 dimensions in total.
-- `gripper_feedback_L` and `gripper_feedback_R` use the gripper end travel, for 1 dimension in total.
-
-### 4. Start Conversion
-
-![Start Conversion](image/step9.png)
-
-Before starting, the UI displays:
-
-- Input path, output path, FPS, and task description.
-- Number of video stream mappings and the specific `role <- grid`.
-- Total Action / Observation dimensions.
-- Paths of the config files that will be written.
-
-After checking `I have confirmed the configuration above`, conversion can be started. The status panel on the right displays stage progress:
-
-1. Read raw data
-2. Parse rosbag / mcap / video
-3. Timestamp alignment
-4. Generate LeRobot Dataset
-5. Open Rerun visualization
-
-During conversion, you can use:
-
-- Pause: suspend the current conversion process.
-- Resume: resume the paused conversion.
-- Stop conversion: terminate the current conversion process tree.
-- Export logs: save the current live logs to `conversion_logs_*.txt` in the output directory.
-
-### 5. Rerun Visualization
-
-![Rerun Visualization](image/step10.png)
-
-After conversion succeeds, enter the `Rerun Visualization` page. It supports selecting or entering:
-
-- `.mcap`
-- `.rrd`
-- `.rbl`
-- LeRobot dataset directory
-
-After clicking `Start Viewer`, the desktop app starts the Rerun gRPC data service. The default data source address is similar to:
-
-```text
-rerun+http://localhost:9876/proxy
-```
-
-The UI embeds Rerun Web Viewer for inspection. You can also click `Native Rerun` to open it with the system `rerun` command.
-
-## Output Directory Structure
-
-Assuming the output directory selected in the UI is `D:\output\km_dataset`, conversion generates:
-
-```text
-D:\output\km_dataset\
+<output>/
   lerobot_schema.json
   video_stream_config.json
-  mcap2rrd\
-    mcap_to_rrd\
-      my_bag-yy-MM-dd-HH-mm-ss\
-        mcap2rrd.rrd
-  video2rrd\
-    video2rrd-yy-MM-dd-HH-mm-ss.rrd
-  lerobot_output\
-    lerobot_datasets-yy-MM-dd-HH-mm-ss\
-      data\
-      meta\
+  mcap2rrd/
+  video2rrd/
+  lerobot_output/
+    lerobot_datasets-<timestamp>/
+      data/
+      meta/
         stats.json
-      videos\
+      videos/
 ```
 
-Description:
+- `lerobot_schema.json`: Action and Observation field configuration used for this conversion.
+- `video_stream_config.json`: mapping between 2x2 frame positions and camera roles.
+- `mcap2rrd/` and `video2rrd/`: Rerun visualization data.
+- `lerobot_output/`: final LeRobot v3 dataset.
 
-- `lerobot_schema.json` records the final `action` and `observation` topic order.
-- `video_stream_config.json` records the mapping from 2x2 video positions to cameras.
-- `mcap2rrd` stores intermediate results exported from the raw MCAP state.
-- `video2rrd` stores each episode RRD after video and robot state alignment.
-- `lerobot_output/lerobot_datasets-*` is the final trainable dataset.
+## 6. Troubleshooting
 
-```text
-The final generated LeRobot-format dataset is named with the earliest episode timestamp.
-```
+**No episodes are detected**
 
-## Rerun Command Line Viewing
+Verify that the selected directory directly contains `my_bag-*` directories and that every episode has both `data/data_0.mcap` and exactly one `video/**/*.mcap`.
 
-If you do not use the embedded desktop Viewer, you can also run:
+**The video MCAP count is invalid**
 
-```powershell
-rerun D:\output\km_dataset\lerobot_output\lerobot_datasets-yy-MM-dd-HH-mm-ss
-```
+Only one `.mcap` file is allowed under each episode's `video/` directory. Move duplicate recordings or backups elsewhere and run the check again.
 
-## Project Reference
+**Conversion succeeds but camera positions are wrong**
 
-- [KLMmotion/KM_data_converter (`data_converter` branch)](https://github.com/KLMmotion/KM_data_converter/tree/data_converter): converter source, desktop UI, and latest project documentation.
+Return to **Video Stream Mapping** and remap `left_eye`, `right_eye`, `left_wrist`, and `right_wrist` according to the original 2x2 frame.
+
+**Timestamp alignment or field-dimension errors occur**
+
+Run the data-quality check, then verify the state MCAP time range, end-effector selection, and Action/Observation Schema. Include the software version, a screenshot of the input layout, and the live log when reporting an issue.

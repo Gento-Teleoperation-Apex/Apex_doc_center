@@ -12,14 +12,14 @@ This section is based on the [OpenPI](https://github.com/Physical-Intelligence/o
 ## Applicable Scenarios
 
 - Fine-tune PI0 / PI05 models using LeRobot-format datasets
-- Convert LeRobot v3.0 datasets exported by KM Data Converter to the v2.1 format required by OpenPI training
+- Convert LeRobot v3.0 datasets exported by Data-Processing-Tool to the v2.1 format required by OpenPI training
 - Deploy trained checkpoints on robots such as Marvin Pro and execute language-instruction tasks through a WebSocket policy service
 
 ## End-to-End Flow
 
 ```text
 Raw acquisition data (BAG / MCAP)
-  -> KM Data Converter exports LeRobot v3.0 dataset
+  -> Data-Processing-Tool exports LeRobot v3.0 dataset
   -> convert_v3_to_v2.py converts to v2.1 format
   -> train_pytorch.py trains PI0 / PI05 model
   -> serve_policy_kmd_joint.py starts the policy server

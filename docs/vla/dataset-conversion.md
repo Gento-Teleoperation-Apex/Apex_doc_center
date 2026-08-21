@@ -5,7 +5,7 @@ sidebar_position: 2
 
 # LeRobot 数据集格式转换（v3.0 → v2.1）
 
-OpenPI 当前训练代码使用 LeRobot **v2.1** 数据集布局。若你通过 [KM Data Converter](/data-converter/README.zh-CN) 导出了 **v3.0** 格式数据集，需先运行 `convert_v3_to_v2.py` 完成格式转换后再开始训练。
+OpenPI 当前训练代码使用 LeRobot **v2.1** 数据集布局。若你通过 [Data-Processing-Tool](/data-converter/README.zh-CN) 导出了 **v3.0** 格式数据集，需先运行 `convert_v3_to_v2.py` 完成格式转换后再开始训练。
 
 所有命令均在 OpenPI 项目根目录下执行，并使用 `uv` 管理环境。
 
@@ -55,14 +55,14 @@ uv run convert_v3_to_v2.py \
 3. 将原始 v3.0 快照备份至 `_v3.0` 同级目录
 4. 将 v2.1 布局移入原数据集路径
 
-## 与 KM Data Converter 的衔接
+## 与 Data-Processing-Tool 的衔接
 
 推荐的数据准备流程：
 
 ```text
 BAG_STORAGE/recorded_bags 原始采集
-  -> python -m km_data_converter run-full
-  -> datasets/lerobot_output/（LeRobot v3.0）
+  -> Windows Data-Processing-Tool 检查并转换双 MCAP 数据
+  -> <输出目录>/lerobot_output/（LeRobot v3.0）
   -> uv run convert_v3_to_v2.py --local-root <v3.0 数据集路径>
   -> 可用于 OpenPI 训练的 v2.1 数据集
 ```

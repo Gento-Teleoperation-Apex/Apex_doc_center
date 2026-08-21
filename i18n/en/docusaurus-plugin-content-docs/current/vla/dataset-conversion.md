@@ -5,7 +5,7 @@ sidebar_position: 2
 
 # LeRobot Dataset Format Conversion (v3.0 -> v2.1)
 
-OpenPI's current training code uses the LeRobot **v2.1** dataset layout. If you exported a **v3.0** dataset through [KM Data Converter](../data-converter/README.zh-CN), run `convert_v3_to_v2.py` to finish format conversion before training.
+OpenPI's current training code uses the LeRobot **v2.1** dataset layout. If you exported a **v3.0** dataset through [Data-Processing-Tool](/data-converter/README.zh-CN), run `convert_v3_to_v2.py` to finish format conversion before training.
 
 All commands should be run from the OpenPI project root and use `uv` to manage the environment.
 
@@ -55,14 +55,14 @@ Script flow:
 3. Back up the original v3.0 snapshot to a sibling `_v3.0` directory
 4. Move the v2.1 layout into the original dataset path
 
-## Integration with KM Data Converter
+## Integration with Data-Processing-Tool
 
 Recommended data preparation flow:
 
 ```text
 BAG_STORAGE/recorded_bags raw acquisition
-  -> python -m km_data_converter run-full
-  -> datasets/lerobot_output/ (LeRobot v3.0)
+  -> Validate and convert dual-MCAP data with Data-Processing-Tool on Windows
+  -> <output>/lerobot_output/ (LeRobot v3.0)
   -> uv run convert_v3_to_v2.py --local-root <v3.0 dataset path>
   -> v2.1 dataset ready for OpenPI training
 ```

@@ -48,7 +48,7 @@ Gento Teleoperation Apex 文档中心是 Marvin Pro、Gento Skye/Luna 及其遥�
 | 分模块检测机器人、头显、相机和末端链路 | 对应产品的“模块化通讯排查” | 进阶配置及检测 |
 | 使用或二次开发 DM/ZY 夹爪 | “ApexTool 使用与二次开发” | 末端夹爪 |
 | 查询 DM 夹爪 CAN 报文 | “DM 夹爪 CAN 协议” | 末端夹爪 |
-| 转换遥操数据 | “数据转换” | 软件使用说明 |
+| 转换遥操数据 | “Data-Processing-Tool” | 软件使用说明 |
 | 训练和部署 VLA | 从“VLA 概述”按顺序阅读 | VLA 入门 |
 
 版本选择原则：
@@ -174,7 +174,7 @@ Skye 和 Luna 归入同一产品栏目。产品介绍以 Skye/Luna 系列为对�
 
 控制增益、QP 参数、碰撞模型、机器人模型和相机标定不属于客户常规配置。
 
-### 6.2 KernelMind Data Converter
+### 6.2 Data-Processing-Tool
 
 目录：`docs/data-converter/`
 
@@ -182,9 +182,9 @@ Skye 和 Luna 归入同一产品栏目。产品介绍以 Skye/Luna 系列为对�
 
 内容包括：
 
-- 原始数据目录结构要求。
+- Windows EXE 安装包下载、安装和启动。
+- 双 MCAP 原始数据目录结构要求。
 - 转换前数据质量检查。
-- 工具安装和桌面界面启动。
 - 输入路径、视频映射和末端执行器设置。
 - LeRobot Schema 配置。
 - 数据转换、输出目录和 Rerun 可视化。
@@ -315,7 +315,7 @@ VLA 板块覆盖从遥操数据到 LeRobot 数据集、模型训练和真机部�
 ### 10.4 VLA 数据闭环
 
 1. 使用 Apex Teleop 录制遥操数据。
-2. 使用 KernelMind Data Converter 整理并检查数据。
+2. 使用 Data-Processing-Tool 整理并检查双 MCAP 数据。
 3. 转换为训练要求的 LeRobot 格式。
 4. 对照数据集样例检查相机、状态和动作字段。
 5. 训练 PI0/PI05 模型。

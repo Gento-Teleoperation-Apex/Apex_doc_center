@@ -59,9 +59,9 @@
     "message": "Skye/Luna",
     "description": "The label for category Skye/Luna in sidebar mainSidebar"
   },
-  "sidebar.mainSidebar.category.数据转换": {
-    "message": "Data Converter",
-    "description": "The label for category Data Converter in sidebar mainSidebar"
+  "sidebar.mainSidebar.category.Data-Processing-Tool": {
+    "message": "Data-Processing-Tool",
+    "description": "The label for category Data-Processing-Tool in sidebar mainSidebar"
   },
   "sidebar.mainSidebar.category.XR 遥操作客户端": {
     "message": "XR Teleoperation App Manual",

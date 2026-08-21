@@ -12,14 +12,14 @@ VLA（Vision-Language-Action）是一类结合视觉感知、自然语言指令�
 ## 适用场景
 
 - 使用 LeRobot 格式数据集微调 PI0 / PI05 模型
-- 将 KM Data Converter 导出的 LeRobot v3.0 数据集转换为 OpenPI 训练所需的 v2.1 格式
+- 将 Data-Processing-Tool 导出的 LeRobot v3.0 数据集转换为 OpenPI 训练所需的 v2.1 格式
 - 在 Marvin Pro 等机型上部署训练好的 checkpoint，通过 WebSocket 策略服务执行语言指令任务
 
 ## 端到端流程
 
 ```text
 原始采集数据（BAG / MCAP）
-  -> KM Data Converter 导出 LeRobot v3.0 数据集
+  -> Data-Processing-Tool 导出 LeRobot v3.0 数据集
   -> convert_v3_to_v2.py 转换为 v2.1 格式
   -> train_pytorch.py 训练 PI0 / PI05 模型
   -> serve_policy_kmd_joint.py 启动策略服务器
