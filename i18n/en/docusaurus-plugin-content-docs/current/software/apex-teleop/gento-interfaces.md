@@ -326,7 +326,42 @@ Mobile-base nodes are normally launched independently in the root namespace:
 
 If these interfaces are absent, also check `/tj/info/base_*` and `/tj/control/base_*` in case the delivered launch applies the robot namespace to the base nodes.
 
-## 10. Recommended Data Collection
+## 10. Topic Rate Reference
+
+Gento control-loop and topic rates differ from Marvin Pro. The following values come from the current Skye/Luna source and default parameters and are not hard real-time guarantees.
+
+| Topic / chain | Skye | Luna | Notes |
+|---|---:|---:|---|
+| `/tj/info/eef_left/right` | 1000 Hz | 1000 Hz | Motion timer target; actual rate depends on load |
+| `/tj/control/teleop/ik_request` | 1000 Hz | 1000 Hz | Teleop running |
+| `/tj/control/qp_controller/joint_cmd_*` | 250 Hz | 500 Hz | Ready, Home, and IK data are valid |
+| `/tj/control/joint_cmd_*` | Normally 250 Hz | Normally 500 Hz | Mux steady-state pass-through; about 100 Hz during source transition |
+| `/tj/info/joint_feedback` | Up to about 1000 Hz | Up to about 1000 Hz | Published after each successful Gento SDK state read |
+| `/tj/joint_states`, `/tj/info/robot_state` | About 200 Hz | About 200 Hz | Current source publishes every fifth Robot poll |
+| `/tj/info/gripper_feedback_L/R` and error topics | 200 Hz | 200 Hz | Default DM/ZY Tool configuration |
+| `/tj/info/gento_replay/status` | 2 Hz | 2 Hz | Every 500 ms while Replay is running |
+| `/move/ManualMoveCmd`, `/target_pose` | 100 Hz | 100 Hz | While the corresponding base mode is active |
+
+Headset topics follow actual UDP packets, camera topics follow camera configuration, and event topics such as mode, source, and static TF have no continuous-rate requirement. The 1000 Hz internal gripper CAN loop does not mean the ROS feedback topics run at 1000 Hz.
+
+```bash
+source /etc/apex/apex_ros_env.sh
+
+ros2 topic info -v /tj/info/joint_feedback --no-daemon
+ros2 topic info -v /tj/joint_states --no-daemon
+
+ros2 topic hz /tj/info/eef_left
+ros2 topic hz /tj/control/teleop/ik_request
+ros2 topic hz /tj/control/qp_controller/joint_cmd_A
+ros2 topic hz /tj/control/joint_cmd_A
+ros2 topic hz /tj/info/joint_feedback
+ros2 topic hz /tj/joint_states
+ros2 topic hz /tj/info/gripper_feedback_L
+```
+
+After startup or a control-source change, wait for the roughly two-second Mux transition before measuring final joint commands. Check publisher count first, and run formal full-load tests for at least 120 seconds.
+
+## 11. Recommended Data Collection
 
 | Category | Recommended topics |
 |---|---|
@@ -342,7 +377,7 @@ Before recording, use `ros2 topic info -v`, `ros2 topic echo --once`, and `ros2 
 
 To add body, head, or end-effector topics to recording, playback, or frontend forwarding, see [Topic whitelist configuration and diagnostics](/advanced/topic-whitelist).
 
-## 11. Minimum Diagnostic Set
+## 12. Minimum Diagnostic Set
 
 ```bash
 source /etc/apex/apex_ros_env.sh

@@ -11,6 +11,12 @@ sidebar_position: 1
 >
 > Document date: August 7, 2026
 
+:::note ROS 2 namespace
+
+Current Marvin Pro and Gento deliveries use the `/tj` namespace by default, so this page uses `/tj/control/...` and `/tj/info/...`. Older standalone Tool packages may still expose root paths without the `/tj` prefix; use the target machine's `ros2 topic list -t` and `ros2 service list -t` as the source of truth.
+
+:::
+
 ## 1. Purpose
 
 This guide explains:
@@ -159,30 +165,30 @@ Stop the manual node before restoring `apex-tool.service`.
 
 | Topic | Type | Direction | Meaning |
 |---|---|---|---|
-| `/control/gripperValueL` | `std_msgs/msg/Float32` | Customer to Tool | Normalized left target |
-| `/control/gripperValueR` | `std_msgs/msg/Float32` | Customer to Tool | Normalized right target |
+| `/tj/control/gripperValueL` | `std_msgs/msg/Float32` | Customer to Tool | Normalized left target |
+| `/tj/control/gripperValueR` | `std_msgs/msg/Float32` | Customer to Tool | Normalized right target |
 
 Input is clamped to `0.0-1.0` and mapped to the physical position range. Driver direction may differ, so verify `0.2` and `0.8` without an object before assuming which value opens or closes the gripper.
 
 ```bash
-ros2 topic pub --once /control/gripperValueL std_msgs/msg/Float32 "{data: 0.2}"
-ros2 topic pub --once /control/gripperValueR std_msgs/msg/Float32 "{data: 0.2}"
+ros2 topic pub --once /tj/control/gripperValueL std_msgs/msg/Float32 "{data: 0.2}"
+ros2 topic pub --once /tj/control/gripperValueR std_msgs/msg/Float32 "{data: 0.2}"
 ```
 
 ### 7.2 Feedback and errors
 
 | Topic | Type | Meaning |
 |---|---|---|
-| `/info/gripper_feedback_L` | `std_msgs/msg/Float32MultiArray` | Left feedback |
-| `/info/gripper_feedback_R` | `std_msgs/msg/Float32MultiArray` | Right feedback |
-| `/info/gripper_feedback_L_err` | `std_msgs/msg/Int32MultiArray` | Left error code |
-| `/info/gripper_feedback_R_err` | `std_msgs/msg/Int32MultiArray` | Right error code |
+| `/tj/info/gripper_feedback_L` | `std_msgs/msg/Float32MultiArray` | Left feedback |
+| `/tj/info/gripper_feedback_R` | `std_msgs/msg/Float32MultiArray` | Right feedback |
+| `/tj/info/gripper_feedback_L_err` | `std_msgs/msg/Int32MultiArray` | Left error code |
+| `/tj/info/gripper_feedback_R_err` | `std_msgs/msg/Int32MultiArray` | Right error code |
 
 ```bash
-ros2 topic echo /info/gripper_feedback_L
-ros2 topic echo /info/gripper_feedback_R
-ros2 topic hz /info/gripper_feedback_L
-ros2 topic hz /info/gripper_feedback_R
+ros2 topic echo /tj/info/gripper_feedback_L
+ros2 topic echo /tj/info/gripper_feedback_R
+ros2 topic hz /tj/info/gripper_feedback_L
+ros2 topic hz /tj/info/gripper_feedback_R
 ```
 
 A ROS publication rate does not prove that every physical CAN frame is new. For real-time evaluation, inspect CAN receive timestamps, changing feedback values, and host load as well.
@@ -191,15 +197,15 @@ A ROS publication rate does not prove that every physical CAN frame is new. For 
 
 | Topic | Type | Meaning |
 |---|---|---|
-| `/info/gripper_state_L` | `std_msgs/msg/Int32MultiArray` | Left ZY state |
-| `/info/gripper_state_R` | `std_msgs/msg/Int32MultiArray` | Right ZY state |
+| `/tj/info/gripper_state_L` | `std_msgs/msg/Int32MultiArray` | Left ZY state |
+| `/tj/info/gripper_state_R` | `std_msgs/msg/Int32MultiArray` | Right ZY state |
 
 ZY state values are `0` reached/still, `1` moving, `2` gripping/stalled, and `3` object dropped. Common error values are `0` normal, `1` over-temperature, `2` over-speed, `3` initialization failure, and `4` limit exceeded.
 
 ### 7.4 Reset
 
 ```bash
-ros2 service call /control/reset_grippers std_srvs/srv/Trigger "{}"
+ros2 service call /tj/control/reset_grippers std_srvs/srv/Trigger "{}"
 ```
 
 This disables and re-enables both grippers. Keep people and fragile objects clear before calling it.
@@ -208,7 +214,7 @@ This disables and re-enables both grippers. Keep people and fragile objects clea
 
 ```text
 Headset trigger / customer device / ROS node
-    -> /control/gripperValueL or /control/gripperValueR
+    -> /tj/control/gripperValueL or /tj/control/gripperValueR
     -> ApexTool DM/ZY driver
     -> clamp and position mapping
     -> vendor CAN frame
@@ -219,7 +225,7 @@ Headset trigger / customer device / ROS node
     -> physical gripper
 ```
 
-Feedback follows the reverse path and becomes `/info/gripper_feedback_*`. `vcan` existence only proves that the software endpoint exists; physical motion plus fresh feedback proves the complete chain.
+Feedback follows the reverse path and becomes `/tj/info/gripper_feedback_*`. `vcan` existence only proves that the software endpoint exists; physical motion plus fresh feedback proves the complete chain.
 
 | Product | Robot interface | Tool interface | Customer interface |
 |---|---|---|---|
@@ -252,11 +258,11 @@ The eight-byte command frame contains control word, position, speed, force/curre
 
 ## 11. Customer ROS Input
 
-Customers may publish directly to `/control/gripperValueL/R` without modifying Teleop. First confirm that no other source publishes continuously:
+Customers may publish directly to `/tj/control/gripperValueL/R` without modifying Teleop. First confirm that no other source publishes continuously:
 
 ```bash
-ros2 topic info /control/gripperValueL -v
-ros2 topic info /control/gripperValueR -v
+ros2 topic info /tj/control/gripperValueL -v
+ros2 topic info /tj/control/gripperValueR -v
 ```
 
 Multiple publishers cause alternating targets, oscillation, or failure to settle.
@@ -271,9 +277,9 @@ class GripperPublisher(Node):
     def __init__(self):
         super().__init__('customer_gripper_publisher')
         self.left_pub = self.create_publisher(
-            Float32, '/control/gripperValueL', 10)
+            Float32, '/tj/control/gripperValueL', 10)
         self.right_pub = self.create_publisher(
-            Float32, '/control/gripperValueR', 10)
+            Float32, '/tj/control/gripperValueR', 10)
 
     def send(self, left, right):
         left_msg = Float32()
@@ -349,14 +355,14 @@ grep -E 'APEX_TOOL_TYPE|APEX_ROBOT_PLATFORM|APEX_ROBOT_MODEL|ROS_DOMAIN_ID' \
   /etc/apex/apex.env
 ros2 topic list | grep -E 'gripper|gripperValue'
 ros2 service list | grep reset_grippers
-ros2 topic info /control/gripperValueL -v
-ros2 topic info /control/gripperValueR -v
+ros2 topic info /tj/control/gripperValueL -v
+ros2 topic info /tj/control/gripperValueR -v
 ip -details -statistics link show vcan0
 ip -details -statistics link show vcan1
-ros2 topic echo /info/gripper_feedback_L --once
-ros2 topic echo /info/gripper_feedback_R --once
-ros2 topic echo /info/gripper_feedback_L_err --once
-ros2 topic echo /info/gripper_feedback_R_err --once
+ros2 topic echo /tj/info/gripper_feedback_L --once
+ros2 topic echo /tj/info/gripper_feedback_R --once
+ros2 topic echo /tj/info/gripper_feedback_L_err --once
+ros2 topic echo /tj/info/gripper_feedback_R_err --once
 ```
 
 ## 16. Common Problems
@@ -396,15 +402,15 @@ journalctl -u apex-tool.service -n 100 --no-pager
 
 ros2 topic list | grep -E 'gripper|gripperValue'
 ros2 service list | grep reset_grippers
-ros2 topic info /control/gripperValueL -v
-ros2 topic info /control/gripperValueR -v
+ros2 topic info /tj/control/gripperValueL -v
+ros2 topic info /tj/control/gripperValueR -v
 
-ros2 topic pub --once /control/gripperValueL std_msgs/msg/Float32 "{data: 0.2}"
-ros2 topic pub --once /control/gripperValueR std_msgs/msg/Float32 "{data: 0.2}"
+ros2 topic pub --once /tj/control/gripperValueL std_msgs/msg/Float32 "{data: 0.2}"
+ros2 topic pub --once /tj/control/gripperValueR std_msgs/msg/Float32 "{data: 0.2}"
 
-ros2 topic echo /info/gripper_feedback_L --once
-ros2 topic echo /info/gripper_feedback_R --once
-ros2 service call /control/reset_grippers std_srvs/srv/Trigger "{}"
+ros2 topic echo /tj/info/gripper_feedback_L --once
+ros2 topic echo /tj/info/gripper_feedback_R --once
+ros2 service call /tj/control/reset_grippers std_srvs/srv/Trigger "{}"
 
 ip -details -statistics link show vcan0
 ip -details -statistics link show vcan1

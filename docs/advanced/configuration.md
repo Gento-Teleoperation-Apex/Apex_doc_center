@@ -188,19 +188,20 @@ source /etc/apex/apex_ros_env.sh
 
 systemctl --no-pager --full status apex-robot.service apex-teleop.service
 ros2 node list
-ros2 topic echo /info/robot_info --once
-ros2 topic echo /info/arm_state --once
-ros2 topic echo /info/robot_state --once
-ros2 topic echo /joint_states --once
-ros2 topic hz /joint_states
+ros2 topic echo /tj/info/robot_info --once
+ros2 topic echo /tj/info/arm_state --once
+ros2 topic echo /tj/info/robot_state --once
+ros2 topic echo /tj/joint_states --once
+ros2 topic hz /tj/joint_states
 ```
 
 相机和末端按设备实际接口验证：
 
 ```bash
 systemctl --no-pager --full status apex-camera.service
-ros2 topic echo /quad_tile/compressed --once
-ros2 topic echo /info/gripper_feedback_L --once
+ros2 topic list -t | grep '^/quad_tile/'
+ros2 topic echo /quad_tile/jpeg/compressed --once
+ros2 topic echo /tj/info/gripper_feedback_L --once
 ```
 
 部分 Topic 只存在于特定产品或末端配置中，以当前设备发布结果为准。

@@ -155,3 +155,43 @@ ros2 topic info /tj/control/gripperValueL -v
 ```
 
 Topics appear only while their modules are running. If a topic exists but carries no messages, check its publishers, QoS, `ROS_DOMAIN_ID`, `APEX_ROS_NAMESPACE`, and module state.
+
+## 12. Topic Rate Reference
+
+The following values come from the current Marvin Pro source and default parameters. Timer, SDK/CAN control-loop, ROS topic, and frontend WebSocket rates are different concepts. These values are not hard real-time guarantees under Linux, DDS, or network load.
+
+| Topic / chain | Design or expected rate | Condition |
+|---|---:|---|
+| `/tj/info/eef_left/right` | 1000 Hz | Teleop running; actual rate depends on compute load |
+| `/tj/control/ik_request/vr` | 1000 Hz | Teleop running with a valid VR source |
+| `/tj/control/qp_controller/joint_cmd_A/B` | Up to 500 Hz | Robot Ready, valid target, and healthy QP |
+| `/tj/control/joint_cmd_A/B` | Normally 500 Hz in Teleop | Joint source is Teleop; follows the active source |
+| `/tj/info/joint_feedback` | 200 Hz | Robot connected to MarvinSDK |
+| `/tj/info/arm_state`, `/tj/info/robot_state` | 200 Hz | Robot connected |
+| `/tj/joint_states` | 100 Hz | Robot connected |
+| `/tj/info/gripper_feedback_L/R` and error topics | 200 Hz | DM/ZY Tool running |
+| `/tj/recorder/status` | 1 Hz | Recorder running |
+| `/tj/playback_status` | 10 Hz | Playback running |
+| `/tj/info/robot_info` | 0.2 Hz | Every 5 seconds by default, plus one message at startup |
+| `/quad_tile/jpeg/compressed` | Camera configuration | Do not infer the ROS source rate from the frontend 30 FPS limit |
+
+Headset targets, enable states, and gripper commands follow actual UDP packets or an upstream customer program and have no universal fixed rate. Planner, Replay, event-state topics, and static TF should not be evaluated as continuous streams.
+
+Check publisher count before measuring so merged traffic from multiple publishers is not mistaken for a single-node rate:
+
+```bash
+source /etc/apex/apex_ros_env.sh
+
+ros2 topic info -v /tj/info/joint_feedback --no-daemon
+ros2 topic info -v /tj/joint_states --no-daemon
+ros2 topic info -v /tj/info/gripper_feedback_L --no-daemon
+
+ros2 topic hz /tj/info/eef_left
+ros2 topic hz /tj/control/qp_controller/joint_cmd_A
+ros2 topic hz /tj/control/joint_cmd_A
+ros2 topic hz /tj/info/joint_feedback
+ros2 topic hz /tj/joint_states
+ros2 topic hz /tj/info/gripper_feedback_L
+```
+
+For a formal stability test, run the arms, grippers, cameras, and recording concurrently for at least 120 seconds. Record mean Hz, period standard deviation, P95/P99, maximum gap, stream interruptions, publisher count, and CPU load.

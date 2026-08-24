@@ -441,18 +441,19 @@ SDK 与控制器固件版本
 按控制链逐级找“最后一个有数据的 Topic”：
 
 ```bash
-ros2 topic echo /info/vr_connected --once
-ros2 topic echo /control/target_poseL --once
-ros2 topic echo /control/enableL --once
-ros2 topic echo /control/teleop/ik_request --once
-ros2 topic echo /control/ik_request --once
-ros2 topic echo /control/qp_controller/joint_cmd_A --once
-ros2 topic echo /control/input_mode --once
-ros2 topic echo /control/joint_cmd_A --once
-ros2 topic echo /info/robot_state --once
+source /etc/apex/apex_ros_env.sh
+ros2 topic echo /tj/info/vr_connected --once
+ros2 topic echo /tj/control/target_poseL --once
+ros2 topic echo /tj/control/enableL --once
+ros2 topic echo /tj/control/teleop/ik_request --once
+ros2 topic echo /tj/control/ik_request --once
+ros2 topic echo /tj/control/qp_controller/joint_cmd_A --once
+ros2 topic echo /tj/control/input_mode --once
+ros2 topic echo /tj/control/joint_cmd_A --once
+ros2 topic echo /tj/info/robot_state --once
 ```
 
-Pro 某些版本没有 `/control/teleop/ik_request` 或使用不同状态 Topic，以目标机 `ros2 topic list` 为准。
+Pro 使用 `/tj/control/ik_request/vr`，Gento 使用 `/tj/control/teleop/ik_request`。不同版本可能使用不同状态 Topic，以目标机 `ros2 topic list` 为准。
 
 日志出现：
 
@@ -483,14 +484,14 @@ Arm A/B idle (no msg ...)
 左右分别比较：
 
 ```bash
-ros2 topic echo /control/target_poseL --once
-ros2 topic echo /control/target_poseR --once
-ros2 topic echo /control/enableL --once
-ros2 topic echo /control/enableR --once
-ros2 topic echo /control/qp_controller/joint_cmd_A --once
-ros2 topic echo /control/qp_controller/joint_cmd_B --once
-ros2 topic echo /control/joint_cmd_A --once
-ros2 topic echo /control/joint_cmd_B --once
+ros2 topic echo /tj/control/target_poseL --once
+ros2 topic echo /tj/control/target_poseR --once
+ros2 topic echo /tj/control/enableL --once
+ros2 topic echo /tj/control/enableR --once
+ros2 topic echo /tj/control/qp_controller/joint_cmd_A --once
+ros2 topic echo /tj/control/qp_controller/joint_cmd_B --once
+ros2 topic echo /tj/control/joint_cmd_A --once
+ros2 topic echo /tj/control/joint_cmd_B --once
 ```
 
 若两侧指令都有而一侧无反馈，再查该侧机械臂电源、线束、控制器状态和 SDK 错误码。
@@ -622,7 +623,7 @@ grep -Rns -E 'left_kd|right_kd' \
 ```bash
 systemctl status apex-tool.service --no-pager
 ros2 node list | grep -Ei 'gripper|tool|hand'
-ros2 topic info /control/gripperValueL -v
+ros2 topic info /tj/control/gripperValueL -v
 ```
 
 若准备手动启动夹爪节点，先停止已运行的 Tool 服务：
@@ -640,8 +641,8 @@ sudo systemctl stop apex-tool.service
 ```bash
 echo "$ROS_DOMAIN_ID"
 grep -E 'ROS_DOMAIN_ID|APEX_TELEOP_MODE|APEX_TOOL_TYPE' /etc/apex/apex.env
-ros2 topic info /control/gripperValueL -v
-ros2 topic info /control/gripperValueR -v
+ros2 topic info /tj/control/gripperValueL -v
+ros2 topic info /tj/control/gripperValueR -v
 ```
 
 普通夹爪应确认遥操模式为 `controller`，头显 APK 与当前 Teleop 配套。若版本更新后 Domain 从 20 变成 23，头显、Teleop、Tool 和调试终端必须全部使用同一 Domain。
@@ -659,15 +660,15 @@ ros2 launch dm_gripper_py dm_gripper.launch.py
 重置：
 
 ```bash
-ros2 service call /control/reset_grippers std_srvs/srv/Trigger '{}'
+ros2 service call /tj/control/reset_grippers std_srvs/srv/Trigger '{}'
 ```
 
 低风险单次测试：
 
 ```bash
-ros2 topic pub --once /control/gripperValueL \
+ros2 topic pub --once /tj/control/gripperValueL \
   std_msgs/msg/Float32 '{data: 0.2}'
-ros2 topic pub --once /control/gripperValueR \
+ros2 topic pub --once /tj/control/gripperValueR \
   std_msgs/msg/Float32 '{data: 0.2}'
 ```
 
@@ -702,16 +703,17 @@ ip -details link show vcan1
 ### Q37：夹爪能动但没有弹性，怎么处理？
 
 1. 确认只有一个夹爪控制节点。
-2. 调用 `/control/reset_grippers`。
+2. 调用 `/tj/control/reset_grippers`。
 3. 查看左右反馈和 `_err` Topic。
 4. 检查启动时左右电机 enable/MIT 初始化是否成功。
 5. 重启后仍异常，再检查 MIT Kp/Kd、末端板和电机。
 
 ```bash
-ros2 topic echo /info/gripper_feedback_L --once
-ros2 topic echo /info/gripper_feedback_R --once
-ros2 topic echo /info/gripper_feedback_L_err --once
-ros2 topic echo /info/gripper_feedback_R_err --once
+source /etc/apex/apex_ros_env.sh
+ros2 topic echo /tj/info/gripper_feedback_L --once
+ros2 topic echo /tj/info/gripper_feedback_R --once
+ros2 topic echo /tj/info/gripper_feedback_L_err --once
+ros2 topic echo /tj/info/gripper_feedback_R_err --once
 ```
 
 ### Q38：DM 夹爪 Kp/Kd 在哪里修改？
@@ -748,8 +750,8 @@ MotorControl1.controlMIT(Motor2, 3.0, 0.12, ...)
 检查发布者数量：
 
 ```bash
-ros2 topic info /control/gripperValueL -v
-ros2 topic info /control/gripperValueR -v
+ros2 topic info /tj/control/gripperValueL -v
+ros2 topic info /tj/control/gripperValueR -v
 ```
 
 不要同时运行头显控制和正弦波测试脚本。当前 DM 夹爪经过 120 秒满负载验证的稳定工程配置约为 200 Hz，不是硬实时承诺。
@@ -828,11 +830,11 @@ grep -n 'ROS_LOCALHOST_ONLY' /etc/apex/apex.env
 ### Q45：如何判断是输入没有数据、QP 没输出，还是最终控制源没切对？
 
 ```bash
-ros2 topic echo /control/teleop/ik_request --once
-ros2 topic echo /control/ik_request --once
-ros2 topic echo /control/qp_controller/joint_cmd_A --once
-ros2 topic echo /control/input_mode --once
-ros2 topic echo /control/joint_cmd_A --once
+ros2 topic echo /tj/control/teleop/ik_request --once
+ros2 topic echo /tj/control/ik_request --once
+ros2 topic echo /tj/control/qp_controller/joint_cmd_A --once
+ros2 topic echo /tj/control/input_mode --once
+ros2 topic echo /tj/control/joint_cmd_A --once
 ```
 
 判断：
@@ -996,12 +998,13 @@ grep -n 'BAG_STORAGE_ROOT' /etc/apex/apex.env
 快速查看：
 
 ```bash
-ros2 topic hz /info/eef_left
-ros2 topic hz /info/eef_right
-ros2 topic hz /info/gripper_feedback_L
-ros2 topic hz /info/gripper_feedback_R
-ros2 topic hz /info/joint_feedback
-ros2 topic hz /joint_states
+source /etc/apex/apex_ros_env.sh
+ros2 topic hz /tj/info/eef_left
+ros2 topic hz /tj/info/eef_right
+ros2 topic hz /tj/info/gripper_feedback_L
+ros2 topic hz /tj/info/gripper_feedback_R
+ros2 topic hz /tj/info/joint_feedback
+ros2 topic hz /tj/joint_states
 ```
 
 正式测试至少记录测试时长、预热、动作负载、发布者数量、样本数、平均 Hz、标准差、P95/P99、最大周期和数据中断。
@@ -1010,12 +1013,12 @@ ros2 topic hz /joint_states
 
 | Topic | 频率参考 |
 | --- | ---: |
-| `/info/eef_left/right` | 约 939 Hz |
-| `/info/gripper_feedback_L/R` | 约 198 Hz |
-| `/info/joint_feedback` | 约 200 Hz |
-| `/joint_states` | 约 100 Hz |
+| `/tj/info/eef_left/right` | 约 939 Hz |
+| `/tj/info/gripper_feedback_L/R` | 约 198 Hz |
+| `/tj/info/joint_feedback` | 约 200 Hz |
+| `/tj/joint_states` | 约 100 Hz |
 
-这些是单次现场实测，不是所有设备的硬实时承诺。训练数据建议保留各 Topic 原始时间戳，录制后统一重采样，不要为了频率一致同时修改所有底层控制环。
+这些是 Marvin Pro 的单次现场实测，不是所有设备的硬实时承诺，也不能直接作为 Skye/Luna 的验收值。各产品当前设计频率见 [Marvin Pro ROS Topic 列表](/advanced/ros-topic-list) 和 [Gento ROS 2 接口](/software/apex-teleop/gento-interfaces)。训练数据建议保留各 Topic 原始时间戳，录制后统一重采样，不要为了频率一致同时修改所有底层控制环。
 
 ## 9. 授权与其他常见问题
 

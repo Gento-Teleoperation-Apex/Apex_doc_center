@@ -301,18 +301,19 @@ After changing the active YAML, restart Robot and Teleop. Persistent `Robot conn
 Find the last topic in the command chain that still has data:
 
 ```bash
-ros2 topic echo /info/vr_connected --once
-ros2 topic echo /control/target_poseL --once
-ros2 topic echo /control/enableL --once
-ros2 topic echo /control/teleop/ik_request --once
-ros2 topic echo /control/ik_request --once
-ros2 topic echo /control/qp_controller/joint_cmd_A --once
-ros2 topic echo /control/input_mode --once
-ros2 topic echo /control/joint_cmd_A --once
-ros2 topic echo /info/robot_state --once
+source /etc/apex/apex_ros_env.sh
+ros2 topic echo /tj/info/vr_connected --once
+ros2 topic echo /tj/control/target_poseL --once
+ros2 topic echo /tj/control/enableL --once
+ros2 topic echo /tj/control/teleop/ik_request --once
+ros2 topic echo /tj/control/ik_request --once
+ros2 topic echo /tj/control/qp_controller/joint_cmd_A --once
+ros2 topic echo /tj/control/input_mode --once
+ros2 topic echo /tj/control/joint_cmd_A --once
+ros2 topic echo /tj/info/robot_state --once
 ```
 
-Some Pro releases do not expose `/control/teleop/ik_request`; use the target `ros2 topic list`. A working gripper does not prove that arm IK/QP, Ready, or final commands are healthy. For a one-sided fault, compare L/R targets, enables, QP output, final commands, feedback, power, cabling, and SDK error codes.
+Pro uses `/tj/control/ik_request/vr`, while Gento uses `/tj/control/teleop/ik_request`. Releases may expose different state topics, so use the target `ros2 topic list`. A working gripper does not prove that arm IK/QP, Ready, or final commands are healthy. For a one-sided fault, compare L/R targets, enables, QP output, final commands, feedback, power, cabling, and SDK error codes.
 
 ### Q25-Q27: Headset network and system prompts
 
@@ -364,7 +365,7 @@ Never run a systemd Tool node and a manual node against the same device:
 ```bash
 systemctl status apex-tool.service --no-pager
 ros2 node list | grep -Ei 'gripper|tool|hand'
-ros2 topic info /control/gripperValueL -v
+ros2 topic info /tj/control/gripperValueL -v
 ```
 
 For missing `/control/gripperValueL/R`, verify `ROS_DOMAIN_ID`, `APEX_TELEOP_MODE`, `APEX_TOOL_TYPE`, publishers, and a compatible headset APK. All nodes and terminals must use the same Domain.
@@ -375,9 +376,9 @@ For missing `/control/gripperValueL/R`, verify `ROS_DOMAIN_ID`, `APEX_TELEOP_MOD
 source /etc/apex/apex_ros_env.sh
 source /opt/kernelmind/apex_tool/install/setup.bash 2>/dev/null || true
 ros2 launch dm_gripper_py dm_gripper.launch.py
-ros2 service call /control/reset_grippers std_srvs/srv/Trigger '{}'
-ros2 topic pub --once /control/gripperValueL std_msgs/msg/Float32 '{data: 0.2}'
-ros2 topic pub --once /control/gripperValueR std_msgs/msg/Float32 '{data: 0.2}'
+ros2 service call /tj/control/reset_grippers std_srvs/srv/Trigger '{}'
+ros2 topic pub --once /tj/control/gripperValueL std_msgs/msg/Float32 '{data: 0.2}'
+ros2 topic pub --once /tj/control/gripperValueR std_msgs/msg/Float32 '{data: 0.2}'
 ```
 
 Command direction and scaling depend on the delivered launch. Do not mix raw motor positions with normalized ROS values.
@@ -387,10 +388,10 @@ Command direction and scaling depend on the delivered launch. Do not mix raw mot
 ```bash
 ip -details link show vcan0
 ip -details link show vcan1
-ros2 topic echo /info/gripper_feedback_L --once
-ros2 topic echo /info/gripper_feedback_R --once
-ros2 topic echo /info/gripper_feedback_L_err --once
-ros2 topic echo /info/gripper_feedback_R_err --once
+ros2 topic echo /tj/info/gripper_feedback_L --once
+ros2 topic echo /tj/info/gripper_feedback_R --once
+ros2 topic echo /tj/info/gripper_feedback_L_err --once
+ros2 topic echo /tj/info/gripper_feedback_R_err --once
 ```
 
 Creating an empty vCAN interface does not bridge data to physical hardware. Check Robot's end-effector bridge, power, terminal board, fuses, cables, IDs, CAN channels, initialization logs, and error codes. Reset the grippers before changing MIT gains.
@@ -441,11 +442,11 @@ All participants must use the same Domain. Cross-machine DDS generally requires 
 ### Q45: How can input, QP, and final-source failures be separated?
 
 ```bash
-ros2 topic echo /control/teleop/ik_request --once
-ros2 topic echo /control/ik_request --once
-ros2 topic echo /control/qp_controller/joint_cmd_A --once
-ros2 topic echo /control/input_mode --once
-ros2 topic echo /control/joint_cmd_A --once
+ros2 topic echo /tj/control/teleop/ik_request --once
+ros2 topic echo /tj/control/ik_request --once
+ros2 topic echo /tj/control/qp_controller/joint_cmd_A --once
+ros2 topic echo /tj/control/input_mode --once
+ros2 topic echo /tj/control/joint_cmd_A --once
 ```
 
 | Last healthy stage | Next area to inspect |
@@ -522,15 +523,16 @@ The common location is `/media/<user>/BAG_STORAGE/recorded_bags`. Perform a shor
 ### Q55: How should EEF, gripper, and joint rates be measured?
 
 ```bash
-ros2 topic hz /info/eef_left
-ros2 topic hz /info/eef_right
-ros2 topic hz /info/gripper_feedback_L
-ros2 topic hz /info/gripper_feedback_R
-ros2 topic hz /info/joint_feedback
-ros2 topic hz /joint_states
+source /etc/apex/apex_ros_env.sh
+ros2 topic hz /tj/info/eef_left
+ros2 topic hz /tj/info/eef_right
+ros2 topic hz /tj/info/gripper_feedback_L
+ros2 topic hz /tj/info/gripper_feedback_R
+ros2 topic hz /tj/info/joint_feedback
+ros2 topic hz /tj/joint_states
 ```
 
-Record warm-up, duration, motion load, publisher count, sample count, mean, standard deviation, P95/P99, maximum period, and dropouts. Historical 120-second full-load measurements were approximately 939 Hz for EEF, 198 Hz for grippers, 200 Hz for joint feedback, and 100 Hz for `/joint_states`; these are references, not hard real-time guarantees.
+Record warm-up, duration, motion load, publisher count, sample count, mean, standard deviation, P95/P99, maximum period, and dropouts. A historical Marvin Pro 120-second full-load test measured approximately 939 Hz for EEF, 198 Hz for grippers, 200 Hz for joint feedback, and 100 Hz for `/tj/joint_states`. These are references, not hard real-time guarantees, and must not be used as Skye/Luna acceptance values. See [Marvin Pro ROS Topic List](/advanced/ros-topic-list) and [Gento ROS 2 Interfaces](/software/apex-teleop/gento-interfaces) for current design rates.
 
 ## 9. Licensing and Other Issues
 

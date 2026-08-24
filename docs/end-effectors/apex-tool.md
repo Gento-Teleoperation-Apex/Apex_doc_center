@@ -11,6 +11,12 @@ sidebar_position: 1
 >
 > 文档日期：2026-08-07
 
+:::note ROS 2 命名空间
+
+当前 Marvin Pro 与 Gento 标准交付默认使用 `/tj` 命名空间，因此本文接口写作 `/tj/control/...` 和 `/tj/info/...`。旧版独立 Tool 包可能仍使用不带 `/tj` 前缀的根路径，应以目标机 `ros2 topic list -t` 和 `ros2 service list -t` 为准。
+
+:::
+
 ## 1. 文档目标
 
 本文说明以下内容：
@@ -244,8 +250,8 @@ source /etc/apex/apex_ros_env.sh
 
 | Topic | 类型 | 方向 | 数据含义 |
 | --- | --- | --- | --- |
-| `/control/gripperValueL` | `std_msgs/msg/Float32` | 客户程序 -> Tool | 左夹爪归一化目标值 |
-| `/control/gripperValueR` | `std_msgs/msg/Float32` | 客户程序 -> Tool | 右夹爪归一化目标值 |
+| `/tj/control/gripperValueL` | `std_msgs/msg/Float32` | 客户程序 -> Tool | 左夹爪归一化目标值 |
+| `/tj/control/gripperValueR` | `std_msgs/msg/Float32` | 客户程序 -> Tool | 右夹爪归一化目标值 |
 
 输入值会被限制在 `0.0` 到 `1.0`，再由驱动映射到对应夹爪的实际位置范围。
 
@@ -254,24 +260,24 @@ source /etc/apex/apex_ros_env.sh
 单次测试命令：
 
 ```bash
-ros2 topic pub --once /control/gripperValueL \
+ros2 topic pub --once /tj/control/gripperValueL \
   std_msgs/msg/Float32 "{data: 0.2}"
 ```
 
 ```bash
-ros2 topic pub --once /control/gripperValueR \
+ros2 topic pub --once /tj/control/gripperValueR \
   std_msgs/msg/Float32 "{data: 0.2}"
 ```
 
 确认方向后再发送另一端点：
 
 ```bash
-ros2 topic pub --once /control/gripperValueL \
+ros2 topic pub --once /tj/control/gripperValueL \
   std_msgs/msg/Float32 "{data: 0.8}"
 ```
 
 ```bash
-ros2 topic pub --once /control/gripperValueR \
+ros2 topic pub --once /tj/control/gripperValueR \
   std_msgs/msg/Float32 "{data: 0.8}"
 ```
 
@@ -279,23 +285,23 @@ ros2 topic pub --once /control/gripperValueR \
 
 | Topic | 类型 | 内容 |
 | --- | --- | --- |
-| `/info/gripper_feedback_L` | `std_msgs/msg/Float32MultiArray` | 左夹爪反馈 |
-| `/info/gripper_feedback_R` | `std_msgs/msg/Float32MultiArray` | 右夹爪反馈 |
-| `/info/gripper_feedback_L_err` | `std_msgs/msg/Int32MultiArray` | 左夹爪错误码 |
-| `/info/gripper_feedback_R_err` | `std_msgs/msg/Int32MultiArray` | 右夹爪错误码 |
+| `/tj/info/gripper_feedback_L` | `std_msgs/msg/Float32MultiArray` | 左夹爪反馈 |
+| `/tj/info/gripper_feedback_R` | `std_msgs/msg/Float32MultiArray` | 右夹爪反馈 |
+| `/tj/info/gripper_feedback_L_err` | `std_msgs/msg/Int32MultiArray` | 左夹爪错误码 |
+| `/tj/info/gripper_feedback_R_err` | `std_msgs/msg/Int32MultiArray` | 右夹爪错误码 |
 
 读取反馈：
 
 ```bash
-ros2 topic echo /info/gripper_feedback_L
-ros2 topic echo /info/gripper_feedback_R
+ros2 topic echo /tj/info/gripper_feedback_L
+ros2 topic echo /tj/info/gripper_feedback_R
 ```
 
 读取频率：
 
 ```bash
-ros2 topic hz /info/gripper_feedback_L
-ros2 topic hz /info/gripper_feedback_R
+ros2 topic hz /tj/info/gripper_feedback_L
+ros2 topic hz /tj/info/gripper_feedback_R
 ```
 
 注意：ROS Topic 发布频率不等于物理 CAN 每一帧都已更新。驱动可能按定时器发布最近一次缓存值。需要严格评估实时性时，应同时检查 CAN 接收时间戳、反馈变化和系统负载。
@@ -306,8 +312,8 @@ ZY 驱动另外发布：
 
 | Topic | 类型 | 内容 |
 | --- | --- | --- |
-| `/info/gripper_state_L` | `std_msgs/msg/Int32MultiArray` | 左夹爪状态 |
-| `/info/gripper_state_R` | `std_msgs/msg/Int32MultiArray` | 右夹爪状态 |
+| `/tj/info/gripper_state_L` | `std_msgs/msg/Int32MultiArray` | 左夹爪状态 |
+| `/tj/info/gripper_state_R` | `std_msgs/msg/Int32MultiArray` | 右夹爪状态 |
 
 当前 ZY 状态定义：
 
@@ -334,12 +340,12 @@ DM 和 ZY 都提供：
 
 | Service | 类型 | 作用 |
 | --- | --- | --- |
-| `/control/reset_grippers` | `std_srvs/srv/Trigger` | 左右夹爪 disable 后重新 enable |
+| `/tj/control/reset_grippers` | `std_srvs/srv/Trigger` | 左右夹爪 disable 后重新 enable |
 
 调用命令：
 
 ```bash
-ros2 service call /control/reset_grippers std_srvs/srv/Trigger "{}"
+ros2 service call /tj/control/reset_grippers std_srvs/srv/Trigger "{}"
 ```
 
 该操作适合排查低概率上使能状态异常。复位前确保夹爪周围无人且无易损物体。
@@ -350,7 +356,7 @@ ros2 service call /control/reset_grippers std_srvs/srv/Trigger "{}"
 
 ```text
 头显扳机 / 客户输入设备 / 自定义 ROS 节点
-    -> /control/gripperValueL 或 /control/gripperValueR
+    -> /tj/control/gripperValueL 或 /tj/control/gripperValueR
     -> ApexTool 中的 DM/ZY 驱动
     -> 归一化值限幅和实际位置映射
     -> 厂商 CAN 协议打包
@@ -371,7 +377,7 @@ ros2 service call /control/reset_grippers std_srvs/srv/Trigger "{}"
     -> Marvin/Gento SDK 读取 A/B 通道
     -> Robot Node 写回 vcan0/vcan1
     -> ApexTool 解析位置、速度、力矩/力、温度、状态或错误码
-    -> /info/gripper_feedback_*
+    -> /tj/info/gripper_feedback_*
     -> 客户程序、UI 或数据采集模块
 ```
 
@@ -402,7 +408,7 @@ flowchart LR
 | Marvin Pro | Marvin SDK 的末端通道 A/B | `vcan0/vcan1` | 标准 ROS Topic 不变 |
 | Gento（Skye/Luna） | Gento SDK 的 L1 Terminal/末端通道 | `vcan0/vcan1` | 标准 ROS Topic 不变 |
 
-客户通过 `/control/gripperValueL/R` 二开时，通常不需要关心底层是 Marvin 还是 Gento。只有在定位 Robot Node、SDK 或物理链路故障时，才需要区分产品体系。
+客户通过 `/tj/control/gripperValueL/R` 二开时，通常不需要关心底层是 Marvin 还是 Gento。只有在定位 Robot Node、SDK 或物理链路故障时，才需要区分产品体系。
 
 ## 9. DM / OmniGripper 驱动说明
 
@@ -452,7 +458,7 @@ Kp/Kd 当前不是标准 ROS 动态参数。若客户确需修改，应基于对
 
 ### 9.3 DM 反馈数组
 
-`/info/gripper_feedback_L/R` 当前字段顺序：
+`/tj/info/gripper_feedback_L/R` 当前字段顺序：
 
 | 索引 | 内容 |
 | --- | --- |
@@ -519,15 +525,15 @@ ZY 驱动内部会根据电机方向做位置换算，客户应以实机确认�
 客户不需要修改 Teleop，可以直接编写 ROS 2 发布节点向以下 Topic 发布：
 
 ```text
-/control/gripperValueL
-/control/gripperValueR
+/tj/control/gripperValueL
+/tj/control/gripperValueR
 ```
 
 接入前必须确认没有其他控制源持续发布：
 
 ```bash
-ros2 topic info /control/gripperValueL -v
-ros2 topic info /control/gripperValueR -v
+ros2 topic info /tj/control/gripperValueL -v
+ros2 topic info /tj/control/gripperValueR -v
 ```
 
 同一 Topic 存在多个发布者时，夹爪会按消息到达顺序执行不同目标，表现为抖动、目标无法到达或左右互相干扰。
@@ -544,9 +550,9 @@ class GripperPublisher(Node):
     def __init__(self):
         super().__init__('customer_gripper_publisher')
         self.left_pub = self.create_publisher(
-            Float32, '/control/gripperValueL', 10)
+            Float32, '/tj/control/gripperValueL', 10)
         self.right_pub = self.create_publisher(
-            Float32, '/control/gripperValueR', 10)
+            Float32, '/tj/control/gripperValueR', 10)
 
     def send(self, left, right):
         left_msg = Float32()
@@ -735,7 +741,7 @@ eef_can_demo.cpp
 `DMROS_gripper-main` 与 ApexTool 中的 DM 驱动接口基本一致：
 
 ```text
-/control/gripperValueL/R
+/tj/control/gripperValueL/R
     -> DM ROS 节点
     -> vcan0/vcan1
 ```
@@ -838,8 +844,8 @@ grep -E 'APEX_TOOL_TYPE|APEX_ROBOT_PLATFORM|APEX_ROBOT_MODEL|ROS_DOMAIN_ID' \
 ```bash
 ros2 topic list | grep -E 'gripper|gripperValue'
 ros2 service list | grep reset_grippers
-ros2 topic info /control/gripperValueL -v
-ros2 topic info /control/gripperValueR -v
+ros2 topic info /tj/control/gripperValueL -v
+ros2 topic info /tj/control/gripperValueR -v
 ```
 
 ### 15.4 `vcan`
@@ -859,10 +865,10 @@ candump vcan1
 ### 15.5 反馈
 
 ```bash
-ros2 topic echo /info/gripper_feedback_L --once
-ros2 topic echo /info/gripper_feedback_R --once
-ros2 topic echo /info/gripper_feedback_L_err --once
-ros2 topic echo /info/gripper_feedback_R_err --once
+ros2 topic echo /tj/info/gripper_feedback_L --once
+ros2 topic echo /tj/info/gripper_feedback_R --once
+ros2 topic echo /tj/info/gripper_feedback_L_err --once
+ros2 topic echo /tj/info/gripper_feedback_R_err --once
 ```
 
 ## 16. 常见问题
@@ -948,7 +954,7 @@ ip link show vcan1
 先调用：
 
 ```bash
-ros2 service call /control/reset_grippers std_srvs/srv/Trigger "{}"
+ros2 service call /tj/control/reset_grippers std_srvs/srv/Trigger "{}"
 ```
 
 若复位后恢复，优先怀疑初始化或使能时序。若不能恢复，再检查错误码、反馈、末端板、供电和电机自身状态，不应直接通过不断提高 Kp/Kd 处理。
@@ -1036,19 +1042,19 @@ ros2 topic list | grep -E 'gripper|gripperValue'
 ros2 service list | grep reset_grippers
 
 # 5. 确认发布者数量
-ros2 topic info /control/gripperValueL -v
-ros2 topic info /control/gripperValueR -v
+ros2 topic info /tj/control/gripperValueL -v
+ros2 topic info /tj/control/gripperValueR -v
 
 # 6. 低幅度测试
-ros2 topic pub --once /control/gripperValueL std_msgs/msg/Float32 "{data: 0.2}"
-ros2 topic pub --once /control/gripperValueR std_msgs/msg/Float32 "{data: 0.2}"
+ros2 topic pub --once /tj/control/gripperValueL std_msgs/msg/Float32 "{data: 0.2}"
+ros2 topic pub --once /tj/control/gripperValueR std_msgs/msg/Float32 "{data: 0.2}"
 
 # 7. 查看反馈
-ros2 topic echo /info/gripper_feedback_L --once
-ros2 topic echo /info/gripper_feedback_R --once
+ros2 topic echo /tj/info/gripper_feedback_L --once
+ros2 topic echo /tj/info/gripper_feedback_R --once
 
 # 8. 复位夹爪
-ros2 service call /control/reset_grippers std_srvs/srv/Trigger "{}"
+ros2 service call /tj/control/reset_grippers std_srvs/srv/Trigger "{}"
 
 # 9. 检查软件 CAN 端点
 ip -details -statistics link show vcan0

@@ -77,7 +77,7 @@ Marvin Pro arrays place the seven left-arm joints before the seven right-arm joi
 | Topic | Type | Access | Description |
 |---|---|---|---|
 | `/tj/joint_states` | `sensor_msgs/msg/JointState` | Read-only | Standard joint state, approximately 100 Hz by default |
-| `/tj/info/joint_feedback` | `marvin_msgs/msg/Jointfeedback` | Read-only | High-rate position, velocity, and torque feedback |
+| `/tj/info/joint_feedback` | `marvin_msgs/msg/Jointfeedback` | Read-only | Position, velocity, and torque feedback, approximately 200 Hz by default |
 | `/tj/info/arm_state` | `std_msgs/msg/Int16MultiArray` | Read-only | Dual-arm state codes |
 | `/tj/info/robot_state` | `std_msgs/msg/Int16MultiArray` | Read-only | Whole-robot control state |
 | `/tj/info/robot_info` | `marvin_msgs/msg/RobotInfo` | Read-only | Robot model and controller version |

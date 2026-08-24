@@ -9,6 +9,8 @@ sidebar_position: 2
 > 文档基线：`kernelmind-apex-tool 1.0.6.10h`，2026-08-11 天准实机验证结果。
 > 使用完整 Apex 系统时，应优先通过标准 ROS 2 接口控制夹爪，参见 [ApexTool 使用与二次开发](/end-effectors/apex-tool)。
 
+当前 Marvin Pro 与 Gento 标准交付默认使用 `/tj` 命名空间。旧版独立 Tool 包可能仍使用根路径，实际接口以目标机 `ros2 topic list -t` 和 `ros2 service list -t` 为准。
+
 :::danger 直接发帧会驱动物理夹爪
 
 执行 `cansend` 前必须停止其他夹爪控制源、清空夹爪附近区域并确保可以立即断使能。设置零位、修改电机 ID、控制模式、量程、方向或 CAN 参数可能造成夹爪误动作或失联，不属于客户常规操作。
@@ -30,7 +32,7 @@ sidebar_position: 2
 ## 2. 当前控制链路
 
 ```text
-/control/gripperValueL/R
+/tj/control/gripperValueL/R
         |
         v
 ApexTool DM 夹爪节点
@@ -108,7 +110,7 @@ Linux 结构中的 `can_id` 采用小端存储；MIT 数据区按协议位布局
 
 ### 5.2 复位 Service
 
-`/control/reset_grippers` 执行：
+`/tj/control/reset_grippers` 执行：
 
 ```text
 左失能 -> 右失能 -> 等待 100 ms
@@ -118,7 +120,7 @@ Linux 结构中的 `can_id` 采用小端存储；MIT 数据区按协议位布局
 调用方式：
 
 ```bash
-ros2 service call /control/reset_grippers std_srvs/srv/Trigger "{}"
+ros2 service call /tj/control/reset_grippers std_srvs/srv/Trigger "{}"
 ```
 
 ### 5.3 退出行为
@@ -282,10 +284,10 @@ tau = uint_to_float(tau_raw, -10.0, 10.0, 12)
 
 | Topic | 数据 |
 |---|---|
-| `/info/gripper_feedback_L` | `[position, velocity, torque, mos_temperature, motor_temperature]` |
-| `/info/gripper_feedback_R` | `[position, velocity, torque, mos_temperature, motor_temperature]` |
-| `/info/gripper_feedback_L_err` | `[status/error_code]` |
-| `/info/gripper_feedback_R_err` | `[status/error_code]` |
+| `/tj/info/gripper_feedback_L` | `[position, velocity, torque, mos_temperature, motor_temperature]` |
+| `/tj/info/gripper_feedback_R` | `[position, velocity, torque, mos_temperature, motor_temperature]` |
+| `/tj/info/gripper_feedback_L_err` | `[status/error_code]` |
+| `/tj/info/gripper_feedback_R_err` | `[status/error_code]` |
 
 ### 9.3 状态和故障码
 

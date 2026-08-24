@@ -155,3 +155,43 @@ ros2 topic info /tj/control/gripperValueL -v
 ```
 
 Topic 只在对应模块启动后出现。列表存在但没有消息时，应继续检查 Publisher、QoS、`ROS_DOMAIN_ID`、`APEX_ROS_NAMESPACE` 和模块运行状态。
+
+## 12. Topic 频率参考
+
+下表是当前 Marvin Pro 源码与默认参数中的设计值。定时器、SDK/CAN 控制循环、ROS Topic 和前端 WebSocket 的频率不是同一个概念；这些数值也不是 Linux、DDS 和网络环境下的硬实时承诺。
+
+| Topic / 链路 | 设计或预期频率 | 生效条件 |
+|---|---:|---|
+| `/tj/info/eef_left/right` | 1000 Hz | Teleop 正常运行；实际值受计算负载影响 |
+| `/tj/control/ik_request/vr` | 1000 Hz | Teleop 正常运行且 VR 来源有效 |
+| `/tj/control/qp_controller/joint_cmd_A/B` | 最高 500 Hz | Robot Ready、目标有效、QP 正常 |
+| `/tj/control/joint_cmd_A/B` | Teleop 时通常 500 Hz | Joint 来源为 Teleop；该 Topic 跟随当前来源 |
+| `/tj/info/joint_feedback` | 200 Hz | Robot 与 MarvinSDK 正常连接 |
+| `/tj/info/arm_state`、`/tj/info/robot_state` | 200 Hz | Robot 正常连接 |
+| `/tj/joint_states` | 100 Hz | Robot 正常连接 |
+| `/tj/info/gripper_feedback_L/R` 及错误码 | 200 Hz | DM/ZY Tool 正常运行 |
+| `/tj/recorder/status` | 1 Hz | Recorder 已启动 |
+| `/tj/playback_status` | 10 Hz | Playback 已启动 |
+| `/tj/info/robot_info` | 0.2 Hz | 默认每 5 秒发布，启动时立即发布一次 |
+| `/quad_tile/jpeg/compressed` | 相机配置决定 | 不应按前端 30 FPS 限速反推 ROS 原始频率 |
+
+头显目标、使能和夹爪控制 Topic 跟随实际 UDP 数据包或上游客户程序，不具有统一固定频率。Planner、Replay、事件状态和静态 TF 也不应套用持续发布频率。
+
+现场测量前先确认发布者数量，避免把多个发布者的合并流量误判为单节点频率：
+
+```bash
+source /etc/apex/apex_ros_env.sh
+
+ros2 topic info -v /tj/info/joint_feedback --no-daemon
+ros2 topic info -v /tj/joint_states --no-daemon
+ros2 topic info -v /tj/info/gripper_feedback_L --no-daemon
+
+ros2 topic hz /tj/info/eef_left
+ros2 topic hz /tj/control/qp_controller/joint_cmd_A
+ros2 topic hz /tj/control/joint_cmd_A
+ros2 topic hz /tj/info/joint_feedback
+ros2 topic hz /tj/joint_states
+ros2 topic hz /tj/info/gripper_feedback_L
+```
+
+正式稳定性测试建议在机械臂、夹爪、相机和录包同时运行时持续至少 120 秒，并记录平均 Hz、周期标准差、P95/P99、最大间隔、断流次数、Publisher 数量和 CPU 负载。

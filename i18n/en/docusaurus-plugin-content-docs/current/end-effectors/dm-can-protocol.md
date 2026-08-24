@@ -9,6 +9,8 @@ sidebar_position: 2
 > Baseline: `kernelmind-apex-tool 1.0.6.10h`, verified on a Tianzhun system on August 11, 2026.
 > On a complete Apex system, use the standard ROS 2 interface whenever possible. See [ApexTool Usage and Integration](/end-effectors/apex-tool).
 
+Current Marvin Pro and Gento deliveries use the `/tj` namespace by default. Older standalone Tool packages may still use root paths; verify the target with `ros2 topic list -t` and `ros2 service list -t`.
+
 :::danger Raw frames can move the physical gripper
 
 Before running `cansend`, stop every other gripper command source, clear the gripper workspace, and ensure that power can be disabled immediately. Setting zero or changing motor IDs, control mode, ranges, direction, or CAN parameters can cause unexpected motion or loss of communication. These are not routine customer operations.
@@ -30,7 +32,7 @@ Other DM motors may use the same frame layout but different position, velocity, 
 ## 2. Current Control Path
 
 ```text
-/control/gripperValueL/R
+/tj/control/gripperValueL/R
         |
         v
 ApexTool DM gripper node
@@ -108,7 +110,7 @@ The Linux `can_id` field is little-endian. The MIT payload follows its protocol 
 
 ### 5.2 Reset Service
 
-`/control/reset_grippers` performs:
+`/tj/control/reset_grippers` performs:
 
 ```text
 Disable left -> disable right -> wait 100 ms
@@ -118,7 +120,7 @@ Disable left -> disable right -> wait 100 ms
 Call it with:
 
 ```bash
-ros2 service call /control/reset_grippers std_srvs/srv/Trigger "{}"
+ros2 service call /tj/control/reset_grippers std_srvs/srv/Trigger "{}"
 ```
 
 ### 5.3 Shutdown Behavior
@@ -282,10 +284,10 @@ tau = uint_to_float(tau_raw, -10.0, 10.0, 12)
 
 | Topic | Data |
 |---|---|
-| `/info/gripper_feedback_L` | `[position, velocity, torque, mos_temperature, motor_temperature]` |
-| `/info/gripper_feedback_R` | `[position, velocity, torque, mos_temperature, motor_temperature]` |
-| `/info/gripper_feedback_L_err` | `[status/error_code]` |
-| `/info/gripper_feedback_R_err` | `[status/error_code]` |
+| `/tj/info/gripper_feedback_L` | `[position, velocity, torque, mos_temperature, motor_temperature]` |
+| `/tj/info/gripper_feedback_R` | `[position, velocity, torque, mos_temperature, motor_temperature]` |
+| `/tj/info/gripper_feedback_L_err` | `[status/error_code]` |
+| `/tj/info/gripper_feedback_R_err` | `[status/error_code]` |
 
 ### 9.3 Status and Fault Codes
 

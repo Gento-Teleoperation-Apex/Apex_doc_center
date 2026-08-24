@@ -328,7 +328,42 @@ Gento 使用两级仲裁，客户程序通常只需通过 `/tj/control/set_input
 
 若接口不存在，请同时检查 `/tj/info/base_*` 和 `/tj/control/base_*`，确认现场 Launch 是否为底盘节点增加了命名空间。
 
-## 10. 建议采集的数据
+## 10. Topic 频率参考
+
+Gento 的控制循环和 Topic 频率与 Marvin Pro 不同。下表为当前 Skye/Luna 源码及默认参数的设计值，不是硬实时承诺。
+
+| Topic / 链路 | Skye | Luna | 说明 |
+|---|---:|---:|---|
+| `/tj/info/eef_left/right` | 1000 Hz | 1000 Hz | Motion 定时器目标，实际值受负载影响 |
+| `/tj/control/teleop/ik_request` | 1000 Hz | 1000 Hz | Teleop 正常运行 |
+| `/tj/control/qp_controller/joint_cmd_*` | 250 Hz | 500 Hz | Ready、Home 和 IK 数据均正常 |
+| `/tj/control/joint_cmd_*` | 通常 250 Hz | 通常 500 Hz | Mux 稳态直通；来源切换期间约 100 Hz |
+| `/tj/info/joint_feedback` | 最高约 1000 Hz | 最高约 1000 Hz | 每次 Gento SDK 状态读取成功时发布 |
+| `/tj/joint_states`、`/tj/info/robot_state` | 约 200 Hz | 约 200 Hz | 当前源码每 5 次 Robot 轮询发布一次 |
+| `/tj/info/gripper_feedback_L/R` 及错误码 | 200 Hz | 200 Hz | DM/ZY Tool 默认配置 |
+| `/tj/info/gento_replay/status` | 2 Hz | 2 Hz | Replay 启动后每 500 ms 发布 |
+| `/move/ManualMoveCmd`、`/target_pose` | 100 Hz | 100 Hz | 对应底盘模式有效时 |
+
+头显输入 Topic 跟随实际 UDP 数据包；相机 Topic 跟随相机配置；模式、来源和静态 TF 等事件 Topic 没有连续频率要求。夹爪内部 CAN 控制循环为 1000 Hz，不代表 ROS 反馈也是 1000 Hz。
+
+```bash
+source /etc/apex/apex_ros_env.sh
+
+ros2 topic info -v /tj/info/joint_feedback --no-daemon
+ros2 topic info -v /tj/joint_states --no-daemon
+
+ros2 topic hz /tj/info/eef_left
+ros2 topic hz /tj/control/teleop/ik_request
+ros2 topic hz /tj/control/qp_controller/joint_cmd_A
+ros2 topic hz /tj/control/joint_cmd_A
+ros2 topic hz /tj/info/joint_feedback
+ros2 topic hz /tj/joint_states
+ros2 topic hz /tj/info/gripper_feedback_L
+```
+
+刚启动或切换控制源后，应等待约 2 秒的 Mux 平滑过程结束再测最终关节命令。测量前还应检查 Publisher 数量，正式满负载测试建议持续至少 120 秒。
+
+## 11. 建议采集的数据
 
 | 数据类别 | 建议 Topic |
 |---|---|
@@ -344,7 +379,7 @@ Gento 使用两级仲裁，客户程序通常只需通过 `/tj/control/set_input
 
 如需将新的身体、头部或末端 Topic 纳入录制、回放或前端转发，参见 [Topic 白名单配置与排查](/advanced/topic-whitelist)。
 
-## 11. 最小诊断清单
+## 12. 最小诊断清单
 
 ```bash
 source /etc/apex/apex_ros_env.sh
