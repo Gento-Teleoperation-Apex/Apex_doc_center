@@ -11,17 +11,33 @@ This page covers the minimum sequence from power-on to first full-body teleopera
 
 - Connect the robot, host PC, network device, and Pico according to [Hardware Wiring](./hardware-wiring).
 - Release the emergency stop and clear the workspace.
-- Put the host PC and Tianzhun 003 control unit on the same subnet.
+- Put the host PC and the robot's integrated controller on the same subnet.
 - Charge and correctly wear the Pico headset, waist tracker, and leg trackers.
 
-## 2. Connect to Tianzhun 003
+## 2. Connect to the Controller
 
-The following uses the default IP `6.6.7.100`. Use the delivered site configuration if it was changed.
+Select the address and account for the controller installed in the device. These are factory defaults; use the delivery configuration if the IP address, username, or password has been changed.
+
+| Controller | Default IP | Username | Default password |
+|---|---|---|---|
+| Tianzhun 003 | `6.6.7.100` | `nvidia` | `nvidia` |
+| Lingjing Thor | `6.6.7.100` | `user` | `1` |
+
+Tianzhun 003 control unit:
 
 ```bash
 ping 6.6.7.100
 ssh nvidia@6.6.7.100
 ```
+
+Lingjing Thor controller:
+
+```bash
+ping 6.6.7.100
+ssh user@6.6.7.100
+```
+
+Enter the corresponding default password on the first SSH connection. If the delivered device already uses a changed password, do not attempt to restore the factory default.
 
 Start the Apex backend service:
 
@@ -33,7 +49,7 @@ sudo systemctl status apex-backend.service --no-pager
 ## 3. Start classic Apex Teleop
 
 1. Open Apex Teleop.
-2. Enter the Tianzhun 003 IP and press **Enter**.
+2. Enter the current controller IP and press **Enter**.
 3. Start **Robot** and verify that the 3D model matches the physical robot.
 4. Start **Teleop** and the network module. Camera is optional.
 5. Use the robot start control to set the robot Ready.
@@ -50,7 +66,7 @@ After connection, test small arm motions first. For Skye, verify torso and lift 
 
 | Symptom | Check |
 |---|---|
-| Cannot connect to Tianzhun 003 | IP, host subnet, and cable |
+| Cannot connect to the controller | Controller type, IP, account, host subnet, and cable |
 | 3D and physical poses differ | Robot module, model configuration, and startup log |
 | Teleop unavailable | Robot running and Ready state |
 | Pico cannot connect | Network module, headset IP, cable, and client settings |

@@ -15,14 +15,30 @@ This page applies to the current Tianzhun-controller version and covers the mini
 - Connect the headset to the same LAN.
 - Check whether the robot is still in its factory packing pose. **Do not click Home from the packing pose. A wrist camera may collide with the center column.**
 
-## 2. Connect to the Tianzhun controller
+## 2. Connect to the Controller
 
-The following uses the default IP `6.6.7.100`. Use the delivered site configuration if it was changed.
+Select the address and account for the controller installed in the device. These are factory defaults; use the delivery configuration if the IP address, username, or password has been changed.
+
+| Controller | Default IP | Username | Default password |
+|---|---|---|---|
+| Tianzhun | `6.6.7.100` | `nvidia` | `nvidia` |
+| Lingjing Thor | `6.6.7.100` | `user` | `1` |
+
+Tianzhun controller:
 
 ```bash
 ping 6.6.7.100
 ssh nvidia@6.6.7.100
 ```
+
+Lingjing Thor controller:
+
+```bash
+ping 6.6.7.100
+ssh user@6.6.7.100
+```
+
+Enter the corresponding default password on the first SSH connection. If the delivered device already uses a changed password, do not attempt to restore the factory default.
 
 After controller power-on, if the delivered system contains `~/cam_geac`, initialize the cameras according to the delivered configuration:
 

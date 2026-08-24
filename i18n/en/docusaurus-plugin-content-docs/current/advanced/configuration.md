@@ -16,6 +16,15 @@ This page covers customer-accessible configuration for delivered Marvin Pro, Gen
 
 :::
 
+## Default Controller Login Credentials
+
+| Controller | Default IP | Username | Default password |
+|---|---|---|---|
+| Tianzhun | `6.6.7.100` | `nvidia` | `nvidia` |
+| Lingjing Thor | `6.6.7.100` | `user` | `1` |
+
+These values are factory defaults only. Use the delivery configuration when networking or credentials have been changed. Do not expose controller SSH directly to the public Internet. Before changing a default password, confirm that the change will not affect automated deployment, remote maintenance, or delivery scripts.
+
 ## 1. Identify the Active Configuration
 
 Configuration files may exist in both source and installation directories. Running services normally use the installation directory, so confirm the active service and package paths first.

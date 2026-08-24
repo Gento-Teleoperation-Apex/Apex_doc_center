@@ -70,7 +70,7 @@ The Senyun camera and deserializer-related wiring are integrated inside the robo
 The host PC, Tianzhun electric cabinet, and VR headset must be on the same `6.6.7.x` subnet.
 
 :::warning Headset Ethernet Port
-For wired headset networking, connect a **Tianzhun controller to Ethernet port 1**, whose default connection address is `6.6.7.100`. For a **Lingjing Thor controller, use Ethernet port 2**, whose default connection address is `6.6.8.100`. Do not interchange the two ports. If the site network was changed, follow the delivered configuration.
+For wired headset networking, connect a **Tianzhun controller to Ethernet port 1** and a **Lingjing Thor controller to Ethernet port 2**. Both controllers use `6.6.7.100` as the default connection address. Do not interchange the two ports. If the site network was changed, follow the delivered configuration.
 :::
 
 | Item | Requirement |
