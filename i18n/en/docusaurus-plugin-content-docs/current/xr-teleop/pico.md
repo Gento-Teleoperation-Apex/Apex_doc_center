@@ -18,7 +18,7 @@ Tianji | KernalMind
 
 ## Open app
 
-Uninstall the previous Apex_teleop App. Install latest .apk to your headset, open with two controllers keeping tracked. Agree to popups.
+Follow [Headset APK Installation and Upgrade](./apk-installation.md), then open the application while both controllers are tracked and accept the required permission and system prompts.
 
 ## Check your setups
 

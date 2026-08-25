@@ -18,6 +18,7 @@ Use **Ethernet port 1** when connecting the headset to a Tianzhun controller and
 
 Please select the manual that corresponds to the headset you are currently using:
 
+* [**Headset APK Installation and Upgrade**](./apk-installation.md)
 * [**PICO User Manual**](./pico.md)
 * [**META QUEST User Manual**](./meta.md)
 

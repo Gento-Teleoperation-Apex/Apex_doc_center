@@ -18,6 +18,7 @@ sidebar_position: 0
 
 请选择对应的手册进行阅读：
 
+* [**头显 APK 安装与升级**](./apk-installation.md)
 * [**PICO 用户手册**](./pico.md)
 * [**META QUEST 用户手册**](./meta.md)
 
