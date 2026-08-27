@@ -47,7 +47,8 @@ const sidebars = {
           label: 'Apex XR 头显客户端',
           link: { type: 'doc', id: 'xr-teleop/index' },
           items: [
-            'xr-teleop/apk-installation',
+            'xr-teleop/meta-app-installation',
+            'xr-teleop/pico-app-installation',
             'xr-teleop/pico',
             'xr-teleop/meta',
             'xr-teleop/privacy-policy',

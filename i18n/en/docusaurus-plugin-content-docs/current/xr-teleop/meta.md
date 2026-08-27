@@ -18,7 +18,7 @@ Tianji | KernalMind
 
 ## Open app
 
-Follow [Headset APK Installation and Upgrade](./apk-installation.md), then open the application while both controllers are tracked and accept the required permission and system prompts.
+Follow [Meta Quest App Installation](./meta-app-installation.md), then open the application while both controllers are tracked and accept the required permission and system prompts.
 
 ## Check your setups
 

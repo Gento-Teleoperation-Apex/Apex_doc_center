@@ -8,7 +8,7 @@ sidebar_position: 0
 
 # Apex XR 遥操作客户端用户手册
 
-![ApexXR](./Screenshots/tianji_cover.jpg)
+![ApexXR](./Screenshots/cover.jpg)
 
 欢迎来到遥操作客户端使用指南。
 
@@ -18,9 +18,10 @@ sidebar_position: 0
 
 请选择对应的手册进行阅读：
 
-* [**头显 APK 安装与升级**](./apk-installation.md)
-* [**PICO 用户手册**](./pico.md)
-* [**META QUEST 用户手册**](./meta.md)
-* [**隐私政策**](./privacy-policy.md)
+* [Meta Quest App 安装](./meta-app-installation.md)
+* [Pico App 安装](./pico-app-installation.md)
+* [PICO 用户手册](./pico.md)
+* [META QUEST 用户手册](./meta.md)
+* [隐私政策](./privacy-policy.md)
 
 ---

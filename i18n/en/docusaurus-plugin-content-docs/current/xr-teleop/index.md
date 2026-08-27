@@ -8,7 +8,7 @@ sidebar_position: 0
 
 # Apex XR Teleoperation Client User Manual
 
-![ApexXR](./Screenshots/tianji_cover.jpg)
+![ApexXR](./Screenshots/cover.jpg)
 
 Welcome to the Teleoperation Client usage guide.
 
@@ -18,9 +18,10 @@ Use **Ethernet port 1** when connecting the headset to a Tianzhun controller and
 
 Please select the manual that corresponds to the headset you are currently using:
 
-* [**Headset APK Installation and Upgrade**](./apk-installation.md)
-* [**PICO User Manual**](./pico.md)
-* [**META QUEST User Manual**](./meta.md)
-* [**Privacy Policy**](./privacy-policy.md)
+* [Meta Quest App Installation](./meta-app-installation.md)
+* [Pico App Installation](./pico-app-installation.md)
+* [PICO User Manual](./pico.md)
+* [META QUEST User Manual](./meta.md)
+* [Privacy Policy](./privacy-policy.md)
 
 ---

@@ -4,6 +4,8 @@ sidebar_label: 隐私政策
 sidebar_position: 4
 ---
 
+<div className="bingru-theme" />
+
 # 隐私政策
 
 最后更新时间：2026 年 8 月 27 日

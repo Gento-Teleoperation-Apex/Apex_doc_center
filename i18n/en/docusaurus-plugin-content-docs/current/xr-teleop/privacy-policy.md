@@ -4,6 +4,8 @@ sidebar_label: Privacy Policy
 sidebar_position: 4
 ---
 
+<div className="bingru-theme" />
+
 # Privacy Policy for Apex Teleop
 
 Last updated: August 27, 2026
