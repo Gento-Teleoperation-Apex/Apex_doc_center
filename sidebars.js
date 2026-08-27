@@ -50,6 +50,7 @@ const sidebars = {
             'xr-teleop/apk-installation',
             'xr-teleop/pico',
             'xr-teleop/meta',
+            'xr-teleop/privacy-policy',
           ],
         },
       ],

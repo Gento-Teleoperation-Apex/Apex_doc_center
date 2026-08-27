@@ -21,5 +21,6 @@ Please select the manual that corresponds to the headset you are currently using
 * [**Headset APK Installation and Upgrade**](./apk-installation.md)
 * [**PICO User Manual**](./pico.md)
 * [**META QUEST User Manual**](./meta.md)
+* [**Privacy Policy**](./privacy-policy.md)
 
 ---
