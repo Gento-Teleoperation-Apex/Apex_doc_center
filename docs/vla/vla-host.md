@@ -354,7 +354,7 @@ http://<ROBOT_IP>:8000/stream/quad.mjpg
 | `/tj/info/joint_feedback` | `marvin_msgs/msg/Jointfeedback` | 200 Hz | 14个手臂关节的位置、速度和力矩反馈 |
 | `/tj/info/eef_left` | `geometry_msgs/msg/PoseStamped` | Teleop内部标称1000 Hz | 左末端基于当前关节反馈计算的FK位姿 |
 | `/tj/info/eef_right` | `geometry_msgs/msg/PoseStamped` | Teleop内部标称1000 Hz | 右末端基于当前关节反馈计算的FK位姿 |
-| `/quad_tile/compressed` | `sensor_msgs/msg/CompressedImage` | 相机配置决定，通常30 Hz | 四路GMSL相机2×2拼接压缩图 |
+| `/quad_tile/jpeg/compressed` | `sensor_msgs/msg/CompressedImage` | 相机配置决定，通常30 Hz | 四路GMSL相机2×2拼接 JPEG 图 |
 | `/info/gripper_feedback_L` | `std_msgs/msg/Float32MultiArray` | Tool模块决定 | 左夹爪位置、速度、力矩和温度原始反馈 |
 | `/info/gripper_feedback_R` | `std_msgs/msg/Float32MultiArray` | Tool模块决定 | 右夹爪反馈 |
 | `/info/gripper_feedback_L_err` | `std_msgs/msg/Int32MultiArray` | Tool模块决定 | 左夹爪错误码 |
@@ -517,7 +517,7 @@ curl http://<ROBOT_IP>:8000/state
 | `image_stream_fps` | `60.0` | MJPEG目标上限，不能超过相机源帧率 |
 | `image_passthrough` | `false` | 直接转发上游JPEG，跳过解码和重编码 |
 
-如上游`/quad_tile/compressed`已经是合适尺寸的JPEG，可将`image_passthrough`设为`true`，
+如上游`/quad_tile/jpeg/compressed`已经是合适尺寸的JPEG，可将`image_passthrough`设为`true`，
 以降低CPU和延迟。当前标准launch只对外声明`host`、`port`和`ros_namespace`；调整图像ROS参数时，
 请在客户部署的launch中覆盖`vlahost_server`的parameters，或修改
 `vlahost_server.launch.py`里的参数字典后重新构建。

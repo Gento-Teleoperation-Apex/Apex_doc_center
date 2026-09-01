@@ -126,7 +126,11 @@ Wuji topics remain global and do not use `/tj`.
 | `/tj/control/playback_control` | `std_msgs/msg/String` | Compatibility input, optional | JSON playback control; prefer the service |
 | `/tj/playback_status` | `std_msgs/msg/String` | Read-only, optional | Playback state |
 | `/tj/playback_key` | `std_msgs/msg/Bool` | Read-only, optional | Playback key/state |
+| `/quad_tile/compressed` | `sensor_msgs/msg/CompressedImage` | Read-only, optional, global | Raw tiled H.264 image, subscriber-driven |
+| `/quad_tile/compressed_undistorted` | `sensor_msgs/msg/CompressedImage` | Read-only, optional, global | Calibration-processed tiled H.264 image, subscriber-driven |
 | `/quad_tile/jpeg/compressed` | `sensor_msgs/msg/CompressedImage` | Read-only, optional, global | Tiled JPEG image |
+
+See [Camera Configuration and ROS Interfaces](/advanced/camera-configuration-and-interfaces) for the complete camera interface reference.
 
 ## 10. ROS System Topics
 
@@ -173,7 +177,7 @@ The following values come from the current Marvin Pro source and default paramet
 | `/tj/recorder/status` | 1 Hz | Recorder running |
 | `/tj/playback_status` | 10 Hz | Playback running |
 | `/tj/info/robot_info` | 0.2 Hz | Every 5 seconds by default, plus one message at startup |
-| `/quad_tile/jpeg/compressed` | Camera configuration | Do not infer the ROS source rate from the frontend 30 FPS limit |
+| `/quad_tile/compressed`, `/quad_tile/compressed_undistorted`, `/quad_tile/jpeg/compressed` | Default maximum 30 Hz, subscriber-driven | Actual rate depends on valid inputs, mosaic configuration, and subscription state |
 
 Headset targets, enable states, and gripper commands follow actual UDP packets or an upstream customer program and have no universal fixed rate. Planner, Replay, event-state topics, and static TF should not be evaluated as continuous streams.
 

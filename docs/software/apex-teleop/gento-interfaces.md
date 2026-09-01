@@ -88,14 +88,13 @@ Skye 与 Luna 使用相同的 BODY Topic 名，但数组含义不同：
 
 启动 Robot 模块后，可读取：
 
-| Topic | 消息类型 | 说明 |
-|---|---|---|
-| `/tj/joint_states` | `sensor_msgs/msg/JointState` | ROS 标准整机关节名称、位置、速度和力矩 |
-| `/tj/info/joint_feedback` | `marvin_msgs/msg/Jointfeedback` | Gento 整机实时关节反馈 |
-| `/tj/info/robot_state` | `std_msgs/msg/Int16MultiArray` | ARM、HEAD、BODY、LIFT 当前控制状态 |
-| `/tj/info/robot_cmd_state` | `std_msgs/msg/Int16MultiArray` | 各组件目标控制状态 |
-| `/tj/info/robot_info` | `marvin_msgs/msg/RobotInfo` | 机器人型号和控制器版本 |
-| `/tj/info/imu0` | `sensor_msgs/msg/Imu` | 主体 IMU 数据 |
+| Topic | 消息类型 | 频率 / 发布方式 | 说明 |
+|---|---|---|---|
+| `/tj/joint_states` | `sensor_msgs/msg/JointState` | 通常约 100 Hz | ROS 标准整机关节名称、位置、速度和力矩 |
+| `/tj/info/joint_feedback` | `marvin_msgs/msg/Jointfeedback` | SDK 返回驱动，目标约 500 Hz | Gento 整机实时关节反馈，实际频率以现场测量为准 |
+| `/tj/info/robot_state` | `std_msgs/msg/Int16MultiArray` | 通常约 100 Hz | ARM、HEAD、BODY、LIFT 当前控制状态 |
+| `/tj/info/robot_info` | `marvin_msgs/msg/RobotInfo` | 启动时立即发布，之后约 0.2 Hz | 机器人型号和控制器版本 |
+| `/tj/info/imu0` | `sensor_msgs/msg/Imu` | 跟随关节反馈 | 主体 IMU 数据 |
 
 ```bash
 ros2 topic echo /tj/info/robot_info --once
@@ -106,28 +105,26 @@ ros2 topic echo /tj/joint_states --once
 
 `Jointfeedback` 的双臂顺序固定为左臂 7 关节在前、右臂 7 关节在后。BODY 有效范围按上一节区分机型。
 
+> 当前版本虽然创建了 `/tj/info/robot_cmd_state` Publisher，但源码中没有实际发布，不应作为客户可用接口。
+
 ## 4. 头显与遥操数据 Topic
 
 启动 Teleop 模块后，可观察：
 
-| Topic | 消息类型 | 说明 |
-|---|---|---|
-| `/tj/control/target_poseL` | `geometry_msgs/msg/PoseStamped` | 左手柄映射后的左臂末端目标 |
-| `/tj/control/target_poseR` | `geometry_msgs/msg/PoseStamped` | 右手柄映射后的右臂末端目标 |
-| `/tj/control/enableL` | `std_msgs/msg/Bool` | 左臂遥操使能 |
-| `/tj/control/enableR` | `std_msgs/msg/Bool` | 右臂遥操使能 |
-| `/tj/control/vr_joy_L` | `sensor_msgs/msg/Joy` | 左手柄按键和摇杆 |
-| `/tj/control/vr_joy_R` | `sensor_msgs/msg/Joy` | 右手柄按键和摇杆 |
-| `/tj/control/vr_body` | `marvin_msgs/msg/VrBody` | 躯干、头、肘、腿等全身追踪数据 |
-| `/tj/info/vr_connected` | `std_msgs/msg/Bool` | 头显连接状态 |
-| `/tj/control/eef_cmd_A` | `geometry_msgs/msg/PoseStamped` | 左末端映射目标 |
-| `/tj/control/eef_cmd_B` | `geometry_msgs/msg/PoseStamped` | 右末端映射目标 |
-| `/tj/info/eef_left` | `geometry_msgs/msg/PoseStamped` | 左臂当前末端位姿 |
-| `/tj/info/eef_right` | `geometry_msgs/msg/PoseStamped` | 右臂当前末端位姿 |
-| `/tj/info/collision_statusA` | `std_msgs/msg/Bool` | 左侧碰撞检测状态 |
-| `/tj/info/collision_statusB` | `std_msgs/msg/Bool` | 右侧碰撞检测状态 |
-| `/tj/info/teleop_motion_mode` | `std_msgs/msg/Int32` | `0=全身，1=仅双臂，2=双臂加头部` |
-| `/tj/info/body_pose_mode` | `std_msgs/msg/Int32` | `0=skeleton，1=neck_head_pose` |
+| Topic | 消息类型 | 频率 / 发布方式 | 说明 |
+|---|---|---|---|
+| `/tj/control/target_poseL` | `geometry_msgs/msg/PoseStamped` | 跟随头显输入 | 左手柄映射后的左臂末端目标 |
+| `/tj/control/target_poseR` | `geometry_msgs/msg/PoseStamped` | 跟随头显输入 | 右手柄映射后的右臂末端目标 |
+| `/tj/control/enableL` | `std_msgs/msg/Bool` | 跟随头显输入；手套模式约 10 Hz | 左臂遥操使能 |
+| `/tj/control/enableR` | `std_msgs/msg/Bool` | 跟随头显输入；手套模式约 10 Hz | 右臂遥操使能 |
+| `/tj/control/vr_joy_L` | `sensor_msgs/msg/Joy` | 跟随头显输入 | 左手柄按键和摇杆 |
+| `/tj/control/vr_joy_R` | `sensor_msgs/msg/Joy` | 跟随头显输入 | 右手柄按键和摇杆 |
+| `/tj/control/vr_body` | `marvin_msgs/msg/VrBody` | 跟随头显输入 | 躯干、头、肘、腿等全身追踪数据 |
+| `/tj/info/vr_connected` | `std_msgs/msg/Bool` | 1 Hz | 头显连接状态 |
+| `/tj/info/eef_left` | `geometry_msgs/msg/PoseStamped` | 目标 1000 Hz | 左臂当前末端位姿，实际频率受系统负载影响 |
+| `/tj/info/eef_right` | `geometry_msgs/msg/PoseStamped` | 目标 1000 Hz | 右臂当前末端位姿，实际频率受系统负载影响 |
+| `/tj/info/teleop_motion_mode` | `std_msgs/msg/Int32` | 事件触发 | `0=全身，1=仅双臂，2=双臂加头部` |
+| `/tj/info/body_pose_mode` | `std_msgs/msg/Int32` | 事件触发 | `0=skeleton，1=neck_head_pose` |
 
 `VrBody` 中包含左右肘、躯干、头、骨盆、左右脚和左右膝位姿，以及对应的 `available` 标志。某项 `available=false` 时，不应把对应位姿作为有效数据。
 
@@ -142,34 +139,36 @@ ros2 topic echo /tj/info/eef_right --once
 
 Skye 当前版本可能不使用 TCP 连接状态作为遥操门控，因此不能只依据 `/tj/info/vr_connected` 判断 Skye 遥操是否正常，还应检查目标位姿和使能 Topic 是否持续更新。
 
+> 当前版本虽然创建了 `/tj/control/eef_cmd_A`、`/tj/control/eef_cmd_B`、`/tj/info/collision_statusA` 和 `/tj/info/collision_statusB` Publisher，但源码中没有实际发布，不应作为客户可用接口。
+
 ### 4.1 控制链观测接口
 
 以下 Topic 可用于确认 Teleop、IK/QP 和最终下发链路停在哪一层。客户程序不要直接向 QP 输出或最终命令 Topic 发布。
 
-| Topic | 类型 | 说明 |
-|---|---|---|
-| `/tj/control/teleop/ik_request` | `marvin_msgs/msg/IKRequest` | Teleop 生成的全身 IK 请求 |
-| `/tj/control/replay/ik_request` | `marvin_msgs/msg/IKRequest` | Replay 生成的 IK 请求 |
-| `/tj/control/ik_request` | `marvin_msgs/msg/IKRequest` | IK Mux 选出的当前请求 |
-| `/tj/control/qp_controller/joint_cmd_A` | `marvin_msgs/msg/JointcmdArm` | QP 左臂输出 |
-| `/tj/control/qp_controller/joint_cmd_B` | `marvin_msgs/msg/JointcmdArm` | QP 右臂输出 |
-| `/tj/control/qp_controller/joint_cmd_body` | `marvin_msgs/msg/JointcmdBody` | QP 主体输出 |
-| `/tj/control/qp_controller/joint_cmd_head` | `marvin_msgs/msg/JointcmdHead` | QP 头部输出 |
-| `/tj/control/joint_cmd_A` | `marvin_msgs/msg/JointcmdArm` | Joint Mux 最终左臂命令 |
-| `/tj/control/joint_cmd_B` | `marvin_msgs/msg/JointcmdArm` | Joint Mux 最终右臂命令 |
-| `/tj/control/joint_cmd_body` | `marvin_msgs/msg/JointcmdBody` | Joint Mux 最终主体命令 |
-| `/tj/control/joint_cmd_head` | `marvin_msgs/msg/JointcmdHead` | Joint Mux 最终头部命令 |
+| Topic | 类型 | 频率 / 发布方式 | 说明 |
+|---|---|---|---|
+| `/tj/control/teleop/ik_request` | `marvin_msgs/msg/IKRequest` | 目标 1000 Hz | Teleop 生成的全身 IK 请求 |
+| `/tj/control/replay/ik_request` | `marvin_msgs/msg/IKRequest` | 跟随录制时间戳 | Replay 生成的 IK 请求 |
+| `/tj/control/ik_request` | `marvin_msgs/msg/IKRequest` | 跟随当前输入源 | IK Mux 选出的当前请求 |
+| `/tj/control/qp_controller/joint_cmd_A` | `marvin_msgs/msg/JointcmdArm` | Skye 250 Hz；Luna 500 Hz | QP 左臂输出 |
+| `/tj/control/qp_controller/joint_cmd_B` | `marvin_msgs/msg/JointcmdArm` | Skye 250 Hz；Luna 500 Hz | QP 右臂输出 |
+| `/tj/control/qp_controller/joint_cmd_body` | `marvin_msgs/msg/JointcmdBody` | Skye 250 Hz；Luna 500 Hz | QP 主体输出 |
+| `/tj/control/qp_controller/joint_cmd_head` | `marvin_msgs/msg/JointcmdHead` | Skye 250 Hz；Luna 500 Hz | QP 头部输出 |
+| `/tj/control/joint_cmd_A` | `marvin_msgs/msg/JointcmdArm` | 稳态 Skye 250 Hz、Luna 500 Hz；切换时约 100 Hz | Joint Mux 最终左臂命令 |
+| `/tj/control/joint_cmd_B` | `marvin_msgs/msg/JointcmdArm` | 稳态 Skye 250 Hz、Luna 500 Hz；切换时约 100 Hz | Joint Mux 最终右臂命令 |
+| `/tj/control/joint_cmd_body` | `marvin_msgs/msg/JointcmdBody` | 稳态 Skye 250 Hz、Luna 500 Hz；切换时约 100 Hz | Joint Mux 最终主体命令 |
+| `/tj/control/joint_cmd_head` | `marvin_msgs/msg/JointcmdHead` | 稳态 Skye 250 Hz、Luna 500 Hz；切换时约 100 Hz | Joint Mux 最终头部命令 |
 
 ## 5. Custom 全身控制接口
 
 客户算法通过以下 `user` Topic 输入关节目标：
 
-| Topic | 消息类型 | 说明 |
-|---|---|---|
-| `/tj/control/user/joint_cmd_A` | `marvin_msgs/msg/JointcmdArm` | 左臂 7 关节目标，单位 rad |
-| `/tj/control/user/joint_cmd_B` | `marvin_msgs/msg/JointcmdArm` | 右臂 7 关节目标，单位 rad |
-| `/tj/control/user/joint_cmd_body` | `marvin_msgs/msg/JointcmdBody` | Skye 的 LIFT+BODY 或 Luna 的 BODY 目标 |
-| `/tj/control/user/joint_cmd_head` | `marvin_msgs/msg/JointcmdHead` | HEAD 目标，当前使用前两个值 |
+| Topic | 消息类型 | 频率 / 发布方式 | 说明 |
+|---|---|---|---|
+| `/tj/control/user/joint_cmd_A` | `marvin_msgs/msg/JointcmdArm` | 由客户程序决定 | 左臂 7 关节目标，单位 rad |
+| `/tj/control/user/joint_cmd_B` | `marvin_msgs/msg/JointcmdArm` | 由客户程序决定 | 右臂 7 关节目标，单位 rad |
+| `/tj/control/user/joint_cmd_body` | `marvin_msgs/msg/JointcmdBody` | 由客户程序决定 | Skye 的 LIFT+BODY 或 Luna 的 BODY 目标 |
+| `/tj/control/user/joint_cmd_head` | `marvin_msgs/msg/JointcmdHead` | 由客户程序决定 | HEAD 目标，当前使用前两个值 |
 
 消息结构：
 
@@ -248,23 +247,23 @@ ros2 service call /tj/control/go_home std_srvs/srv/Trigger "{}"
 
 ### DM / ZY 夹爪
 
-| Topic | 消息类型 | 说明 |
-|---|---|---|
-| `/tj/control/gripperValueL` | `std_msgs/msg/Float32` | 左夹爪开合目标 |
-| `/tj/control/gripperValueR` | `std_msgs/msg/Float32` | 右夹爪开合目标 |
-| `/tj/info/gripper_feedback_L` | `std_msgs/msg/Float32MultiArray` | 左夹爪反馈 |
-| `/tj/info/gripper_feedback_R` | `std_msgs/msg/Float32MultiArray` | 右夹爪反馈 |
-| `/tj/info/gripper_feedback_L_err` | `std_msgs/msg/Int32MultiArray` | 左夹爪错误码 |
-| `/tj/info/gripper_feedback_R_err` | `std_msgs/msg/Int32MultiArray` | 右夹爪错误码 |
+| Topic | 消息类型 | 频率 / 发布方式 | 说明 |
+|---|---|---|---|
+| `/tj/control/gripperValueL` | `std_msgs/msg/Float32` | 跟随控制输入 | 左夹爪开合目标 |
+| `/tj/control/gripperValueR` | `std_msgs/msg/Float32` | 跟随控制输入 | 右夹爪开合目标 |
+| `/tj/info/gripper_feedback_L` | `std_msgs/msg/Float32MultiArray` | 200 Hz | 左夹爪反馈 |
+| `/tj/info/gripper_feedback_R` | `std_msgs/msg/Float32MultiArray` | 200 Hz | 右夹爪反馈 |
+| `/tj/info/gripper_feedback_L_err` | `std_msgs/msg/Int32MultiArray` | 200 Hz | 左夹爪错误码 |
+| `/tj/info/gripper_feedback_R_err` | `std_msgs/msg/Int32MultiArray` | 200 Hz | 右夹爪错误码 |
 
 ### Wuji 灵巧手
 
-| Topic | 消息类型 | 说明 |
-|---|---|---|
-| `/hand_left/joint_commands` | `sensor_msgs/msg/JointState` | 左手关节目标 |
-| `/hand_right/joint_commands` | `sensor_msgs/msg/JointState` | 右手关节目标 |
-| `/hand_left/joint_states` | 以目标机为准 | 左手关节反馈 |
-| `/hand_right/joint_states` | 以目标机为准 | 右手关节反馈 |
+| Topic | 消息类型 | 频率 / 发布方式 | 说明 |
+|---|---|---|---|
+| `/hand_left/joint_commands` | `sensor_msgs/msg/JointState` | 跟随控制输入 | 左手关节目标 |
+| `/hand_right/joint_commands` | `sensor_msgs/msg/JointState` | 跟随控制输入 | 右手关节目标 |
+| `/hand_left/joint_states` | 以目标机为准 | 由驱动配置决定 | 左手关节反馈 |
+| `/hand_right/joint_states` | 以目标机为准 | 由驱动配置决定 | 右手关节反馈 |
 
 ```bash
 ros2 topic list -t | grep -E "gripper|hand"
@@ -272,14 +271,17 @@ ros2 topic list -t | grep -E "gripper|hand"
 
 ## 8. 相机 Topic
 
-Gento 视频通常通过 H264/WebRTC 传输，不要求每路相机都发布 ROS 原始图像。
+Gento 视频通常通过 H.264/WebRTC 传输。当前相机组件默认以 30 Hz 生成四路 Mosaic，ROS 图像接口多为按订阅启停，实际频率以现场配置和测量为准。
 
-| Topic | 消息类型 | 说明 |
-|---|---|---|
-| `/quad_tile/jpeg/compressed` | `sensor_msgs/msg/CompressedImage` | 当前常见的多相机拼接 JPEG 图像 |
-| `/quad_tile/compressed` | `sensor_msgs/msg/CompressedImage` | 旧相机包兼容路径 |
+| Topic | 消息类型 | 格式 | 频率 / 发布方式 | 说明 |
+|---|---|---|---|---|
+| `/quad_tile/compressed` | `sensor_msgs/msg/CompressedImage` | `h264` | 有订阅者时发布，默认上限 30 Hz | 原始四路 Mosaic |
+| `/quad_tile/compressed_undistorted` | `sensor_msgs/msg/CompressedImage` | `h264` | 有订阅者时发布，默认上限 30 Hz | 按各槽位标定配置处理后的 Mosaic |
+| `/quad_tile/jpeg/compressed` | `sensor_msgs/msg/CompressedImage` | `jpeg` | 有订阅者时发布，默认上限 30 Hz | 处理后的 JPEG Mosaic，默认 640×360 |
+| `/camera/<name>/depth/image_raw` | `sensor_msgs/msg/Image` | `16UC1` | 启用深度和原始发布时 | D405 原始深度图 |
+| `/camera/<name>/depth/image_raw/compressed` | `sensor_msgs/msg/CompressedImage` | `h264` | 启用深度且有订阅者时 | D405 灰度映射深度码流 |
 
-该 Topic 取决于相机模块版本和压缩图发布参数。它不存在时，WebRTC 仍可能正常工作。
+单路 NV12、槽位配置、录像服务和故障检查参见 [相机配置与 ROS 接口](/advanced/camera-configuration-and-interfaces)。ROS 图像 Topic 不存在时，WebRTC 仍可能正常工作。
 
 ```bash
 ros2 topic list -t | grep -Ei "camera|image|compressed|quad|usb_cam"
@@ -291,24 +293,24 @@ ros2 topic list -t | grep -Ei "camera|image|compressed|quad|usb_cam"
 
 Gento 使用两级仲裁，客户程序通常只需通过 `/tj/control/set_input` 选择最终关节命令来源：
 
-| Topic | 类型 | 说明 |
-|---|---|---|
-| `/tj/info/ik_request_mux/active_source` | `std_msgs/msg/Int32` | IK 来源：`0=Teleop, 1=Replay` |
-| `/tj/info/joint_cmd_mux/active_source` | `std_msgs/msg/Int32` | 原生来源索引：`-1..3` |
-| `/tj/control/input_mode` | `std_msgs/msg/Int32` | 兼容索引：`0=None, 1=Teleop, 2=Planner, 3=Custom, 4=Replay` |
-| `/tj/info/joint_cmd_mux/latest_joint_cmd` | `sensor_msgs/msg/JointState` | 最近一次完整关节命令快照 |
+| Topic | 类型 | 频率 / 发布方式 | 说明 |
+|---|---|---|---|
+| `/tj/info/ik_request_mux/active_source` | `std_msgs/msg/Int32` | 事件触发并保留最新值 | IK 来源：`0=Teleop, 1=Replay` |
+| `/tj/info/joint_cmd_mux/active_source` | `std_msgs/msg/Int32` | 事件触发并保留最新值 | 原生来源索引：`-1..3` |
+| `/tj/control/input_mode` | `std_msgs/msg/Int32` | 事件触发并保留最新值 | 兼容索引：`0=None, 1=Teleop, 2=Planner, 3=Custom, 4=Replay` |
+| `/tj/info/joint_cmd_mux/latest_joint_cmd` | `sensor_msgs/msg/JointState` | 跟随最终关节命令 | 最近一次完整关节命令快照 |
 
 切换来源时系统会从当前关节反馈开始平滑过渡。只向 `user` Topic 发布而没有选择 Custom 输入，机器人不会使用该命令。
 
 ### 9.2 Gento Replay
 
-| 接口 | 类型 | 说明 |
-|---|---|---|
-| `/tj/info/gento_replay/status` | `std_msgs/msg/String` | Replay JSON 状态，默认约 2 Hz |
-| `/tj/control/gento_replay/record` | `marvin_msgs/srv/Int` | `data=1` 开始录制，`data=0` 停止 |
-| `/tj/control/gento_replay/playback` | `marvin_msgs/srv/Int` | `data=1` 开始回放，`data=0` 停止 |
-| `/tj/control/gento_replay/record_named` | `marvin_msgs/srv/GentoReplay` | 按指定名称开始或停止录制 |
-| `/tj/control/gento_replay/playback_named` | `marvin_msgs/srv/GentoReplay` | 按指定名称开始或停止回放 |
+| 接口 | 类型 | 频率 / 调用方式 | 说明 |
+|---|---|---|---|
+| `/tj/info/gento_replay/status` | `std_msgs/msg/String` | 约 2 Hz | Replay JSON 状态 |
+| `/tj/control/gento_replay/record` | `marvin_msgs/srv/Int` | 按请求调用 | `data=1` 开始录制，`data=0` 停止 |
+| `/tj/control/gento_replay/playback` | `marvin_msgs/srv/Int` | 按请求调用 | `data=1` 开始回放，`data=0` 停止 |
+| `/tj/control/gento_replay/record_named` | `marvin_msgs/srv/GentoReplay` | 按请求调用 | 按指定名称开始或停止录制 |
+| `/tj/control/gento_replay/playback_named` | `marvin_msgs/srv/GentoReplay` | 按请求调用 | 按指定名称开始或停止回放 |
 
 新版 Gento 优先使用 `gento_replay`。旧 `/recorder/*` 和 `/playback_*` 接口属于历史兼容链路，不建议新客户程序依赖。
 
@@ -316,15 +318,15 @@ Gento 使用两级仲裁，客户程序通常只需通过 `/tj/control/set_input
 
 底盘节点通常独立运行并保持根命名空间：
 
-| Topic / Service | 类型 | 说明 |
-|---|---|---|
-| `/controller/odom` | `nav_msgs/msg/Odometry` | 底盘里程计 |
-| `/move/State` | `move/msg/State` | 底盘状态 |
-| `/move/ManualMoveCmd` | `geometry_msgs/msg/TwistStamped` | 手动速度命令 |
-| `/info/base_local_state` | `move/msg/State` | 基于重置原点的本地状态 |
-| `/info/base_teleop/active_mode` | `std_msgs/msg/Int32` | `0=off, 1=joy, 2=wholebody` |
-| `/control/base_local_reset` | `std_srvs/srv/Trigger` | 重置底盘本地坐标原点 |
-| `/control/base_teleop/set_mode` | `marvin_msgs/srv/Int` | 切换底盘遥操模式 |
+| Topic / Service | 类型 | 频率 / 调用方式 | 说明 |
+|---|---|---|---|
+| `/controller/odom` | `nav_msgs/msg/Odometry` | 由底盘驱动决定 | 底盘里程计 |
+| `/move/State` | `move/msg/State` | 由底盘驱动决定 | 底盘状态 |
+| `/move/ManualMoveCmd` | `geometry_msgs/msg/TwistStamped` | 对应模式启用时 100 Hz | 手动速度命令 |
+| `/info/base_local_state` | `move/msg/State` | 跟随 `/move/State` | 基于重置原点的本地状态 |
+| `/info/base_teleop/active_mode` | `std_msgs/msg/Int32` | 事件触发并保留最新值 | `0=off, 1=joy, 2=wholebody` |
+| `/control/base_local_reset` | `std_srvs/srv/Trigger` | 按请求调用 | 重置底盘本地坐标原点 |
+| `/control/base_teleop/set_mode` | `marvin_msgs/srv/Int` | 按请求调用 | 切换底盘遥操模式 |
 
 若接口不存在，请同时检查 `/tj/info/base_*` 和 `/tj/control/base_*`，确认现场 Launch 是否为底盘节点增加了命名空间。
 
@@ -338,8 +340,8 @@ Gento 的控制循环和 Topic 频率与 Marvin Pro 不同。下表为当前 Sky
 | `/tj/control/teleop/ik_request` | 1000 Hz | 1000 Hz | Teleop 正常运行 |
 | `/tj/control/qp_controller/joint_cmd_*` | 250 Hz | 500 Hz | Ready、Home 和 IK 数据均正常 |
 | `/tj/control/joint_cmd_*` | 通常 250 Hz | 通常 500 Hz | Mux 稳态直通；来源切换期间约 100 Hz |
-| `/tj/info/joint_feedback` | 最高约 1000 Hz | 最高约 1000 Hz | 每次 Gento SDK 状态读取成功时发布 |
-| `/tj/joint_states`、`/tj/info/robot_state` | 约 200 Hz | 约 200 Hz | 当前源码每 5 次 Robot 轮询发布一次 |
+| `/tj/info/joint_feedback` | 目标约 500 Hz | 目标约 500 Hz | SDK 返回驱动，实际频率以现场测量为准 |
+| `/tj/joint_states`、`/tj/info/robot_state` | 通常约 100 Hz | 通常约 100 Hz | 每 5 次成功的关节反馈发布一次；实际值随反馈频率变化 |
 | `/tj/info/gripper_feedback_L/R` 及错误码 | 200 Hz | 200 Hz | DM/ZY Tool 默认配置 |
 | `/tj/info/gento_replay/status` | 2 Hz | 2 Hz | Replay 启动后每 500 ms 发布 |
 | `/move/ManualMoveCmd`、`/target_pose` | 100 Hz | 100 Hz | 对应底盘模式有效时 |
@@ -368,7 +370,7 @@ ros2 topic hz /tj/info/gripper_feedback_L
 | 数据类别 | 建议 Topic |
 |---|---|
 | 整机关节反馈 | `/tj/joint_states`、`/tj/info/joint_feedback` |
-| 机器人状态 | `/tj/info/robot_state`、`/tj/info/robot_cmd_state`、`/tj/info/robot_info` |
+| 机器人状态 | `/tj/info/robot_state`、`/tj/info/robot_info` |
 | 末端位姿 | `/tj/info/eef_left`、`/tj/info/eef_right` |
 | 头显目标与使能 | `/tj/control/target_poseL/R`、`/tj/control/enableL/R`、`/tj/control/vr_body` |
 | 客户控制输入 | `/tj/control/user/joint_cmd_A/B/body/head` |

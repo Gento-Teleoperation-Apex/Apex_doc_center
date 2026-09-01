@@ -113,7 +113,7 @@ source install/setup.bash
 | `/info/joint_feedback` | `marvin_msgs/Jointfeedback` | Dual-arm joint feedback |
 | `/info/eef_left` | `geometry_msgs/PoseStamped` | Left end-effector pose |
 | `/info/eef_right` | `geometry_msgs/PoseStamped` | Right end-effector pose |
-| `quad_tile/compressed` | `sensor_msgs/CompressedImage` | Quad-camera JPEG image |
+| `quad_tile/jpeg/compressed` | `sensor_msgs/CompressedImage` | Quad-camera JPEG image |
 
 In EEF-control mode, `vlahost` publishes these topics by default:
 

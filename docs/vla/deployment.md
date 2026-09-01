@@ -113,7 +113,7 @@ source install/setup.bash
 | `/info/joint_feedback` | `marvin_msgs/Jointfeedback` | 双臂关节反馈 |
 | `/info/eef_left` | `geometry_msgs/PoseStamped` | 左末端位姿 |
 | `/info/eef_right` | `geometry_msgs/PoseStamped` | 右末端位姿 |
-| `quad_tile/compressed` | `sensor_msgs/CompressedImage` | 四宫格相机 JPEG 图像 |
+| `quad_tile/jpeg/compressed` | `sensor_msgs/CompressedImage` | 四宫格相机 JPEG 图像 |
 
 EEF 控制模式下，`vlahost` 默认发布：
 

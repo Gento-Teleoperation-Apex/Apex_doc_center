@@ -244,10 +244,12 @@ ros2 topic echo /tj/info/arm_state --once
 | `/tj/playback/control` | `marvin_msgs/srv/JsonCommand` | 回放控制主 Service |
 | `/tj/playback_status` | `std_msgs/msg/String` | 回放状态 Topic |
 | `/tj/playback_key` | `std_msgs/msg/Bool` | 回放按键/状态 Topic |
+| `/quad_tile/compressed` | `sensor_msgs/msg/CompressedImage` | 全局原始四宫格 H.264 图像，按订阅启停 |
+| `/quad_tile/compressed_undistorted` | `sensor_msgs/msg/CompressedImage` | 全局按标定处理的四宫格 H.264 图像，按订阅启停 |
 | `/quad_tile/jpeg/compressed` | `sensor_msgs/msg/CompressedImage` | 全局四宫格 JPEG 图像，当前约 640×360 |
 | `/recorder/set_recording` | `marvin_msgs/srv/VideoCapture` | 全局相机视频录制控制 |
 
-录制白名单、回放白名单和 WebSocket 白名单互相独立，详见 [Topic 白名单配置与排查](/advanced/topic-whitelist)。
+相机接口的编码格式、单路图像和发布条件详见 [相机配置与 ROS 接口](/advanced/camera-configuration-and-interfaces)。录制白名单、回放白名单和 WebSocket 白名单互相独立，详见 [Topic 白名单配置与排查](/advanced/topic-whitelist)。
 
 ## 10. 可选 VLA 接口
 

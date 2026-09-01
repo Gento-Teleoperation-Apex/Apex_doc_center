@@ -126,7 +126,11 @@ Wuji Topic 保持全局路径，不添加 `/tj`。
 | `/tj/control/playback_control` | `std_msgs/msg/String` | 兼容输入，可选 | JSON 回放控制；优先使用 Service |
 | `/tj/playback_status` | `std_msgs/msg/String` | 只读，可选 | 回放状态 |
 | `/tj/playback_key` | `std_msgs/msg/Bool` | 只读，可选 | 回放按键/状态 |
+| `/quad_tile/compressed` | `sensor_msgs/msg/CompressedImage` | 只读，可选，全局 | 原始四宫格 H.264 图像，按订阅启停 |
+| `/quad_tile/compressed_undistorted` | `sensor_msgs/msg/CompressedImage` | 只读，可选，全局 | 按标定处理的四宫格 H.264 图像，按订阅启停 |
 | `/quad_tile/jpeg/compressed` | `sensor_msgs/msg/CompressedImage` | 只读，可选，全局 | 四宫格 JPEG 图像 |
+
+完整相机接口参见 [相机配置与 ROS 接口](/advanced/camera-configuration-and-interfaces)。
 
 ## 10. ROS 系统 Topic
 
@@ -173,7 +177,7 @@ Topic 只在对应模块启动后出现。列表存在但没有消息时，应�
 | `/tj/recorder/status` | 1 Hz | Recorder 已启动 |
 | `/tj/playback_status` | 10 Hz | Playback 已启动 |
 | `/tj/info/robot_info` | 0.2 Hz | 默认每 5 秒发布，启动时立即发布一次 |
-| `/quad_tile/jpeg/compressed` | 相机配置决定 | 不应按前端 30 FPS 限速反推 ROS 原始频率 |
+| `/quad_tile/compressed`、`/quad_tile/compressed_undistorted`、`/quad_tile/jpeg/compressed` | 默认上限 30 Hz，按订阅启停 | 实际频率取决于有效输入、Mosaic 配置和订阅状态 |
 
 头显目标、使能和夹爪控制 Topic 跟随实际 UDP 数据包或上游客户程序，不具有统一固定频率。Planner、Replay、事件状态和静态 TF 也不应套用持续发布频率。
 

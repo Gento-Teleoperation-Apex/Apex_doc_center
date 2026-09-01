@@ -297,7 +297,7 @@ The following interfaces use the default namespace `tj`. Rates are nominal and m
 | `/tj/info/joint_feedback` | `marvin_msgs/msg/Jointfeedback` | 200 Hz | Position, velocity, and torque for 14 arm joints |
 | `/tj/info/eef_left` | `geometry_msgs/msg/PoseStamped` | Teleop nominally 1000 Hz | Left FK pose |
 | `/tj/info/eef_right` | `geometry_msgs/msg/PoseStamped` | Teleop nominally 1000 Hz | Right FK pose |
-| `/quad_tile/compressed` | `sensor_msgs/msg/CompressedImage` | Camera configuration, typically 30 Hz | 2x2 GMSL camera composite |
+| `/quad_tile/jpeg/compressed` | `sensor_msgs/msg/CompressedImage` | Camera configuration, typically 30 Hz | 2x2 GMSL camera JPEG composite |
 | `/info/gripper_feedback_L` | `std_msgs/msg/Float32MultiArray` | Tool-dependent | Left gripper feedback |
 | `/info/gripper_feedback_R` | `std_msgs/msg/Float32MultiArray` | Tool-dependent | Right gripper feedback |
 | `/info/gripper_feedback_L_err` | `std_msgs/msg/Int32MultiArray` | Tool-dependent | Left gripper error code |
@@ -449,7 +449,7 @@ curl http://<ROBOT_IP>:8000/state
 | `image_stream_fps` | `60.0` | MJPEG target limit, capped by source rate |
 | `image_passthrough` | `false` | Forward upstream JPEG without decode/re-encode |
 
-If `/quad_tile/compressed` already has a suitable JPEG size, set `image_passthrough=true` to reduce CPU load and latency. The standard launch exposes only `host`, `port`, and `ros_namespace`. Override image parameters in a customer launch or update the parameter dictionary in `vlahost_server.launch.py` and rebuild.
+If `/quad_tile/jpeg/compressed` already has a suitable JPEG size, set `image_passthrough=true` to reduce CPU load and latency. The standard launch exposes only `host`, `port`, and `ros_namespace`. Override image parameters in a customer launch or update the parameter dictionary in `vlahost_server.launch.py` and rebuild.
 
 ## 14. Network and Safety Restrictions
 

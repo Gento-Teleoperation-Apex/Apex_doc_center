@@ -200,10 +200,12 @@ ros2 service call /tj/control/set_input marvin_msgs/srv/Int "{data: 0}"
 | `/tj/playback/control` | `marvin_msgs/srv/JsonCommand` | Main playback service |
 | `/tj/playback_status` | `std_msgs/msg/String` | Playback state topic |
 | `/tj/playback_key` | `std_msgs/msg/Bool` | Playback key/state topic |
+| `/quad_tile/compressed` | `sensor_msgs/msg/CompressedImage` | Global raw tiled H.264 image, subscriber-driven |
+| `/quad_tile/compressed_undistorted` | `sensor_msgs/msg/CompressedImage` | Global calibration-processed tiled H.264 image, subscriber-driven |
 | `/quad_tile/jpeg/compressed` | `sensor_msgs/msg/CompressedImage` | Global tiled JPEG image |
 | `/recorder/set_recording` | `marvin_msgs/srv/VideoCapture` | Global camera recording service |
 
-See [Topic Whitelist Configuration and Troubleshooting](/advanced/topic-whitelist) for recording, playback, WebSocket, and diagnostic-log allowlists.
+See [Camera Configuration and ROS Interfaces](/advanced/camera-configuration-and-interfaces) for camera formats, per-camera images, and publication conditions. See [Topic Whitelist Configuration and Troubleshooting](/advanced/topic-whitelist) for recording, playback, WebSocket, and diagnostic-log allowlists.
 
 ## 10. Optional VLA API
 

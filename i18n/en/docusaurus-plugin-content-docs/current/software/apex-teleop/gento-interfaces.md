@@ -88,14 +88,13 @@ Customer software must identify the model from `/tj/info/robot_info`. Do not reu
 
 After Robot starts:
 
-| Topic | Type | Description |
-|---|---|---|
-| `/tj/joint_states` | `sensor_msgs/msg/JointState` | Standard whole-robot joint names, positions, velocities, and efforts |
-| `/tj/info/joint_feedback` | `marvin_msgs/msg/Jointfeedback` | Real-time Gento whole-robot joint feedback |
-| `/tj/info/robot_state` | `std_msgs/msg/Int16MultiArray` | Current ARM, HEAD, BODY, and LIFT states |
-| `/tj/info/robot_cmd_state` | `std_msgs/msg/Int16MultiArray` | Target state of each component |
-| `/tj/info/robot_info` | `marvin_msgs/msg/RobotInfo` | Robot model and controller version |
-| `/tj/info/imu0` | `sensor_msgs/msg/Imu` | Body IMU data |
+| Topic | Type | Rate / Publication | Description |
+|---|---|---|---|
+| `/tj/joint_states` | `sensor_msgs/msg/JointState` | Normally about 100 Hz | Standard whole-robot joint names, positions, velocities, and efforts |
+| `/tj/info/joint_feedback` | `marvin_msgs/msg/Jointfeedback` | SDK-return driven; target about 500 Hz | Real-time Gento whole-robot joint feedback; verify the actual rate on the target |
+| `/tj/info/robot_state` | `std_msgs/msg/Int16MultiArray` | Normally about 100 Hz | Current ARM, HEAD, BODY, and LIFT states |
+| `/tj/info/robot_info` | `marvin_msgs/msg/RobotInfo` | Immediately at startup, then about 0.2 Hz | Robot model and controller version |
+| `/tj/info/imu0` | `sensor_msgs/msg/Imu` | Follows joint feedback | Body IMU data |
 
 ```bash
 ros2 topic echo /tj/info/robot_info --once
@@ -106,28 +105,26 @@ ros2 topic echo /tj/joint_states --once
 
 In `Jointfeedback`, the 14 arm entries are ordered as left seven followed by right seven. Interpret BODY values according to the model rules above.
 
+> The current release creates a publisher for `/tj/info/robot_cmd_state`, but the source does not publish messages through it. Do not treat it as a customer-facing interface.
+
 ## 4. Headset and teleoperation topics
 
 After Teleop starts:
 
-| Topic | Type | Description |
-|---|---|---|
-| `/tj/control/target_poseL` | `geometry_msgs/msg/PoseStamped` | Left-arm target mapped from the left controller |
-| `/tj/control/target_poseR` | `geometry_msgs/msg/PoseStamped` | Right-arm target mapped from the right controller |
-| `/tj/control/enableL` | `std_msgs/msg/Bool` | Left-arm teleoperation enable |
-| `/tj/control/enableR` | `std_msgs/msg/Bool` | Right-arm teleoperation enable |
-| `/tj/control/vr_joy_L` | `sensor_msgs/msg/Joy` | Left-controller buttons and joystick |
-| `/tj/control/vr_joy_R` | `sensor_msgs/msg/Joy` | Right-controller buttons and joystick |
-| `/tj/control/vr_body` | `marvin_msgs/msg/VrBody` | Torso, head, elbow, leg, and other full-body tracking data |
-| `/tj/info/vr_connected` | `std_msgs/msg/Bool` | Headset connection state |
-| `/tj/control/eef_cmd_A` | `geometry_msgs/msg/PoseStamped` | Mapped left end-effector target |
-| `/tj/control/eef_cmd_B` | `geometry_msgs/msg/PoseStamped` | Mapped right end-effector target |
-| `/tj/info/eef_left` | `geometry_msgs/msg/PoseStamped` | Current left end-effector pose |
-| `/tj/info/eef_right` | `geometry_msgs/msg/PoseStamped` | Current right end-effector pose |
-| `/tj/info/collision_statusA` | `std_msgs/msg/Bool` | Left collision state |
-| `/tj/info/collision_statusB` | `std_msgs/msg/Bool` | Right collision state |
-| `/tj/info/teleop_motion_mode` | `std_msgs/msg/Int32` | `0=full body, 1=arms only, 2=arms and head` |
-| `/tj/info/body_pose_mode` | `std_msgs/msg/Int32` | `0=skeleton, 1=neck_head_pose` |
+| Topic | Type | Rate / Publication | Description |
+|---|---|---|---|
+| `/tj/control/target_poseL` | `geometry_msgs/msg/PoseStamped` | Follows headset input | Left-arm target mapped from the left controller |
+| `/tj/control/target_poseR` | `geometry_msgs/msg/PoseStamped` | Follows headset input | Right-arm target mapped from the right controller |
+| `/tj/control/enableL` | `std_msgs/msg/Bool` | Follows headset input; about 10 Hz in glove mode | Left-arm teleoperation enable |
+| `/tj/control/enableR` | `std_msgs/msg/Bool` | Follows headset input; about 10 Hz in glove mode | Right-arm teleoperation enable |
+| `/tj/control/vr_joy_L` | `sensor_msgs/msg/Joy` | Follows headset input | Left-controller buttons and joystick |
+| `/tj/control/vr_joy_R` | `sensor_msgs/msg/Joy` | Follows headset input | Right-controller buttons and joystick |
+| `/tj/control/vr_body` | `marvin_msgs/msg/VrBody` | Follows headset input | Torso, head, elbow, leg, and other full-body tracking data |
+| `/tj/info/vr_connected` | `std_msgs/msg/Bool` | 1 Hz | Headset connection state |
+| `/tj/info/eef_left` | `geometry_msgs/msg/PoseStamped` | Target 1000 Hz | Current left end-effector pose; actual rate depends on system load |
+| `/tj/info/eef_right` | `geometry_msgs/msg/PoseStamped` | Target 1000 Hz | Current right end-effector pose; actual rate depends on system load |
+| `/tj/info/teleop_motion_mode` | `std_msgs/msg/Int32` | Event-driven | `0=full body, 1=arms only, 2=arms and head` |
+| `/tj/info/body_pose_mode` | `std_msgs/msg/Int32` | Event-driven | `0=skeleton, 1=neck_head_pose` |
 
 `VrBody` contains left/right elbow, torso, head, pelvis, left/right foot, and left/right knee poses with matching `available` flags. A pose must not be treated as valid when its flag is `false`.
 
@@ -142,34 +139,36 @@ ros2 topic echo /tj/info/eef_right --once
 
 Current Skye releases may not use the TCP connection state as the teleoperation gate. Do not diagnose Skye from `/tj/info/vr_connected` alone; also verify target-pose and enable updates.
 
+> The current release creates publishers for `/tj/control/eef_cmd_A`, `/tj/control/eef_cmd_B`, `/tj/info/collision_statusA`, and `/tj/info/collision_statusB`, but the source does not publish messages through them. Do not treat them as customer-facing interfaces.
+
 ### 4.1 Control-Chain Observation Interfaces
 
 Use these topics to identify whether a fault is in Teleop, IK/QP, or final command output. Customer programs must not publish directly to QP outputs or final command topics.
 
-| Topic | Type | Description |
-|---|---|---|
-| `/tj/control/teleop/ik_request` | `marvin_msgs/msg/IKRequest` | Whole-body IK request generated by Teleop |
-| `/tj/control/replay/ik_request` | `marvin_msgs/msg/IKRequest` | IK request generated by Replay |
-| `/tj/control/ik_request` | `marvin_msgs/msg/IKRequest` | Request selected by the IK Mux |
-| `/tj/control/qp_controller/joint_cmd_A` | `marvin_msgs/msg/JointcmdArm` | QP left-arm output |
-| `/tj/control/qp_controller/joint_cmd_B` | `marvin_msgs/msg/JointcmdArm` | QP right-arm output |
-| `/tj/control/qp_controller/joint_cmd_body` | `marvin_msgs/msg/JointcmdBody` | QP body output |
-| `/tj/control/qp_controller/joint_cmd_head` | `marvin_msgs/msg/JointcmdHead` | QP head output |
-| `/tj/control/joint_cmd_A` | `marvin_msgs/msg/JointcmdArm` | Final left-arm command selected by Joint Mux |
-| `/tj/control/joint_cmd_B` | `marvin_msgs/msg/JointcmdArm` | Final right-arm command selected by Joint Mux |
-| `/tj/control/joint_cmd_body` | `marvin_msgs/msg/JointcmdBody` | Final body command selected by Joint Mux |
-| `/tj/control/joint_cmd_head` | `marvin_msgs/msg/JointcmdHead` | Final head command selected by Joint Mux |
+| Topic | Type | Rate / Publication | Description |
+|---|---|---|---|
+| `/tj/control/teleop/ik_request` | `marvin_msgs/msg/IKRequest` | Target 1000 Hz | Whole-body IK request generated by Teleop |
+| `/tj/control/replay/ik_request` | `marvin_msgs/msg/IKRequest` | Follows recorded timestamps | IK request generated by Replay |
+| `/tj/control/ik_request` | `marvin_msgs/msg/IKRequest` | Follows the active source | Request selected by the IK Mux |
+| `/tj/control/qp_controller/joint_cmd_A` | `marvin_msgs/msg/JointcmdArm` | Skye 250 Hz; Luna 500 Hz | QP left-arm output |
+| `/tj/control/qp_controller/joint_cmd_B` | `marvin_msgs/msg/JointcmdArm` | Skye 250 Hz; Luna 500 Hz | QP right-arm output |
+| `/tj/control/qp_controller/joint_cmd_body` | `marvin_msgs/msg/JointcmdBody` | Skye 250 Hz; Luna 500 Hz | QP body output |
+| `/tj/control/qp_controller/joint_cmd_head` | `marvin_msgs/msg/JointcmdHead` | Skye 250 Hz; Luna 500 Hz | QP head output |
+| `/tj/control/joint_cmd_A` | `marvin_msgs/msg/JointcmdArm` | Steady state: Skye 250 Hz, Luna 500 Hz; about 100 Hz while switching | Final left-arm command selected by Joint Mux |
+| `/tj/control/joint_cmd_B` | `marvin_msgs/msg/JointcmdArm` | Steady state: Skye 250 Hz, Luna 500 Hz; about 100 Hz while switching | Final right-arm command selected by Joint Mux |
+| `/tj/control/joint_cmd_body` | `marvin_msgs/msg/JointcmdBody` | Steady state: Skye 250 Hz, Luna 500 Hz; about 100 Hz while switching | Final body command selected by Joint Mux |
+| `/tj/control/joint_cmd_head` | `marvin_msgs/msg/JointcmdHead` | Steady state: Skye 250 Hz, Luna 500 Hz; about 100 Hz while switching | Final head command selected by Joint Mux |
 
 ## 5. Custom whole-body command interfaces
 
 Customer algorithms publish to the `user` topics:
 
-| Topic | Type | Description |
-|---|---|---|
-| `/tj/control/user/joint_cmd_A` | `marvin_msgs/msg/JointcmdArm` | Seven left-arm joint targets in radians |
-| `/tj/control/user/joint_cmd_B` | `marvin_msgs/msg/JointcmdArm` | Seven right-arm joint targets in radians |
-| `/tj/control/user/joint_cmd_body` | `marvin_msgs/msg/JointcmdBody` | Skye LIFT+BODY or Luna BODY targets |
-| `/tj/control/user/joint_cmd_head` | `marvin_msgs/msg/JointcmdHead` | HEAD targets; current models use the first two values |
+| Topic | Type | Rate / Publication | Description |
+|---|---|---|---|
+| `/tj/control/user/joint_cmd_A` | `marvin_msgs/msg/JointcmdArm` | Defined by the customer program | Seven left-arm joint targets in radians |
+| `/tj/control/user/joint_cmd_B` | `marvin_msgs/msg/JointcmdArm` | Defined by the customer program | Seven right-arm joint targets in radians |
+| `/tj/control/user/joint_cmd_body` | `marvin_msgs/msg/JointcmdBody` | Defined by the customer program | Skye LIFT+BODY or Luna BODY targets |
+| `/tj/control/user/joint_cmd_head` | `marvin_msgs/msg/JointcmdHead` | Defined by the customer program | HEAD targets; current models use the first two values |
 
 Message layouts:
 
@@ -246,23 +245,23 @@ End-effector topics appear only when the matching hardware and driver are config
 
 ### DM / ZY gripper
 
-| Topic | Type | Description |
-|---|---|---|
-| `/tj/control/gripperValueL` | `std_msgs/msg/Float32` | Left gripper target |
-| `/tj/control/gripperValueR` | `std_msgs/msg/Float32` | Right gripper target |
-| `/tj/info/gripper_feedback_L` | `std_msgs/msg/Float32MultiArray` | Left gripper feedback |
-| `/tj/info/gripper_feedback_R` | `std_msgs/msg/Float32MultiArray` | Right gripper feedback |
-| `/tj/info/gripper_feedback_L_err` | `std_msgs/msg/Int32MultiArray` | Left gripper error codes |
-| `/tj/info/gripper_feedback_R_err` | `std_msgs/msg/Int32MultiArray` | Right gripper error codes |
+| Topic | Type | Rate / Publication | Description |
+|---|---|---|---|
+| `/tj/control/gripperValueL` | `std_msgs/msg/Float32` | Follows control input | Left gripper target |
+| `/tj/control/gripperValueR` | `std_msgs/msg/Float32` | Follows control input | Right gripper target |
+| `/tj/info/gripper_feedback_L` | `std_msgs/msg/Float32MultiArray` | 200 Hz | Left gripper feedback |
+| `/tj/info/gripper_feedback_R` | `std_msgs/msg/Float32MultiArray` | 200 Hz | Right gripper feedback |
+| `/tj/info/gripper_feedback_L_err` | `std_msgs/msg/Int32MultiArray` | 200 Hz | Left gripper error codes |
+| `/tj/info/gripper_feedback_R_err` | `std_msgs/msg/Int32MultiArray` | 200 Hz | Right gripper error codes |
 
 ### Wuji dexterous hand
 
-| Topic | Type | Description |
-|---|---|---|
-| `/hand_left/joint_commands` | `sensor_msgs/msg/JointState` | Left-hand joint target |
-| `/hand_right/joint_commands` | `sensor_msgs/msg/JointState` | Right-hand joint target |
-| `/hand_left/joint_states` | Verify on target | Left-hand joint feedback |
-| `/hand_right/joint_states` | Verify on target | Right-hand joint feedback |
+| Topic | Type | Rate / Publication | Description |
+|---|---|---|---|
+| `/hand_left/joint_commands` | `sensor_msgs/msg/JointState` | Follows control input | Left-hand joint target |
+| `/hand_right/joint_commands` | `sensor_msgs/msg/JointState` | Follows control input | Right-hand joint target |
+| `/hand_left/joint_states` | Verify on target | Defined by driver configuration | Left-hand joint feedback |
+| `/hand_right/joint_states` | Verify on target | Defined by driver configuration | Right-hand joint feedback |
 
 ```bash
 ros2 topic list -t | grep -E "gripper|hand"
@@ -270,14 +269,17 @@ ros2 topic list -t | grep -E "gripper|hand"
 
 ## 8. Camera topic
 
-Gento video is normally carried over H264/WebRTC. Individual cameras do not need to publish raw ROS image topics.
+Gento video is normally carried over H.264/WebRTC. The current camera component generates the four-camera mosaic at 30 Hz by default, while most ROS image topics publish on demand. Verify the actual rate from the deployed configuration and target system.
 
-| Topic | Type | Description |
-|---|---|---|
-| `/quad_tile/jpeg/compressed` | `sensor_msgs/msg/CompressedImage` | Current common multi-camera tiled JPEG image |
-| `/quad_tile/compressed` | `sensor_msgs/msg/CompressedImage` | Compatibility path used by older camera packages |
+| Topic | Type | Format | Rate / Publication | Description |
+|---|---|---|---|---|
+| `/quad_tile/compressed` | `sensor_msgs/msg/CompressedImage` | `h264` | Published when subscribed; default maximum 30 Hz | Raw four-camera mosaic |
+| `/quad_tile/compressed_undistorted` | `sensor_msgs/msg/CompressedImage` | `h264` | Published when subscribed; default maximum 30 Hz | Mosaic processed according to each slot's calibration |
+| `/quad_tile/jpeg/compressed` | `sensor_msgs/msg/CompressedImage` | `jpeg` | Published when subscribed; default maximum 30 Hz | Processed JPEG mosaic, default 640x360 |
+| `/camera/<name>/depth/image_raw` | `sensor_msgs/msg/Image` | `16UC1` | Depth and raw publication enabled | Raw D405 depth image |
+| `/camera/<name>/depth/image_raw/compressed` | `sensor_msgs/msg/CompressedImage` | `h264` | Depth enabled and a subscriber exists | D405 grayscale-mapped depth stream |
 
-This topic depends on the camera module version and compressed-image publication setting. WebRTC may still work when it is absent.
+For per-camera NV12 topics, slot configuration, recording services, and diagnostics, see [Camera Configuration and ROS Interfaces](/advanced/camera-configuration-and-interfaces). WebRTC may still work when ROS image topics are absent.
 
 ```bash
 ros2 topic list -t | grep -Ei "camera|image|compressed|quad|usb_cam"
@@ -289,24 +291,24 @@ ros2 topic list -t | grep -Ei "camera|image|compressed|quad|usb_cam"
 
 Gento uses two input-mux layers. Customer programs normally select the final joint-command source through `/tj/control/set_input`:
 
-| Topic | Type | Description |
-|---|---|---|
-| `/tj/info/ik_request_mux/active_source` | `std_msgs/msg/Int32` | IK source: `0=Teleop, 1=Replay` |
-| `/tj/info/joint_cmd_mux/active_source` | `std_msgs/msg/Int32` | Native source index: `-1..3` |
-| `/tj/control/input_mode` | `std_msgs/msg/Int32` | Compatibility index: `0=None, 1=Teleop, 2=Planner, 3=Custom, 4=Replay` |
-| `/tj/info/joint_cmd_mux/latest_joint_cmd` | `sensor_msgs/msg/JointState` | Latest complete joint-command snapshot |
+| Topic | Type | Rate / Publication | Description |
+|---|---|---|---|
+| `/tj/info/ik_request_mux/active_source` | `std_msgs/msg/Int32` | Event-driven and latched | IK source: `0=Teleop, 1=Replay` |
+| `/tj/info/joint_cmd_mux/active_source` | `std_msgs/msg/Int32` | Event-driven and latched | Native source index: `-1..3` |
+| `/tj/control/input_mode` | `std_msgs/msg/Int32` | Event-driven and latched | Compatibility index: `0=None, 1=Teleop, 2=Planner, 3=Custom, 4=Replay` |
+| `/tj/info/joint_cmd_mux/latest_joint_cmd` | `sensor_msgs/msg/JointState` | Follows final joint commands | Latest complete joint-command snapshot |
 
 The controller transitions smoothly from current joint feedback when the source changes. Publishing to `user` topics without selecting Custom does not activate those commands.
 
 ### 9.2 Gento Replay
 
-| Interface | Type | Description |
-|---|---|---|
-| `/tj/info/gento_replay/status` | `std_msgs/msg/String` | Replay JSON status, normally about 2 Hz |
-| `/tj/control/gento_replay/record` | `marvin_msgs/srv/Int` | `data=1` starts recording; `data=0` stops |
-| `/tj/control/gento_replay/playback` | `marvin_msgs/srv/Int` | `data=1` starts playback; `data=0` stops |
-| `/tj/control/gento_replay/record_named` | `marvin_msgs/srv/GentoReplay` | Starts or stops a named recording |
-| `/tj/control/gento_replay/playback_named` | `marvin_msgs/srv/GentoReplay` | Starts or stops named playback |
+| Interface | Type | Rate / Invocation | Description |
+|---|---|---|---|
+| `/tj/info/gento_replay/status` | `std_msgs/msg/String` | About 2 Hz | Replay JSON status |
+| `/tj/control/gento_replay/record` | `marvin_msgs/srv/Int` | Called on demand | `data=1` starts recording; `data=0` stops |
+| `/tj/control/gento_replay/playback` | `marvin_msgs/srv/Int` | Called on demand | `data=1` starts playback; `data=0` stops |
+| `/tj/control/gento_replay/record_named` | `marvin_msgs/srv/GentoReplay` | Called on demand | Starts or stops a named recording |
+| `/tj/control/gento_replay/playback_named` | `marvin_msgs/srv/GentoReplay` | Called on demand | Starts or stops named playback |
 
 New Gento integrations should use `gento_replay`. The old `/recorder/*` and `/playback_*` topics belong to the compatibility path and are not recommended for new customer applications.
 
@@ -314,15 +316,15 @@ New Gento integrations should use `gento_replay`. The old `/recorder/*` and `/pl
 
 Mobile-base nodes are normally launched independently in the root namespace:
 
-| Topic / Service | Type | Description |
-|---|---|---|
-| `/controller/odom` | `nav_msgs/msg/Odometry` | Base odometry |
-| `/move/State` | `move/msg/State` | Base state |
-| `/move/ManualMoveCmd` | `geometry_msgs/msg/TwistStamped` | Manual velocity command |
-| `/info/base_local_state` | `move/msg/State` | State relative to the reset origin |
-| `/info/base_teleop/active_mode` | `std_msgs/msg/Int32` | `0=off, 1=joy, 2=wholebody` |
-| `/control/base_local_reset` | `std_srvs/srv/Trigger` | Resets the local base origin |
-| `/control/base_teleop/set_mode` | `marvin_msgs/srv/Int` | Selects the base teleoperation mode |
+| Topic / Service | Type | Rate / Invocation | Description |
+|---|---|---|---|
+| `/controller/odom` | `nav_msgs/msg/Odometry` | Defined by the base driver | Base odometry |
+| `/move/State` | `move/msg/State` | Defined by the base driver | Base state |
+| `/move/ManualMoveCmd` | `geometry_msgs/msg/TwistStamped` | 100 Hz while the corresponding mode is active | Manual velocity command |
+| `/info/base_local_state` | `move/msg/State` | Follows `/move/State` | State relative to the reset origin |
+| `/info/base_teleop/active_mode` | `std_msgs/msg/Int32` | Event-driven and latched | `0=off, 1=joy, 2=wholebody` |
+| `/control/base_local_reset` | `std_srvs/srv/Trigger` | Called on demand | Resets the local base origin |
+| `/control/base_teleop/set_mode` | `marvin_msgs/srv/Int` | Called on demand | Selects the base teleoperation mode |
 
 If these interfaces are absent, also check `/tj/info/base_*` and `/tj/control/base_*` in case the delivered launch applies the robot namespace to the base nodes.
 
@@ -336,8 +338,8 @@ Gento control-loop and topic rates differ from Marvin Pro. The following values 
 | `/tj/control/teleop/ik_request` | 1000 Hz | 1000 Hz | Teleop running |
 | `/tj/control/qp_controller/joint_cmd_*` | 250 Hz | 500 Hz | Ready, Home, and IK data are valid |
 | `/tj/control/joint_cmd_*` | Normally 250 Hz | Normally 500 Hz | Mux steady-state pass-through; about 100 Hz during source transition |
-| `/tj/info/joint_feedback` | Up to about 1000 Hz | Up to about 1000 Hz | Published after each successful Gento SDK state read |
-| `/tj/joint_states`, `/tj/info/robot_state` | About 200 Hz | About 200 Hz | Current source publishes every fifth Robot poll |
+| `/tj/info/joint_feedback` | Target about 500 Hz | Target about 500 Hz | SDK-return driven; verify the actual rate on the target |
+| `/tj/joint_states`, `/tj/info/robot_state` | Normally about 100 Hz | Normally about 100 Hz | Published every fifth successful joint-feedback cycle; actual rate follows feedback |
 | `/tj/info/gripper_feedback_L/R` and error topics | 200 Hz | 200 Hz | Default DM/ZY Tool configuration |
 | `/tj/info/gento_replay/status` | 2 Hz | 2 Hz | Every 500 ms while Replay is running |
 | `/move/ManualMoveCmd`, `/target_pose` | 100 Hz | 100 Hz | While the corresponding base mode is active |
@@ -366,7 +368,7 @@ After startup or a control-source change, wait for the roughly two-second Mux tr
 | Category | Recommended topics |
 |---|---|
 | Whole-robot joint feedback | `/tj/joint_states`, `/tj/info/joint_feedback` |
-| Robot state | `/tj/info/robot_state`, `/tj/info/robot_cmd_state`, `/tj/info/robot_info` |
+| Robot state | `/tj/info/robot_state`, `/tj/info/robot_info` |
 | End-effector pose | `/tj/info/eef_left`, `/tj/info/eef_right` |
 | Headset targets and enable | `/tj/control/target_poseL/R`, `/tj/control/enableL/R`, `/tj/control/vr_body` |
 | Customer command input | `/tj/control/user/joint_cmd_A/B/body/head` |
