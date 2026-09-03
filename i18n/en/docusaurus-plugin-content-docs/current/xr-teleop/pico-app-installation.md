@@ -1,7 +1,7 @@
 ---
 title: Pico App Installation
-sidebar_label: Pico App Installation
-sidebar_position: 2
+sidebar_label: PICO App Installation
+sidebar_position: 3
 ---
 
 <div className="bingru-theme" />

@@ -1,7 +1,7 @@
 ---
 title: 隐私政策
 sidebar_label: 隐私政策
-sidebar_position: 4
+sidebar_position: 5
 ---
 
 <div className="bingru-theme" />

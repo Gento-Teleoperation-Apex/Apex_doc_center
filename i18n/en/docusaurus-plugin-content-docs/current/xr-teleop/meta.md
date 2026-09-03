@@ -1,20 +1,16 @@
 ---
 title: USER MANUAL FOR META QUEST
-sidebar_label: META QUEST
+sidebar_label: Meta Quest User Manual
 sidebar_position: 2
 ---
 
 <div className="bingru-theme" />
 
-import GearIcon from './Screenshots/gear.svg';
-
 # USER MANUAL FOR META QUEST
 
 Human-Robot TeleOperation for Meta Quest
 
-Latest version:  [`download`![download](./Screenshots/download.svg)](https://github.com/KLMmotion/km_teleop_openxr/releases)
-
-Tianji | KernalMind
+Latest version:  [`download`![download](./Screenshots/download.svg)](https://github.com/Gento-Teleoperation-Apex/KernelMind_Apex_VR_Apk.git)
 
 ## Open app
 
@@ -46,7 +42,21 @@ Check your controller battery level before using. If it is too low, the controll
 
 ### Boundary
 
-We use your boundary settings to determine the location of the real-world floor and display the position of the virtual robotic arm. If you haven't set up your room boundary, the system UI and virtual robotic arm may appear too high or too low during teleoperation. Please check if your room boundary is correctly configured in <i><b>Quick Control > Boundary</b></i>. You must setup the floor height correctly.
+Click on the <span>![](./Screenshots/boundary.svg)</span> to view boundary settings. The `Suppress Boundary` toggle controls safety boundaries:
+
+- **ON** (default): Safeguards disabled, cross boundaries freely.
+- **OFF:** Safeguards active, you cannot cross boundaries.
+
+You can change this setting at any time.
+
+Boundary data is used to detect physical floor height and align the virtual robotic arm. Without a valid **Roomscale** or **Stationary** boundary, the UI and virtual arm may appear too high or low during teleoperation.  
+
+To calibrate the floor height: **Roomscale:** Click the room setup button. **Stationary:** Go to Meta system *<b>Quick Control > Boundary</b>*. Ensure the floor level is calibrated correctly.
+
+<figure>
+    <img src={require("./Screenshots/teleop_boundary_metaxr.jpg").default} alt="boundary setting" />
+    <figcaption>Boundary setting</figcaption>
+</figure>
 
 ### Language
 
@@ -97,31 +107,31 @@ This feature is designed for trackerless teleoperation, taking use of left/right
     <figcaption>Teleoperation in Effortless Full-body Tracking mode</figcaption>
 </figure>
 
-## Connect to host
+## Connect to Host
 
-This interface would be shown after you enter the app.
-
-Please enter your host IP address and your height (in cm). You can click the button above the height input field to get an estimated value. If a host address is detected, a button reading `ApexHost XXX.XXX.XXX.XXX` will also appear above the IP input field; click it to auto-fill the host address into the field.
-
-You can also change the end-effector configuration directly on the main panel (the button is located above the `Connect` button). Switch the origin configuration of the robotic arm sent out in XR based on different situations (e.g., Gripper, Dexhand) to calibrate the tracker position.
+Enter your host IP address and height (in cm). You can click the button above the height input field to get an estimated value. If a host address is detected, a prompt saying `ApexHost XXX.XXX.XXX.XXX` will appear above the IP input field—click it to automatically populate the IP address.
 
 :::tip Tip
-You must exit teleoperation to change configuration, the button remains uninteractable while you are manipulating the robot.
+You must exit teleoperation mode to change settings; this button cannot be clicked while in teleoperation mode.
 :::
 
-Once you fill IP and height, click on `Connect` button to connect to host.
+Once you confirm the height and IP address are correct, click the `Connect` button to connect to the host.
 
-- Connect successfully: 
-    - You will receive two short vibration on controllers both hands.
-    - The `Connection` icon will change.
-- Connect fail: 
-    - You will receive a long vibration on controllers both hands.
-    - The `Connection` icon does not make any changes.
+- Connection successful:
+  - Both controllers will vibrate briefly twice.
+  - The ![](./Screenshots/disconnected.svg) icon will change to ![](./Screenshots/connected.svg).
+- Connection failed:
+  - Both controllers will deliver one long vibration.
+  - The ![](./Screenshots/disconnected.svg) icon will remain unchanged.
 
 ### Host Recording
 
 Press the `B` button on your right controller to notify the host to start or stop recording. Voice prompts will indicate whether the recording started successfully or failed.
 Before using this feature, please ensure that the HTTP connection between the headset and the host is functioning correctly. You can verify this by checking the recording icon on the main panel; if there is no exclamation mark, it indicates the current connection is normal.
+
+### Reset the Robot Pose
+
+Press the `A` button on the right controller notifies the host machine to reset the robot to its default pose. An audio prompt will play upon success.
 
 ## How to start and end teleoperation
 
@@ -131,7 +141,9 @@ Align your hand with the virtual robotic arm and hold the `Grip` button to start
 
 On the main panel, if the left and right controller icons are lit up and not red, it indicates that the controller tracking is normal.
 
-During teleoperation, you will see the video streaming views as shown below:
+## Spatial Video
+
+Click <span>![](./Screenshots/video.svg)</span> to toggle the video on or off. After entering the correct IP address and enabling the video stream, the interface will appear as shown below:
 
 <div style={{display: 'flex', justifyContent: 'space-between', gap: '10px'}}>
     <figure style={{margin: 0, width: '49%'}}>
@@ -140,16 +152,36 @@ During teleoperation, you will see the video streaming views as shown below:
     </figure>
     <figure style={{margin: 0, width: '49%'}}>
         <img src={require("./Screenshots/teleop_wifi_connectedvideo.jpg").default} alt="Connected video stream" style={{width: '100%'}} />
-        <figcaption style={{textAlign: 'center', fontSize: '0.9em'}}>Connected video stream</figcaption>
+        <figcaption style={{textAlign: 'center', fontSize: '0.9em'}}>Video stream connected</figcaption>
     </figure>
 </div>
 
 <figure style={{marginTop: '15px'}}>
-    <img src={require("./Screenshots/teleop_video_focused.jpg").default} alt="Robotic arm right wrist camera stream" style={{width: '100%'}} />
-    <figcaption style={{textAlign: 'center', fontSize: '0.9em'}}>The user is viewing the camera stream from the robotic arm's right hand to assist in fine-grained manipulation</figcaption>
+    <img src={require("./Screenshots/teleop_video_focused.jpg").default} alt="Right wrist camera view of the robotic arm" style={{width: '100%'}} />
+    <figcaption style={{textAlign: 'center', fontSize: '0.9em'}}>The operator inspects the right wrist camera feed for fine-grained teleoperation</figcaption>
 </figure>
 
-In the focused view, besides the main binocular camera stream in the center, you can also see the video streams from the left and right wrist cameras on both sides of the robotic arm. This added detail significantly enhances the accuracy of teleoperation control.
+In addition to the central large display for spatial video, operators can monitor video feeds from the robotic arm's left and right wrist-mounted cameras. These detailed views enhance manipulation accuracy. Both wrist camera feeds can be anchored beneath the spatial video window or set to follow the user's wrist movements.
+
+The top-left corner of the primary video window provides the following controls:
+
+- Collapse the video window.
+- Pin / unpin the spatial video window.
+- View transmission stats, such as bandwidth, resolution, and network latency.
+- Stretch the spatial video window.
+- Toggle the spatial video window between stereo and monocular view modes.
+
+<figure style={{marginTop: '15px'}}>
+    <img src={require("./Screenshots/teleop_video_setting.jpg").default} alt="Controls in the top-left corner of the spatial video window" />
+    <figcaption>Controls in the top-left corner of the spatial video window</figcaption>
+</figure>
+
+Hovering the cursor over the bottom-center of the spatial video window reveals the Interpupillary Distance (IPD) adjustment slider. This setting reduces eye strain and improves depth perception of the remote environment.
+
+<figure style={{marginTop: '15px'}}>
+    <img src={require("./Screenshots/teleop_video_IPD.jpg").default} alt="IPD adjustment slider at the bottom center of the spatial video window" />
+    <figcaption>IPD adjustment slider at the bottom center of the spatial video window</figcaption>
+</figure>
 
 ## Stream and Play the XR App
 
@@ -185,7 +217,7 @@ There are two modes when viewing XR stream: `First-Person` and `Free Cam` mode. 
 This is for developer use only. You may bring safety issues to both of your device and the robot. Please enable it only when you know what you are doing.
 :::
 
-Click on <GearIcon style={{width: '20px', height: '20px', verticalAlign: 'middle', display: 'inline-block'}} /> logo on the top row of the panel to open developer panel. You will see new options appear next to the main panel. The App uses TCP for host communication, UDP for robot control and receives teleoperation data from robot, and WebRTC for video streaming.
+Click on <span>![](./Screenshots/gear.svg)</span> logo on the top row of the panel to open developer panel. You will see new options appear next to the main panel. The App uses TCP for host communication, UDP for robot control and receives teleoperation data from robot, and WebRTC for video streaming.
 
 Click again to close developer panel.
 
@@ -196,7 +228,7 @@ Click again to close developer panel.
 
 What can you do in Developer Mode?
 
-In developer mode, you can check the communication details and specific logs between the host and the headset, monitor video transmission and decoding status, configure individual ports, and perform other advanced and fine-grained configurations:
+In developer mode, you can check the communication details and specific logs between the host and the headset, configure individual ports, and perform other advanced and fine-grained configurations:
 
 - Change Host connection, Spatial Video, and Data ports **individually**.
 - Test Host connection, Spatial Video, and Data connection status and disconnect/connect them individually.

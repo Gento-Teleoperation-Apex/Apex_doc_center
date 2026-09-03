@@ -1,7 +1,7 @@
 ---
 title: Privacy Policy
 sidebar_label: Privacy Policy
-sidebar_position: 4
+sidebar_position: 5
 ---
 
 <div className="bingru-theme" />

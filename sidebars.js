@@ -48,9 +48,9 @@ const sidebars = {
           link: { type: 'doc', id: 'xr-teleop/index' },
           items: [
             'xr-teleop/meta-app-installation',
+            'xr-teleop/meta',
             'xr-teleop/pico-app-installation',
             'xr-teleop/pico',
-            'xr-teleop/meta',
             'xr-teleop/privacy-policy',
           ],
         },

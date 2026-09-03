@@ -200,3 +200,74 @@ article:has(.bingru-theme) figcaption {
   margin-bottom: 0.5rem !important;
   font-weight: 500 !important;
 }
+
+/* ========================================================
+   Dark Mode Support for bingru.css
+   ======================================================== */
+[data-theme='dark'] article:has(.bingru-theme) {
+  --bingru-bg-color: #1b1b1d;
+  --bingru-panel-bg-color: #242526;
+  --bingru-border-color: rgba(255, 255, 255, 0.1);
+  --bingru-border-darker: rgba(255, 255, 255, 0.18);
+  --bingru-icon-color: #8c909a;
+  --bingru-text-secondary: #a3aab6;
+  --bingru-text-primary: #e3e3e8;
+
+  color: var(--bingru-text-primary) !important;
+}
+
+[data-theme='dark'] article:has(.bingru-theme) strong,
+[data-theme='dark'] article:has(.bingru-theme) b {
+  color: #ffffff !important;
+}
+
+[data-theme='dark'] article:has(.bingru-theme) h1,
+[data-theme='dark'] article:has(.bingru-theme) h2,
+[data-theme='dark'] article:has(.bingru-theme) h3 {
+  color: #ffffff !important;
+  border-color: var(--bingru-border-color) !important;
+}
+
+[data-theme='dark'] article:has(.bingru-theme) h2 {
+  border-left-color: #588bf0 !important;
+}
+
+[data-theme='dark'] article:has(.bingru-theme) p {
+  color: var(--bingru-text-primary) !important;
+}
+
+[data-theme='dark'] article:has(.bingru-theme) th {
+  background-color: var(--bingru-panel-bg-color) !important;
+  color: #ffffff !important;
+  border-color: var(--bingru-border-darker) !important;
+}
+
+[data-theme='dark'] article:has(.bingru-theme) td {
+  background-color: #1e1e20 !important;
+  color: var(--bingru-text-primary) !important;
+  border-color: var(--bingru-border-darker) !important;
+}
+
+[data-theme='dark'] article:has(.bingru-theme) blockquote {
+  background-color: var(--bingru-panel-bg-color) !important;
+  border-left-color: #588bf0 !important;
+  color: var(--bingru-text-secondary) !important;
+}
+
+[data-theme='dark'] article:has(.bingru-theme) blockquote p {
+  color: var(--bingru-text-secondary) !important;
+}
+
+[data-theme='dark'] article:has(.bingru-theme) code {
+  background-color: #282a30 !important;
+  color: #e3e3e8 !important;
+  border-color: #444752 !important;
+  box-shadow: none !important;
+}
+
+/* Invert dark monochrome SVG icons in dark mode so they are visible */
+[data-theme='dark'] article:has(.bingru-theme) span > img,
+[data-theme='dark'] article:has(.bingru-theme) img[src*=".svg"],
+[data-theme='dark'] article:has(.bingru-theme) img[src*="image/svg+xml"] {
+  filter: invert(1) !important;
+}

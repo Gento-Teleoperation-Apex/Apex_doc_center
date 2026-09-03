@@ -1,20 +1,16 @@
 ---
 title: META QUEST 用户手册
-sidebar_label: META QUEST
+sidebar_label: Meta Quest 用户手册
 sidebar_position: 2
 ---
 
 <div className="bingru-theme" />
 
-import GearIcon from './Screenshots/gear.svg';
-
 # META QUEST 用户手册
 
 Meta Quest 人机遥操作
 
-最新版本： [`download`![download](./Screenshots/download.svg)](https://github.com/KLMmotion/km_teleop_openxr/releases)
-
-天机 | 科摩德
+最新版本： [`download`![download](./Screenshots/download.svg)](https://github.com/Gento-Teleoperation-Apex/KernelMind_Apex_VR_Apk.git)
 
 ## 打开应用
 
@@ -46,7 +42,21 @@ Meta Quest 人机遥操作
 
 ### 边界设置
 
-我们使用您的房间边界设置来获取真实世界中地面的位置，并将虚拟机械臂的位置显示出来。如果您没有设置房间边界，摇操时您将会看到系统UI 和虚拟机械臂过高或者过低。请在 <i><b>快捷控制 > 边界</b></i>  中检查是否正确设置房间边界。不建议使用<i><b>原地</b></i>。
+点击 <span>![](./Screenshots/boundary.svg)</span> 查看边界设置。`隐藏边界` 按钮用于控制安全边界：
+
+* **开**（默认）：停用安全防护，可自由跨越边界。
+* **关**：启用安全防护，禁止跨越边界。
+
+您可以随时更改此设置。
+
+边界数据用于检测实际地面高度并对齐虚拟机械臂。如果没有正确的**房间边界**或者**原地边界**，在远程操作期间，UI 和虚拟机械臂显示的位置可能会偏高或偏低。
+
+校准地面高度的方法：**房间边界**：点击`隐藏边界`按钮下方的房间边界设置按钮。**原地边界**：打开Meta 系统的 <i>**快速控制 > 边界**</i>。请确保地面高度已正确校准。
+
+<figure>
+    <img src={require("./Screenshots/teleop_boundary_metaxr.jpg").default} alt="边界设置" />
+    <figcaption>边界设置</figcaption>
+</figure>
 
 ### 语言
 
@@ -99,28 +109,28 @@ Meta Quest 人机遥操作
 
 ## 连接到主机
 
-进入应用后将显示此界面。
-
 填写您的主机 IP 地址以及您的身高（cm），您可以点击身高文本框上方的按钮获取一个预估值。如果检测到主机地址，IP 输入框上方也会出现提示框`ApexHost XXX.XXX.XXX.XXX`，点击即可将主机地址填入输入框。
-
-您可以在主面板上直接选择机械臂末端原点配置（按钮位于 `Connect` 按钮上方）。可以根据不同情况（如夹爪、灵巧手）切换 XR 发送出去的机械臂末端原点配置，以矫正追踪器位置。
 
 :::tip 提示
 您必须退出遥操作状态才能更改配置，处于遥操作状态下该按钮无法点击。
 :::
 
-确认身高和 IP 地址正确后，点击`Connect`（连接）按钮连接到主机。
+确认身高和 IP 地址正确后，点击`连接`按钮连接到主机。
 
 - 连接成功：
-    - 您双手的手柄会发出两次短促的震动。
-    - `Connection`（连接）图标将会改变。
+  - 您双手的手柄会发出两次短促的震动。
+  - ![](./Screenshots/disconnected.svg)图标将会改变为 ![](./Screenshots/connected.svg)
 - 连接失败：
-    - 您双手的手柄会发出一次长震动。
-    - `Connection`（连接）图标不会有任何变化。
+  - 您双手的手柄会发出一次长震动。
+  - ![](./Screenshots/disconnected.svg)图标不会有任何变化。
 
 ### 主机录制功能
 
-在右手柄上按下 `B` 键可以通知主机开始或结束录制，录制成功或失败会有语音提示。在使用此功能前请确保头显跟主机的 HTTP 连接畅通，通过查看主面板上的录制图标，如果没有感叹号就表示目前连接正常。
+在右手柄上按下 `B`键可以通知主机开始或结束录制，录制成功或失败会有语音提示。使用此功能前请确保头显跟主机的 HTTP 连接畅通，通过查看主面板上的录制图标，如果没有感叹号就表示目前连接正常。
+
+### 重置机器人位姿
+
+在右手柄上按下 `A` 键可以通知主机恢复机器人初始位姿。若成功会有语音提示。使用此功能前请确保头显跟主机的 HTTP 连接畅通。
 
 ## 如何开始和结束遥操作
 
@@ -130,7 +140,9 @@ Meta Quest 人机遥操作
 
 在主面板上有左/右手手柄的图标，如果图标亮起且没有显示红色，即表示目前手柄的追踪状态正常。
 
-在遥操作过程中，您将看到如下视频传输界面：
+## 空间视频
+
+点击 <span>![](./Screenshots/video.svg)</span> 打开或者关闭视频。在正确填写IP 并打开视频后，您将看到如下视频传输界面：
 
 <div style={{display: 'flex', justifyContent: 'space-between', gap: '10px'}}>
     <figure style={{margin: 0, width: '49%'}}>
@@ -147,11 +159,26 @@ Meta Quest 人机遥操作
     <figcaption style={{textAlign: 'center', fontSize: '0.9em'}}>用户正在查看机械臂右手的相机流来帮助他精细化操作</figcaption>
 </figure>
 
-此外，主视频流支持切换双目视频（3D）和单目视频（2D）画面。您可以点击空间视频窗口的左上方的按钮来切换。
+用户除了中间那个空间视频的大屏，还可以看到机械臂左右两个腕部相机的视频流。增加了细节可以加强操控的准确性。两个腕部相机的视频流可以选择固定在空间视频窗口下方，或者跟随用户手腕运动。
+
+主视频窗口左上方有以下选项：
+
+- 收起视频。
+- 固定/取消固定空间视频窗口。
+- 查看视频流传输细节，例如带宽、像素、网络情况等。
+- 拉伸空间视频窗口。
+- 主视频流支持切换双目视频（Stereo）和单目视频（Mono）画面。
 
 <figure style={{marginTop: '15px'}}>
-    <img src={require("./Screenshots/teleop_stereo.jpg").default} alt="双目视频切换" />
-    <figcaption>空间视频窗口左上方的双目视频切换选项</figcaption>
+    <img src={require("./Screenshots/teleop_video_setting.jpg").default} alt="" />
+    <figcaption>空间视频窗口左上方的选项</figcaption>
+</figure>
+
+将光标移入空间视频中下方，可以调节空间视频的瞳距（IPD）。此设置可以减轻用户的眼睛疲劳以及改善远端空间感知。
+
+<figure style={{marginTop: '15px'}}>
+    <img src={require("./Screenshots/teleop_video_IPD.jpg").default} alt="" />
+    <figcaption>空间视频窗口中下方的瞳距调节滑块</figcaption>
 </figure>
 
 ## 推流和游玩 XR 应用
@@ -169,7 +196,7 @@ Meta Quest 人机遥操作
 
 您可以在电脑或平板浏览器中输入上述链接来打开此视频流。您的外部设备和 XR 设备必须处于同一网络下。
 
-观看 XR 视频流时有两种模式：`First-Person（第一人称）`和 `Free Cam（自由视角）`模式。在 `Free Cam` 模式下，您可以拖动和点击。此模式旨在协助非专业用户，`First-Person` 模式仅供观看。视频流有三种画质模式：`low（低）`、`regular（普通）`和 `high（高）`。
+观看 XR 视频流时有两种模式：`First-Person`和 `Free Cam`模式。在 `Free Cam` 模式下，您可以执行左键转动、中键位移、右键点击。此模式旨在协助非专业用户，`First-Person` 模式仅供观看。视频流有三种画质模式：`low` `regular` 和 `high`。
 
 <div style={{display: 'flex', justifyContent: 'space-between', gap: '10px'}}>
     <figure style={{margin: 0, width: '49%'}}>
@@ -188,7 +215,7 @@ Meta Quest 人机遥操作
 仅供开发者使用。这可能会给您的设备和机器人带来安全风险。请仅在明确操作后果的情况下启用。
 :::
 
-点击面板顶部的 <GearIcon style={{width: '20px', height: '20px', verticalAlign: 'middle', display: 'inline-block'}} /> 标志即可打开开发者面板。您会看到主面板旁边出现了新的选项。本应用使用 TCP 进行主机通信，使用 UDP 进行机器人控制并接收来自机器人的遥操作数据，使用 WebRTC 进行视频流传输。
+点击面板顶部的 <span>![](./Screenshots/gear.svg)</span> 标志即可打开开发者面板。您会看到主面板旁边出现了新的选项。本应用使用 TCP 进行主机通信，使用 UDP 进行机器人控制并接收来自机器人的遥操作数据，使用 WebRTC 进行视频流传输。
 
 再次点击即可关闭开发者面板。
 
@@ -199,7 +226,7 @@ Meta Quest 人机遥操作
 
 在开发者模式下您可以做什么？
 
-在开发者模式下，您可以查看主机与头显之间的通讯细节和具体日志，检查视频的传输与解码情况，进行各个端口配置，以及进行其他更精细的配置。
+在开发者模式下，您可以查看主机与头显之间的通讯细节和具体日志，进行各个端口配置，以及进行其他更精细的配置。
 
 - 单独更改主机连接、空间视频和数据传输端口。
 - 测试主机连接、空间视频和数据传输状态并单独断开/连接它们。
@@ -263,8 +290,7 @@ adb shell monkey -p com.KernalMind.Apex_Teleop -c android.intent.category.LAUNCH
 
 1. 在 Quest 官方应用商店中搜索并安装 `AnExplorer VR File Manager`（该应用不会出现在未知来源中）。安装 `Quest 助手` 应用，需前往 [Quest 助手客户端下载页](https://quest.vrzwk.cn/download#client-downloads) 获取安装包。
 2. 在头显内打开 `AnExplorer`，在这里面打开 `Quest 助手`。
-3. 从 `Quest 助手` 中打开 `Quest 助手`。
-4. 从 `Quest 助手` 中打开 `Apex Teleop` 应用。
+3. 从 `Quest 助手` 中打开 `Apex Teleop` 应用。
 
 解决办法 3：使用代理网络连接
 

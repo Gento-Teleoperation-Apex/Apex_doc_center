@@ -19,9 +19,9 @@ Use **Ethernet port 1** when connecting the headset to a Tianzhun controller and
 Please select the manual that corresponds to the headset you are currently using:
 
 * [Meta Quest App Installation](./meta-app-installation.md)
-* [Pico App Installation](./pico-app-installation.md)
+* [Meta Quest User Manual](./meta.md)
+* [PICO App Installation](./pico-app-installation.md)
 * [PICO User Manual](./pico.md)
-* [META QUEST User Manual](./meta.md)
 * [Privacy Policy](./privacy-policy.md)
 
 ---

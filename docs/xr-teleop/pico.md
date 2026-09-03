@@ -1,20 +1,16 @@
 ---
 title: PICO 用户手册
-sidebar_label: PICO
-sidebar_position: 1
+sidebar_label: PICO 用户手册
+sidebar_position: 4
 ---
 
 <div className="bingru-theme" />
-
-import GearIcon from './Screenshots/gear.svg';
 
 # PICO 用户手册
 
 Pico 人机遥操作
 
-最新版本： [`download`![download](./Screenshots/download.svg)](https://github.com/KLMmotion/km_teleop_openxr/releases)
-
-天机 | 科摩德
+最新版本： [`download`![download](./Screenshots/download.svg)](https://github.com/Gento-Teleoperation-Apex/KernelMind_Apex_VR_Apk.git)
 
 ## 打开应用
 
@@ -42,11 +38,16 @@ Pico 人机遥操作
 
 ### 手柄电量
 
-使用前请检查手柄电量。如果手柄电量过低，手柄将无法被追踪，您也无法使用遥操作。您可能需要充电或暂时更换电池，稍后再试。电池图标旁边的手柄图标显示的是由 OpenXR Runtime 提供的实时追踪状态，而不是电量数值。
+使用前请检查手柄电量。如果手柄电量过低，手柄将无法被追踪，您也无法使用遥操作。您可能需要充电或暂时更换电池，稍后再试。在您放下手柄一段时间后若系统无法追踪到手柄，图标会熄灭。电池图标旁边的手柄图标显示的是当前的手柄可用状态。此状态会被以下情况影响：手柄电量、手柄运动静止、手柄运动超速、手柄是否被系统追踪到。
 
-### 房间边界设置
+### 边界设置
 
-我们使用您的房间边界设置来获取真实世界中地面的位置，并将虚拟机械臂的位置显示出来。如果您没有设置房间边界，摇操时您将会看到系统UI 和虚拟机械臂过高或者过低。请在 <i><b>设置 > 通用 > 房间边界</b></i> 中检查是否正确设置房间边界。
+点击 <span>![](./Screenshots/boundary.svg)</span> 查看边界设置。我们使用您的边界设置来获取真实世界中地面的位置，并将虚拟机械臂的位置显示出来。如果您没有设置**房间边界**或者**原地边界**，摇操时您将会看到系统UI 和虚拟机械臂过高或者过低。我们提供三种调试边界的方法：地面高度、重设原地边界、重设房间边界。您可以按照图片指示分别设置。
+
+<figure>
+    <img src={require("./Screenshots/teleop_boundary_pico.jpg").default} alt="边界设置" />
+    <figcaption>边界设置</figcaption>
+</figure>
 
 ### 语言
 
@@ -125,28 +126,28 @@ Pico 人机遥操作
 
 ## 连接到主机
 
-进入应用后将显示此界面。
-
 填写您的主机 IP 地址以及您的身高（cm），您可以点击身高文本框上方的按钮获取一个预估值。如果检测到主机地址，IP 输入框上方也会出现提示框`ApexHost XXX.XXX.XXX.XXX`，点击即可将主机地址填入输入框。
-
-您可以在主面板上直接选择机械臂末端原点配置（按钮位于 `Connect` 按钮上方）。可以根据不同机械臂末端原点配置情况（如夹爪、灵巧手）切换 XR 发送出去，以矫正追踪器位置。
 
 :::tip 提示
 您必须退出遥操作状态才能更改配置，处于遥操作状态下该按钮无法点击。
 :::
 
-确认身高和 IP 地址正确后，点击`Connect`（连接）按钮连接到主机。
+确认身高和 IP 地址正确后，点击`连接`按钮连接到主机。
 
 - 连接成功：
-    - 您双手的手柄会发出两次短促的震动。
-    - `Connection`（连接）图标将会改变。
+  - 您双手的手柄会发出两次短促的震动。
+  - ![](./Screenshots/disconnected.svg)图标将会改变为 ![](./Screenshots/connected.svg)
 - 连接失败：
-    - 您双手的手柄会发出一次长震动。
-    - `Connection`（连接）图标不会有任何变化。
+  - 您双手的手柄会发出一次长震动。
+  - ![](./Screenshots/disconnected.svg)图标不会有任何变化。
 
 ### 主机录制功能
 
 在右手柄上按下 `B`键可以通知主机开始或结束录制，录制成功或失败会有语音提示。使用此功能前请确保头显跟主机的 HTTP 连接畅通，通过查看主面板上的录制图标，如果没有感叹号就表示目前连接正常。
+
+### 重置机器人位姿
+
+在右手柄上按下 `A` 键可以通知主机恢复机器人初始位姿。若成功会有语音提示。使用此功能前请确保头显跟主机的 HTTP 连接畅通。
 
 ## 如何开始和结束遥操作
 
@@ -156,7 +157,9 @@ Pico 人机遥操作
 
 在主面板上有左/右手手柄的图标，如果图标亮起且没有显示红色，即表示目前手柄的追踪状态正常。
 
-在遥操作过程中，您将看到如下视频传输界面：
+## 空间视频
+
+点击 <span>![](./Screenshots/video.svg)</span> 打开或者关闭视频。在正确填写IP 并打开视频后，您将看到如下视频传输界面：
 
 <div style={{display: 'flex', justifyContent: 'space-between', gap: '10px'}}>
     <figure style={{margin: 0, width: '49%'}}>
@@ -173,13 +176,26 @@ Pico 人机遥操作
     <figcaption style={{textAlign: 'center', fontSize: '0.9em'}}>用户正在查看机械臂右手的相机流来帮助他精细化操作</figcaption>
 </figure>
 
-用户除了中间那个双目视频的大屏，还可以看到机械臂左右两个腕部相机的视频流。增加了细节可以加强操控的准确性。
+用户除了中间那个空间视频的大屏，还可以看到机械臂左右两个腕部相机的视频流。增加了细节可以加强操控的准确性。两个腕部相机的视频流可以选择固定在空间视频窗口下方，或者跟随用户手腕运动。
 
-此外，主视频流支持切换双目视频（3D）和单目视频（2D）画面。您可以点击空间视频窗口的左上方的按钮来切换。
+主视频窗口左上方有以下选项：
+
+- 收起视频。
+- 固定/取消固定空间视频窗口。
+- 查看视频流传输细节，例如带宽、像素、网络情况等。
+- 拉伸空间视频窗口。
+- 主视频流支持切换双目视频（Stereo）和单目视频（Mono）画面。
 
 <figure style={{marginTop: '15px'}}>
-    <img src={require("./Screenshots/teleop_stereo.jpg").default} alt="双目视频切换" />
-    <figcaption>空间视频窗口左上方的双目视频切换选项</figcaption>
+    <img src={require("./Screenshots/teleop_video_setting.jpg").default} alt="" />
+    <figcaption>空间视频窗口左上方的选项</figcaption>
+</figure>
+
+将光标移入空间视频中下方，可以调节空间视频的瞳距（IPD）。此设置可以减轻用户的眼睛疲劳以及改善远端空间感知。
+
+<figure style={{marginTop: '15px'}}>
+    <img src={require("./Screenshots/teleop_video_IPD.jpg").default} alt="" />
+    <figcaption>空间视频窗口中下方的瞳距调节滑块</figcaption>
 </figure>
 
 ## 推流和游玩 XR 应用
@@ -197,7 +213,7 @@ Pico 人机遥操作
 
 您可以在电脑或平板浏览器中输入上述链接来打开此视频流。您的外部设备和 XR 设备必须处于同一网络下。
 
-观看 XR 视频流时有两种模式：`First-Person（第一人称）`和 `Free Cam（自由视角）`模式。在 `Free Cam` 模式下，您可以拖动和点击。此模式旨在协助非专业用户，`First-Person` 模式仅供观看。视频流有三种画质模式：`low（低）`、`regular（普通）`和 `high（高）`。
+观看 XR 视频流时有两种模式：`First-Person`和 `Free Cam`模式。在 `Free Cam` 模式下，您可以执行左键转动、中键位移、右键点击。此模式旨在协助非专业用户，`First-Person` 模式仅供观看。视频流有三种画质模式：`low` `regular` 和 `high`。
 
 <div style={{display: 'flex', justifyContent: 'space-between', gap: '10px'}}>
     <figure style={{margin: 0, width: '49%'}}>
@@ -216,7 +232,7 @@ Pico 人机遥操作
 仅供开发者使用。这可能会给您的设备和机器人带来安全风险。请仅在明确操作后果的情况下启用。
 :::
 
-点击面板顶部的 <GearIcon style={{width: '20px', height: '20px', verticalAlign: 'middle', display: 'inline-block'}} /> 标志即可打开开发者面板。您会看到主面板旁边出现了新的选项。本应用使用 TCP 进行主机通信，使用 UDP 进行机器人控制并接收来自机器人的遥操作数据，使用 WebRTC 进行视频流传输。
+点击面板顶部的 <span>![](./Screenshots/gear.svg)</span> 标志即可打开开发者面板。您会看到主面板旁边出现了新的选项。本应用使用 TCP 进行主机通信，使用 UDP 进行机器人控制并接收来自机器人的遥操作数据，使用 WebRTC 进行视频流传输。
 
 再次点击即可关闭开发者面板。
 
@@ -227,7 +243,7 @@ Pico 人机遥操作
 
 在开发者模式下您可以做什么？
 
-在开发者模式下，您可以查看主机与头显之间的通讯细节和具体日志，检查视频的传输与解码情况，进行各个端口配置，以及进行其他更精细的配置。
+在开发者模式下，您可以查看主机与头显之间的通讯细节和具体日志，进行各个端口配置，以及进行其他更精细的配置。
 
 - 单独更改主机连接、空间视频和数据传输端口。
 - 测试主机连接、空间视频和数据传输状态并单独断开/连接它们。
@@ -279,3 +295,12 @@ Pico 人机遥操作
 系统已内置瞬时抖动过滤机制以确保安全，但无法完全消除缓慢的姿态漂移。**用户在操作过程中若发现机械臂出现缓慢漂移，应立即停止操作。**
 
 当系统确认底层光学追踪丢失，或手柄电池耗尽时，机械臂的控制均会立即自动停止。
+
+### 如何关闭 PICO 的安全防护边界？地上总有一个蓝色的圆圈限制我走动。
+
+出于您的安全考虑，我们不建议关闭安全边界，请考虑重新绘制房间边界以便在物理空间内自由移动。如果您清楚关闭该功能可能带来的意外后果，请按照以下步骤操作。
+
+<figure>
+    <img src={require("./Screenshots/disablePICOsafeguard.jpg").default} alt="" />
+    <figcaption>Disable safeguard on PICO</figcaption>
+</figure>

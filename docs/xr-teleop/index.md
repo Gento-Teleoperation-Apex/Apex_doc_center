@@ -19,9 +19,9 @@ sidebar_position: 0
 请选择对应的手册进行阅读：
 
 * [Meta Quest App 安装](./meta-app-installation.md)
-* [Pico App 安装](./pico-app-installation.md)
+* [Meta Quest 用户手册](./meta.md)
+* [PICO App 安装](./pico-app-installation.md)
 * [PICO 用户手册](./pico.md)
-* [META QUEST 用户手册](./meta.md)
 * [隐私政策](./privacy-policy.md)
 
 ---
