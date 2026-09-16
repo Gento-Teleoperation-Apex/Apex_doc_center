@@ -28,7 +28,7 @@ This guide explains:
 5. USB, robot-SDK passthrough, and standalone ROS examples for systems without the complete Apex stack.
 6. Troubleshooting and delivery checks.
 
-Wuji dexterous hands are not treated as a standard gripper-development interface here. Their serial numbers, hand configuration, and control topics depend on the delivered Wuji package.
+Wuji dexterous hands are not treated as a standard gripper-development interface here. The second-generation hand connects directly over Ethernet and uses different configuration and topics; for release `1.0.7.86dex`, see the [Wuji Second-Generation Direct-Connection Guide](/end-effectors/wuji2). Follow the matching delivery documentation for other releases.
 
 ## 2. What ApexTool Does
 
