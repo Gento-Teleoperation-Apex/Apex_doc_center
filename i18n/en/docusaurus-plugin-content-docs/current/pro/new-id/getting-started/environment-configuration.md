@@ -22,8 +22,8 @@ No two devices may share an IP address. Before changing the site subnet, update 
 
 ## Software compatibility
 
-- Use the robot controller / MarvinSDK, Teleop service, Apex frontend, and headset client from the same delivery release.
-- The current documentation baseline uses robot controller / MarvinSDK `100343001`, Teleop service `1.0.18`, and Marvin Pro frontend `1.0.7.6o`.
+- Use the robot controller, Gento SDK, Teleop service, Apex frontend, and headset client from the same delivery release.
+- The current Pro source-review target is `gento-apex 1.1.7.1` with Gento SDK `4.7.1`. The source still marks this target as unreleased, and it no longer uses MarvinSDK as its control runtime. Follow the customer delivery manifest for the installed version.
 - Package filenames change by release; use the delivered files and release notes.
 - Enable Tool and Camera according to the installed options.
 

@@ -273,7 +273,7 @@ check_topic() {
 ### 7.4 结果判断
 
 - `robot_info` 的机型必须与 Skye/Luna 实物一致。
-- `robot_info` 可能只在 Robot Node 启动阶段发布；晚启动监听为 `[NO_DATA]` 时，应结合发布端和 Robot 启动日志确认机型，不能单凭这一项判故障。
+- `robot_info` 启动时立即发布，之后默认每 5 秒发布一次；连续 6 秒仍为 `[NO_DATA]` 时，应检查 Robot Node、命名空间和 DDS 通讯。
 - `joint_feedback` 和 `joint_states` 应持续有数据。
 - 服务 active 但全部 `[NO_DATA]`：检查 L1 SDK 数据线程、Robot Node 和 DDS。
 - 双臂有反馈但身体轴无变化：检查机型参数和身体控制开关。

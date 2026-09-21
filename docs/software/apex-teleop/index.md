@@ -9,10 +9,10 @@ Apex 上位机软件用于连接机器人控制器、管理遥操模块、切换
 
 | 软件层 | 当前文档基线 | 作用 |
 |---|---|---|
-| 机器人控制端 / MarvinSDK | `100343001` | 建立机器人控制链路 |
-| Teleop 遥操服务 | `1.0.18` | 处理遥操数据和控制链路 |
-| Marvin Pro 前端 | `1.0.7.6o` | 上位机界面 |
-| Gento 前端 | `1.0.6.81g` | Skye/Luna 上位机界面；带 `g` 的版本属于 Gento 产品线 |
+| Marvin Pro 控制端 | `gento-apex 1.1.7.1` | 当前 Pro 源码核对目标，使用 Gento SDK `4.7.1`；源码中仍标记为未正式发布 |
+| Skye/Luna 控制端 | `v1.0.6.95g-beta-10-g14cfc0d` | 当前 Gento 源码核对快照；客户安装包以交付清单为准 |
+| Teleop 遥操服务与前端 | 随交付批次配套 | 处理遥操数据并提供上位机界面，不与控制端包版本混用 |
+| 头显客户端 | 随交付批次配套 | 提供视频显示和遥操输入 |
 
 版本会持续更新，以上编号用于说明当前文档基线，现场应使用同一交付批次的配套软件。
 
@@ -20,9 +20,9 @@ Apex 上位机软件用于连接机器人控制器、管理遥操模块、切换
 
 | 产品 | 使用界面 | 说明 |
 |---|---|---|
-| Marvin Pro（当前天准版本） | [当前版界面](/software/apex-teleop/pro-current) | 本文档以前端 `1.0.7.6o` 对应界面为例 |
+| Marvin Pro（当前天准版本） | [当前版界面](/software/apex-teleop/pro-current) | 当前控制端源码核对目标为 `gento-apex 1.1.7.1`，尚未标记为正式发布 |
 | Marvin Pro（历史 Orin 版本） | [经典版界面](/software/apex-teleop/classic) | 面向已出货历史设备 |
-| Skye / Luna | [经典版界面](/software/apex-teleop/classic) | 当前文档以 Gento 前端 `1.0.6.81g` 为基线 |
+| Skye / Luna | [经典版界面](/software/apex-teleop/classic) | 当前源码核对快照为 `v1.0.6.95g-beta-10-g14cfc0d` |
 
 ## 文档导航
 

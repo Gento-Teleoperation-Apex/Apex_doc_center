@@ -5,7 +5,7 @@ sidebar_position: 2
 
 # Marvin Pro 当前版 Apex Teleop
 
-本页适用于 Marvin Pro 当前天准控制器版本，以前端 `1.0.7.6o` 界面为例。当前配套基线中，机器人控制端 / MarvinSDK 为 `100343001`，Teleop 遥操服务为 `1.0.18`；现场版本应以同一交付批次为准。
+本页适用于 Marvin Pro 当前天准控制器版本。当前控制端源码核对目标为 `gento-apex 1.1.7.1`，使用 Gento SDK `4.7.1`；该目标在源码中仍标记为未正式发布，客户现场应以交付清单为准，并使用同一批次的上位机和头显客户端。
 
 ## 界面总览
 
@@ -33,33 +33,32 @@ sidebar_position: 2
 6. 在左下角点击 **Start Robot**，使机器人进入 Ready 状态。
 
 :::danger 出厂打包姿态禁止直接 Home
-如果机器人双臂垂直靠近中间立柱，说明设备仍处于出厂打包姿态。此时直接 Home 可能使腕部相机碰撞立柱，必须先按下方步骤将双臂 14 个关节移动到全零位。
+如果机器人双臂垂直靠近中间立柱，说明设备仍处于出厂打包姿态。此时直接 Home 可能使腕部相机碰撞立柱，必须先按下方步骤开启拖动模式，手动将双臂移到标准零位姿态。
 :::
 
-### 打包姿态全零位操作
+### 手动退出打包姿态
 
-确保 **Robot**、**Teleop** 已启动且机器人 Ready，在已加载 Apex ROS 环境的桌面终端启动 RQt：
+1. 确认 **Robot** 模块为绿色，并已点击 **Start Robot**，使机器人进入 Ready 状态。
+2. 打开终端，开启拖动模式：
 
 ```bash
 source /etc/apex/apex_ros_env.sh
-rqt
+ros2 service call /tj/control/set_drag \
+  marvin_msgs/srv/Int "{data: 1}"
 ```
 
-打开 **Plugins → Services → Service Caller**，依次执行：
+3. 确认返回 `success: true` 后，缓慢拖动双臂离开中间立柱，并调整到标准零位姿态。移动过程中持续确认腕部相机、机械臂与中间立柱之间保留安全距离。
+4. 调整完成后关闭拖动模式：
 
-1. `/control/set_mode`：`data = 1`，切换到 Position Mode。
-2. `/control/set_input`：`data = 2`，切换到 Planner 输入。
-3. `/control/movej`：将 `joint_values` 设置为 14 个零并点击 **Call**。
-
-```text
-[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
- 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+```bash
+ros2 service call /tj/control/set_drag \
+  marvin_msgs/srv/Int "{data: 0}"
 ```
 
-确认双臂均到达全零位后，继续执行：
+确认关闭操作返回 `success: true` 后，继续执行：
 
 1. 点击 **Impedance Mode**，进入阻抗模式。
-2. 点击 **Home**，让机器人回到遥操初始位。
+2. 点击 **Home**，等待前端显示完成且机器人稳定到达遥操初始位。通过 ROS Service 调用时，成功响应只表示轨迹已经启动，必须继续确认 `/tj/info/go_home_status` 为 `succeeded`。
 3. 将 **Input Mode** 切换为 **Teleop**。
 4. 连接头显，在 Apex 头显客户端中建立连接并开始遥操。
 
@@ -87,7 +86,7 @@ rqt
 | Standby Mode | 待机，不执行外部运动指令 |
 | Position Mode | 位置控制模式 |
 | Impedance Mode | 遥操使用的阻抗控制模式 |
-| Home | 回到配置的遥操初始位；出厂打包姿态必须先通过 MoveJ 到全零位，禁止直接点击 |
+| Home | 回到配置的遥操初始位；出厂打包姿态必须先开启拖动模式并手动移到标准零位姿态，关闭拖动模式后才可点击 |
 | Restart (Gripper) | 重启已配置的夹爪 |
 
 ### 输入模式

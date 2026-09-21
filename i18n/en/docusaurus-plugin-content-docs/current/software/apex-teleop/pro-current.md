@@ -5,7 +5,7 @@ sidebar_position: 2
 
 # Current Marvin Pro Apex Teleop
 
-This page applies to the current Marvin Pro with a Tianzhun controller and uses frontend `1.0.7.6o` in its screenshots. The current matching baseline uses robot controller / MarvinSDK `100343001` and Teleop service `1.0.18`. Use software from the same delivery release on site.
+This page applies to the current Marvin Pro with a Tianzhun controller. The current controller source-review target is `gento-apex 1.1.7.1` with Gento SDK `4.7.1`; the source still marks this target as unreleased. At customer sites, follow the delivery manifest and use the host application and headset client from the same release.
 
 ## Interface overview
 
@@ -33,33 +33,32 @@ This page applies to the current Marvin Pro with a Tianzhun controller and uses 
 6. Click **Start Robot** to set the robot Ready.
 
 :::danger Do not Home directly from the factory packing pose
-If both arms hang vertically close to the center column, the robot is still in its factory packing pose. Calling Home directly can cause a wrist camera to collide with the column. First move all 14 arm joints to zero using the procedure below.
+If both arms hang vertically close to the center column, the robot is still in its factory packing pose. Calling Home directly can cause a wrist camera to collide with the column. First enable drag mode and manually move both arms to the standard zero pose using the procedure below.
 :::
 
-### Move from the Packing Pose to All Zeros
+### Manually Exit the Packing Pose
 
-Confirm that **Robot** and **Teleop** are running and the robot is Ready. Start RQt from a desktop terminal with the Apex ROS environment loaded:
+1. Confirm that the **Robot** module is green, then click **Start Robot** and wait for the Ready state.
+2. Open a terminal and enable drag mode:
 
 ```bash
 source /etc/apex/apex_ros_env.sh
-rqt
+ros2 service call /tj/control/set_drag \
+  marvin_msgs/srv/Int "{data: 1}"
 ```
 
-Open **Plugins → Services → Service Caller**, then:
+3. After the command returns `success: true`, slowly drag both arms away from the center column and adjust them to the standard zero pose. Maintain safe clearance between the wrist cameras, arms, and center column throughout the movement.
+4. Disable drag mode immediately after the adjustment:
 
-1. Call `/control/set_mode` with `data = 1` to select Position Mode.
-2. Call `/control/set_input` with `data = 2` to select Planner input.
-3. Call `/control/movej` with `joint_values` set to 14 zeros.
-
-```text
-[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
- 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+```bash
+ros2 service call /tj/control/set_drag \
+  marvin_msgs/srv/Int "{data: 0}"
 ```
 
-After both arms reach the all-zero pose:
+After the command returns `success: true`:
 
 1. Select **Impedance Mode**.
-2. Click **Home** to move to the teleoperation initial pose.
+2. Click **Home** and wait until the frontend reports completion and the robot is stable at the teleoperation initial pose. For a ROS service call, a successful response only means that the trajectory started; continue only after `/tj/info/go_home_status` reports `succeeded`.
 3. Set **Input Mode** to **Teleop**.
 4. Connect the headset, open the Apex headset client, and begin teleoperation.
 
@@ -87,7 +86,7 @@ Green indicates that a module is running. Dependent controls may remain unavaila
 | Standby Mode | Does not execute external motion commands |
 | Position Mode | Position control mode |
 | Impedance Mode | Compliant mode used for teleoperation |
-| Home | Moves to the configured teleoperation initial pose; from the factory packing pose, first MoveJ to all zeros and never click Home directly |
+| Home | Moves to the configured teleoperation initial pose; from the factory packing pose, first enable drag mode, manually move to the standard zero pose, and disable drag mode before clicking Home |
 | Restart (Gripper) | Restarts a configured gripper |
 
 ### Input modes

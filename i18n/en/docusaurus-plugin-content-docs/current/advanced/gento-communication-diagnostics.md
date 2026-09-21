@@ -215,7 +215,7 @@ check_topic() {
 } 2>&1 | tee "$OUT/04_robot.txt"
 ```
 
-Healthy results include robot information, arm state, joint feedback, joint states, and model-specific body feedback. If all feedback is missing, inspect Gento Robot Node, the L1 SDK, DDS, robot IP, and physical networking.
+`robot_info` is published once at startup and every 5 seconds by default. If it still reports `[NO_DATA]` after 6 seconds, check Robot Node, the namespace, and DDS. Healthy results also include arm state, joint feedback, joint states, and model-specific body feedback.
 
 ## 8. Headset, Controllers, and End-Effector Targets
 

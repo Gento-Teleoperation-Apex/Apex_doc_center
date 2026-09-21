@@ -14,8 +14,9 @@ Stop robot motion and record the fault time before diagnosis.
 | URDF and physical pose differ | Robot module, model configuration, and joint-state updates |
 | Teleop or mode controls unavailable | Robot running and Start Robot completed |
 | Home does not move | Ready state, control mode, and robot alarms |
-| Homing directly from the packing pose may hit the column | Do not continue Homing; start Robot/Teleop and use RQt `/control/movej` to move all 14 arm joints to zero first |
-| Wrist camera approaches the column during Home | Stop immediately and use the emergency stop if needed; verify the starting pose and all-zero procedure |
+| Homing directly from the packing pose may hit the column | Do not continue Homing; start Robot and complete Ready, enable drag mode, manually move both arms to the standard zero pose, and disable drag mode |
+| Drag mode cannot be enabled | Check that Robot is running, Start Robot has completed, and `/tj/control/set_drag` returns success |
+| Wrist camera approaches the column during Home | Stop immediately and use the emergency stop if needed; verify that the robot has left the packing pose, drag mode is disabled, and there is sufficient clearance |
 | Headset cannot connect | dnsmasq, headset cable, connection IP, and VR state |
 | Some camera tiles are black | Whether `camera_sources` contains `none` and matches delivery |
 | All camera tiles are black | Camera module, power-on initialization, wiring, and Camera log |

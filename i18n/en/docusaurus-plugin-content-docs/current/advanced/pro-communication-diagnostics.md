@@ -201,7 +201,7 @@ check_topic() {
 } 2>&1 | tee "$OUT/04_robot.txt"
 ```
 
-Healthy results include continuous robot information, arm state, joint feedback, joint states, and end-effector poses. If all feedback is missing, check Robot Node, SDK communication, DDS, the robot IP, and the physical network.
+`/info/robot_info` is published once at startup and every 5 seconds by default. If it still reports `[NO_DATA]` after 6 seconds, check Robot Node, the namespace, and DDS. Healthy results also include continuous arm state, joint feedback, joint states, and end-effector poses.
 
 ## 7. Headset and Controller Input
 

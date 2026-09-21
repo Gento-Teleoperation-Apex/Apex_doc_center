@@ -262,7 +262,7 @@ check_topic() {
 ### 6.4 结果判断
 
 - `/info/joint_feedback`、`/joint_states` 应为 `[DATA]`。
-- `/info/robot_info` 可能只在 Robot Node 启动阶段发布；晚启动监听得到 `[NO_DATA]` 时，若发布端存在且 Robot 日志已经打印正确型号，不单独判为故障。
+- `/info/robot_info` 启动时立即发布，之后默认每 5 秒发布一次；连续 6 秒仍为 `[NO_DATA]` 时，应检查 Robot Node、命名空间和 DDS 通讯。
 - Robot active 但反馈 `[NO_DATA]`：检查 Robot Node、SDK 数据线程和 DDS 通讯。
 - 日志反复 `Robot connection lost`：检查机器人 IP、网线、网卡和 SDK 连接。
 - `/info/joint_feedback` 有数据但 `/joint_states` 无数据：Robot Node 内部转换或发布异常。

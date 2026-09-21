@@ -29,4 +29,4 @@ Pico 自身地址不能与天准003地址相同。调整现场网段时，应同
 
 ## 软件
 
-Skye/Luna 使用与控制器交付版本配套的 Teleop 遥操服务、Apex 前端和 Pico 客户端。当前文档基线中，Teleop 遥操服务为 `1.0.18`，Gento 前端为 `1.0.6.81g`；版本持续更新，现场以同一交付批次的配套安装包为准。详细界面说明见[经典版 Apex Teleop](/software/apex-teleop/classic)。
+Skye/Luna 当前源码核对快照为 `v1.0.6.95g-beta-10-g14cfc0d`。客户现场以交付清单中的控制端安装包为准；Teleop 遥操服务、Apex 前端和 Pico 客户端必须使用同一交付批次的配套版本，不应根据控制端包号推断各自版本。详细界面说明见[经典版 Apex Teleop](/software/apex-teleop/classic)。

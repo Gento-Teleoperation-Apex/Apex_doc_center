@@ -37,14 +37,7 @@ Wiring notes:
 The robot is delivered with both arms hanging vertically close to the center column. Calling Home directly from this pose can cause a wrist camera to collide with the column.
 :::
 
-After completing all wiring and starting **Robot** and **Teleop**, use RQt Service Caller to select Position Mode and Planner input. Then call `/control/movej` to move all 14 arm joints to zero:
-
-```text
-[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
- 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-```
-
-Enter Impedance Mode and call Home only after both arms reach all zeros. See [Startup and Debugging: First Unpacking](./startup-debugging#4-first-unpacking-exit-the-packing-pose) for the complete procedure.
+After completing all wiring, start **Robot** and click **Start Robot**. Once the robot is Ready, enable drag mode, manually move both arms to the standard zero pose, and disable drag mode. Only then may you enter Impedance Mode and run Home. See [Startup and Debugging: First Unpacking](./startup-debugging#4-first-unpacking-exit-the-packing-pose) for the complete procedure.
 
 ## 3. Tianzhun Electric Cabinet Interface Check
 
@@ -105,7 +98,7 @@ Default network parameters:
 | 3 | Connect the headset wired network | Headset is connected through the Ethernet-to-Type-C adapter |
 | 4 | Turn on the electric cabinet `POWER` | Wait for the system to boot and check the `DC48V` / `DC12V` indicators |
 | 5 | Initialize the camera | Run the camera initialization script after the cabinet is powered on again |
-| 6 | Check the packing pose | If the arms hang vertically near the column, do not Home directly; use RQt MoveJ to move all 14 arm joints to zero |
+| 6 | Check the packing pose | If the arms hang vertically near the column, do not Home directly; after Robot is Ready, enable drag mode, manually move to the standard zero pose, and disable drag mode |
 | 7 | Start the teleoperation system | Confirm that the headset or host PC can display the camera view after startup |
 
 If there is no camera view, first check the Senyun camera-end connector, exposed arm cable, camera initialization status, and network signaling address.

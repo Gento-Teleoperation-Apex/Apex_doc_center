@@ -71,34 +71,37 @@ sudo systemctl status apex-backend.service --no-pager
 ## 4. 首次拆箱：先退出打包姿态
 
 :::danger 打包姿态禁止直接 Home
-机器人以双臂垂直靠近中间立柱的打包姿态交付。此姿态直接执行 Home 时，腕部相机存在碰撞立柱的风险。首次拆箱或每次人工恢复到打包姿态后，必须先将双臂 14 个关节移动到全零位。
+机器人以双臂垂直靠近中间立柱的打包姿态交付。此姿态直接执行 Home 时，腕部相机存在碰撞立柱的风险。首次拆箱或每次人工恢复到打包姿态后，必须先开启拖动模式，手动将双臂移到下图所示的标准零位姿态。
 :::
 
-完成上一节并确保 **Robot**、**Teleop** 已启动且机器人 Ready 后，在已加载 Apex ROS 环境的桌面终端打开 RQt：
+![Marvin Pro 标准零位姿态](/img/pro/new-id-standard-zero-pose.png)
+
+1. 确认 **Robot** 模块为绿色，并且已经点击 **Start Robot**。只有机器人进入 Ready 状态后才能开启拖动模式。
+2. 打开终端，执行以下命令开启拖动模式：
 
 ```bash
 source /etc/apex/apex_ros_env.sh
-rqt
+ros2 service call /tj/control/set_drag \
+  marvin_msgs/srv/Int "{data: 1}"
 ```
 
-在 RQt 中依次打开 **Plugins → Services → Service Caller**，然后执行：
+终端应返回 `success: true`。如果服务不存在或返回失败，不要移动机械臂，先检查 Robot 模块、机器人连接和 Ready 状态。
 
-1. 选择 `/control/set_mode`，将 `data` 设为 `1`，切换到 Position Mode。
-2. 选择 `/control/set_input`，将 `data` 设为 `2`，切换到 Planner 输入。
-3. 选择 `/control/movej`，将 `joint_values` 设置为以下 14 个零后点击 **Call**：
+3. 缓慢拖动左右机械臂离开中间立柱，并将双臂调整到上图所示的标准零位姿态。移动过程中持续确认腕部相机、机械臂与中间立柱之间保留安全距离。
+4. 调整完成后立即执行以下命令关闭拖动模式：
 
-```text
-[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
- 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+```bash
+ros2 service call /tj/control/set_drag \
+  marvin_msgs/srv/Int "{data: 0}"
 ```
 
-移动期间持续观察实体机器人和腕部相机与立柱的距离，保持急停可触及。确认双臂均到达全零位后，再继续下一节。已经离开打包姿态且起始路径确认安全时，不需要重复执行本节。
+确认终端返回 `success: true` 后再继续下一节。操作期间保持急停可触及；已经离开打包姿态且 Home 路径确认安全时，不需要重复执行本节。
 
 ## 5. 进入遥操姿态
 
-1. 确认机器人已经离开打包姿态，双臂处于全零位或其他经确认的安全起始姿态。
+1. 确认机器人已经离开打包姿态，双臂处于标准零位姿态，并且拖动模式已经关闭。
 2. 点击 **Impedance Mode**。
-3. 点击 **Home**，等待机器人到达遥操初始位。
+3. 点击 **Home**，等待前端显示完成且机器人稳定到达遥操初始位。通过 ROS Service 调用 Home 时，成功响应只表示轨迹已经启动，必须继续确认 `/tj/info/go_home_status` 为 `succeeded`。
 4. 将 **Input Mode** 切换为 **Teleop**。
 
 ## 6. 连接头显并遥操
@@ -121,7 +124,8 @@ Marvin Pro 支持 Pico 和 Meta Quest：
 | 头显无法连接 | dnsmasq、头显网线、头显连接 IP 和 VR 状态 |
 | 相机黑屏 | Camera 是否启动、相机初始化和 `camera_sources` 配置 |
 | 遥操无动作 | 是否进入 Impedance Mode、完成 Home、Input Mode 是否为 Teleop |
-| 打包姿态准备首次启动 | 禁止直接 Home；先通过 RQt 的 `/control/movej` 将双臂 14 关节移动到全零位 |
-| Home 路径接近立柱 | 立即停止并按需急停，检查是否遗漏全零位步骤和起始姿态 |
+| 打包姿态准备首次启动 | 禁止直接 Home；Robot Ready 后开启拖动模式，手动将双臂移到标准零位姿态，再关闭拖动模式 |
+| 无法开启拖动模式 | 检查 Robot 模块是否运行、是否已点击 Start Robot，以及 `/tj/control/set_drag` 是否返回成功 |
+| Home 路径接近立柱 | 立即停止并按需急停，检查是否已退出打包姿态、关闭拖动模式并确认安全起始姿态 |
 
 需要进一步排查时，请查看 [Apex Teleop 日志说明](/software/apex-teleop/pro-current#日志查看)。

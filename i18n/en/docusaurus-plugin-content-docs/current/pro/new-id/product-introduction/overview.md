@@ -7,7 +7,7 @@ sidebar_position: 1
 
 ## Product Positioning
 
-KernelMind Apex is a ready-to-use teleoperation kit for robotic operation scenarios. It provides the operator with an immersive first-person view through a VR headset and maps the operator's motion to the robot in real time.
+Marvin Pro is a dual-arm robot product for teleoperation scenarios and is supplied with the Gento Teleoperation Apex system. The system provides an immersive first-person view through a VR headset and maps the operator's motion to the robot in real time.
 
 Marvin Pro supports dual-arm robot teleoperation with either a Pico or Meta Quest VR headset. The current version uses a Tianzhun controller as the core control unit. The deserializer board is integrated inside the robot, and the Senyun camera is a standard component connected through internal arm wiring.
 
@@ -24,7 +24,7 @@ The Marvin Pro teleoperation system mainly consists of the robot body, robot con
 | Power and safety | 48 V main power supply | 220 V to 48 V switching power supply |
 | Power and safety | 12 V controller power supply | Powers the controller and related peripherals |
 | Power and safety | Emergency stop box | Provides on-site safety protection and emergency stop |
-| Main control | Tianzhun electric cabinet / core controller | Runs KernelMind Apex and ROS 2 nodes |
+| Main control | Tianzhun electric cabinet / core controller | Runs Apex and ROS 2 nodes |
 | Perception | Senyun camera | Standard camera mounted at the robot arm end; wiring is routed internally through the arm |
 | Operator side | VR headset (Pico or Meta Quest) and controllers | Provides first-person view and operator input; model depends on the delivered configuration |
 | Network and data | Ethernet cables and Type-C Ethernet adapter | Connects the electric cabinet, host PC, and VR headset |
@@ -42,7 +42,7 @@ The Marvin Pro teleoperation system mainly consists of the robot body, robot con
 |---|---:|---|
 | VR headset (Pico or Meta Quest) | 1 | Provides immersive first-person operation view; model depends on the delivered configuration |
 | Controllers (left/right) | 1 each | Control arm motion and gripper opening/closing |
-| Tianzhun electric cabinet / core controller | 1 | Runs KernelMind Apex and ROS 2 nodes |
+| Tianzhun electric cabinet / core controller | 1 | Runs Apex and ROS 2 nodes |
 | Robot power cable | 1 | Connects to the electric cabinet power interface |
 | Emergency stop box | 1 | Connects to the electric cabinet emergency stop interface |
 | Senyun camera | Standard | Mounted at the robot arm end; wiring is completed before delivery |
@@ -70,7 +70,7 @@ Foot pedal key functions:
 | Key 1 (left key) | Enables both left and right controllers together |
 | Key 3 (right key) | Moves both arms back to the Home position; prohibited in the factory packing pose |
 
-From the packing pose, first follow [Startup and Debugging](../getting-started/startup-debugging#4-first-unpacking-exit-the-packing-pose) to move all 14 arm joints to zero before using any Home function.
+From the packing pose, first follow [Startup and Debugging](../getting-started/startup-debugging#4-first-unpacking-exit-the-packing-pose) to enable drag mode, manually move both arms to the standard zero pose, and disable drag mode before using any Home function.
 
 ![Foot pedal connection example](/img/pro/pro_accessories_foot_pedal.png)
 
@@ -78,7 +78,7 @@ From the packing pose, first follow [Startup and Debugging](../getting-started/s
 
 | Software module | Installation location | Description |
 |---|---|---|
-| KernelMind Apex controller software | Tianzhun electric cabinet / core controller | Matching controller package with ROS 2, motion control, camera, and recording services |
+| Apex controller software | Tianzhun electric cabinet / core controller | Matching controller package with ROS 2, motion control, camera, and recording services |
 | Apex headset client | Pico or Meta Quest | Headset application matched to the controller release |
 | Apex Teleop | PC | Connects to the controller, starts the robot, switches modes, records data, and replays data |
 

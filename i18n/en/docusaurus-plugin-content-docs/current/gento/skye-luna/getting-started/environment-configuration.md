@@ -29,4 +29,4 @@ Pico must not use the same IP as Tianzhun 003. When changing the site subnet, up
 
 ## Software
 
-Skye/Luna uses the Teleop service, Apex frontend, and Pico client matched to the controller release. The current documentation baseline is Teleop service `1.0.18` and Gento frontend `1.0.6.81g`. Versions continue to evolve, so use packages from the same delivery release. See [Classic Apex Teleop](/software/apex-teleop/classic).
+The current Skye/Luna source-review snapshot is `v1.0.6.95g-beta-10-g14cfc0d`. At customer sites, use the controller package listed in the delivery manifest. The Teleop service, Apex frontend, and Pico client must be the matching versions from the same delivery release; do not infer their versions from the controller package number. See [Classic Apex Teleop](/software/apex-teleop/classic).

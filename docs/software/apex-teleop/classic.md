@@ -5,7 +5,7 @@ sidebar_position: 3
 
 # 经典版 Apex Teleop
 
-本页适用于 Marvin Pro 历史 Orin 版本以及当前 Skye/Luna。当前 Gento 文档以前端 `1.0.6.81g` 为基线；不同交付批次的按钮文字可能略有差异，以现场配套软件为准。
+本页适用于 Marvin Pro 历史 Orin 版本以及当前 Skye/Luna。Skye/Luna 当前源码核对快照为 `v1.0.6.95g-beta-10-g14cfc0d`；客户现场以交付清单为准，界面应使用同一交付批次的配套版本，不同批次的按钮文字可能略有差异。
 
 ![经典版 Apex Teleop 标注界面](/img/gento/luna/apex_teleop_overview_annotated.jpg)
 

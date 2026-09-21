@@ -35,7 +35,7 @@ The following interfaces remain global:
 ## 2. Safety Requirements
 
 - Start Robot in Apex and verify Ready state, operating mode, and a safe initial pose before external control.
-- Never call Home directly from the factory packing pose. Use Planner and `/tj/control/movej` to move all 14 arm joints safely to zero first.
+- Never call Home directly from the factory packing pose. After Robot is Ready, enable drag mode, manually move both arms to the standard zero pose, and disable drag mode first.
 - For direct joint commands, select `Custom/User` (`set_input=3`).
 - For Cartesian IK commands, select the VLA IK source (`set_ik_input=2`) and keep Joint Input on Teleop/QP (`set_input=1`).
 - Clear the workspace, start with small motions, and keep the emergency stop within reach.
@@ -120,7 +120,7 @@ ros2 topic info /tj/control/ik_request/vla -v
 | `/tj/control/set_ik_input` | `marvin_msgs/srv/Int` | Select IK source `0/1/2` |
 | `/tj/control/set_input` | `marvin_msgs/srv/Int` | Select joint source `0/1/2/3/4` |
 | `/tj/control/movej` | `marvin_msgs/srv/MoveJ` | Plan a 14-joint point-to-point move |
-| `/tj/control/go_home` | `std_srvs/srv/Trigger` | Plan both arms to Home |
+| `/tj/control/go_home` | `std_srvs/srv/Trigger` | Plan both arms to Home; a successful response only means the trajectory started, and completion requires `succeeded` on `/tj/info/go_home_status` |
 | `/tj/control/reset_grippers` | `std_srvs/srv/Trigger` | Reset/enable DM or ZY grippers when Tool is running |
 
 ```bash

@@ -9,10 +9,10 @@ The Apex host software connects to the robot controller, manages teleoperation m
 
 | Software layer | Current documentation baseline | Purpose |
 |---|---|---|
-| Robot controller / MarvinSDK | `100343001` | Establishes the robot control link |
-| Teleop service | `1.0.18` | Processes teleoperation data and the control chain |
-| Marvin Pro frontend | `1.0.7.6o` | Host user interface |
-| Gento frontend | `1.0.6.81g` | Skye/Luna host user interface; versions marked with `g` belong to the Gento product line |
+| Marvin Pro controller | `gento-apex 1.1.7.1` | Current Pro source-review target with Gento SDK `4.7.1`; the source still marks it as unreleased |
+| Skye/Luna controller | `v1.0.6.95g-beta-10-g14cfc0d` | Current Gento source-review snapshot; use the customer package listed in the delivery manifest |
+| Teleop service and frontend | Matched to the delivery release | Processes teleoperation data and provides the host interface; do not mix it with another controller release |
+| Headset client | Matched to the delivery release | Provides video and teleoperation input |
 
 Versions continue to evolve. These numbers identify the current documentation baseline; always use matching software from one delivery release.
 
@@ -20,9 +20,9 @@ Versions continue to evolve. These numbers identify the current documentation ba
 
 | Product | Interface | Notes |
 |---|---|---|
-| Marvin Pro (current Tianzhun version) | [Current interface](/software/apex-teleop/pro-current) | Screenshots use frontend `1.0.7.6o` |
+| Marvin Pro (current Tianzhun version) | [Current interface](/software/apex-teleop/pro-current) | Current controller source-review target is `gento-apex 1.1.7.1`, which is not yet marked as a formal release |
 | Marvin Pro (historical Orin version) | [Classic interface](/software/apex-teleop/classic) | For previously delivered systems |
-| Skye / Luna | [Classic interface](/software/apex-teleop/classic) | Current documentation baseline is Gento frontend `1.0.6.81g` |
+| Skye / Luna | [Classic interface](/software/apex-teleop/classic) | Current source-review snapshot is `v1.0.6.95g-beta-10-g14cfc0d` |
 
 ## Guides
 

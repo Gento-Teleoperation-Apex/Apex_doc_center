@@ -15,7 +15,7 @@ Skye and Luna are robot models that support full-body teleoperation; they are no
 |---|---|
 | Skye robot | Executes dual-arm, 2-DOF BODY, and 1-DOF LIFT teleoperation; it has no knee joints |
 | Luna robot | Executes dual-arm and 6-DOF BODY teleoperation with a knee-style body structure |
-| Tianzhun 003 control unit | Runs KernelMind Apex and ROS 2 control services |
+| Tianzhun 003 control unit | Runs Apex and ROS 2 control services |
 | Four cameras | Provide a four-tile first-person and environment view |
 | Pico headset | Displays video and provides head tracking |
 | Wearable arm units (left/right) | Capture operator arm motion |
@@ -56,9 +56,9 @@ Interface locations differ by model. Follow [Hardware Wiring](../getting-started
 
 | Software | Location | Description |
 |---|---|---|
-| KernelMind Apex controller software | Tianzhun 003 | Matching robot control, camera, and teleoperation services |
-| Teleop service | Host PC | Current matching baseline is `1.0.18`; processes teleoperation data |
-| Apex frontend | Host PC | Current Gento documentation baseline is `1.0.6.81g`; connects the robot, switches modes, records, plays back, and displays logs |
+| Apex controller software | Tianzhun 003 | Current source-review snapshot is `v1.0.6.95g-beta-10-g14cfc0d`; use the customer package listed in the delivery manifest |
+| Teleop service | Host PC | Use the matching version from the same delivery release; processes teleoperation data |
+| Apex frontend | Host PC | Use the matching version from the same delivery release; connects the robot, switches modes, records, plays back, and displays logs |
 | Apex Pico client | Pico headset | Network connection, video display, and full-body teleoperation input |
 
 ## Network

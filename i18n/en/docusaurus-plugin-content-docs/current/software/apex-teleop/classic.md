@@ -5,7 +5,7 @@ sidebar_position: 3
 
 # Classic Apex Teleop Interface
 
-This page applies to historical Orin-based Marvin Pro systems and current Skye/Luna systems. The current Gento documentation baseline is frontend `1.0.6.81g`. Button labels may vary slightly between delivery releases.
+This page applies to historical Orin-based Marvin Pro systems and current Skye/Luna systems. The current Skye/Luna source-review snapshot is `v1.0.6.95g-beta-10-g14cfc0d`. At customer sites, follow the delivery manifest and use the matching interface from the same release; button labels may vary slightly between releases.
 
 ![Annotated classic Apex Teleop interface](/img/gento/luna/apex_teleop_overview_annotated.jpg)
 

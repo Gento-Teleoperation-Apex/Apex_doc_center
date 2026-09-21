@@ -37,7 +37,7 @@ ros2 service list | grep '^/tj/' | sort
 ## 2. 安全要求
 
 - 外部控制前，先在 Apex 前端启动 Robot，并确认机器人 Ready、模式正确且已进入安全初始姿态。
-- 出厂打包姿态禁止直接 Home。应先通过 Planner 和 `/tj/control/movej` 将双臂安全移到 14 关节全零位。
+- 出厂打包姿态禁止直接 Home。应先在 Robot Ready 后开启拖动模式，手动将双臂移到标准零位姿态并关闭拖动模式。
 - 客户关节直发前，将 Joint Input 切换为 `Custom/User`（`set_input=3`）。
 - 客户末端 IK 输入还需要设置 IK Input（`set_ik_input=2`），并保持 Joint Input 为 `Teleop/QP`（`set_input=1`）。
 - 首次测试应清空工作空间、降低动作幅度，并保持急停可触及。
@@ -141,7 +141,7 @@ ros2 topic info /tj/control/ik_request/vla -v
 | `/tj/control/set_ik_input` | `marvin_msgs/srv/Int` | 切换 IK 输入源：`0/1/2` |
 | `/tj/control/set_input` | `marvin_msgs/srv/Int` | 切换 Joint 输入源：`0/1/2/3/4` |
 | `/tj/control/movej` | `marvin_msgs/srv/MoveJ` | 双臂 14 关节点到点规划 |
-| `/tj/control/go_home` | `std_srvs/srv/Trigger` | 双臂规划回 Home |
+| `/tj/control/go_home` | `std_srvs/srv/Trigger` | 双臂规划回 Home；成功响应只表示轨迹已启动，完成状态以 `/tj/info/go_home_status` 的 `succeeded` 为准 |
 | `/tj/control/reset_grippers` | `std_srvs/srv/Trigger` | 复位/使能 DM 或 ZY 夹爪；Tool 启动后存在 |
 
 切换为客户关节输入：
