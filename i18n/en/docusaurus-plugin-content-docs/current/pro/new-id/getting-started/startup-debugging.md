@@ -102,7 +102,7 @@ Continue only after the command returns `success: true`. Keep the emergency stop
 1. Confirm that the robot has left the packing pose, both arms are in the standard zero pose, and drag mode is disabled.
 2. Select **Impedance Mode**.
 3. Click **Home** and wait until the frontend reports completion and the robot is stable at the teleoperation initial pose. When Home is called through the ROS service, a successful response only means that the trajectory started; continue only after `/tj/info/go_home_status` reports `succeeded`.
-4. Set **Input Mode** to **Teleop**.
+4. Set **Input Mode** to **Teleop**. To verify the IK source or switch through services, see [Teleoperation Modes and Input Sources](/software/apex-teleop/operation-modes).
 
 ## 6. Connect the Headset
 

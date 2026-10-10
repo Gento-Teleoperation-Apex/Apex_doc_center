@@ -94,10 +94,10 @@ ros2 service call /tj/control/set_drag \
 | 模式 | 说明 |
 |---|---|
 | None | 不接受外部运动输入 |
-| Teleop | 接受头显遥操输入，正常遥操时选择此项 |
-| Custom | 接受客户程序或 VLA 的外部控制输入 |
+| Teleop | 接受 Teleop/QP 输出；头显遥操和 VLA 末端位姿控制均选择此项 |
+| Custom | 接受客户程序发布的关节目标，不用于 VLA 末端位姿控制 |
 
-使用 `Custom` 前请先阅读[客户二次开发接口](./customer-interfaces)。
+模式之间的关系、IK 来源切换顺序及全身/双臂/底盘流程见[遥操模式与输入源](./operation-modes)。使用 `Custom` 前请先阅读[客户二次开发接口](./customer-interfaces)。
 
 ## 相机画面
 

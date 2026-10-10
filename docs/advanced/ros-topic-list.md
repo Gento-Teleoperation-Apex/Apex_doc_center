@@ -76,7 +76,7 @@ ros2 topic list -t | grep -E '^/tj/|^/hand_|^/quad_tile/|^/info/apex_package_inf
 | `/tj/control/ik_request` | `marvin_msgs/msg/IKRequest` | 只读 | 仲裁后的 QP IK 请求 |
 | `/tj/control/ik_cmd_A` | `marvin_msgs/msg/Jointcmd` | 只读 | 左臂兼容 IK 调试输出，不是当前主控制链 |
 | `/tj/control/ik_cmd_B` | `marvin_msgs/msg/Jointcmd` | 只读 | 右臂兼容 IK 调试输出，不是当前主控制链 |
-| `/tj/info/ik_request_mux/active_source` | `std_msgs/msg/Int32` | 只读 | IK 来源：`0=idle, 1=VR, 2=VLA` |
+| `/tj/info/ik_request_mux/active_source` | `std_msgs/msg/Int32` | 只读 | IK 来源：`0=idle, 1=VR, 2=VLA, 3=Replay` |
 | `/tj/control/ik_result` | `marvin_msgs/msg/IKResult` | 只读 | IK 求解结果 |
 | `/tj/joint_state_cmd` | `sensor_msgs/msg/JointState` | 只读 | QP 全模型关节目标 |
 | `/tj/control/qp_controller/joint_cmd_A` | `marvin_msgs/msg/JointcmdArm` | 只读 | QP 左臂输出 |

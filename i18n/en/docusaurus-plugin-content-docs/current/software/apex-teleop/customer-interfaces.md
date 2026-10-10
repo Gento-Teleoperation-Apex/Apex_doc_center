@@ -1,6 +1,6 @@
 ---
 title: Marvin Pro Interfaces
-sidebar_position: 4
+sidebar_position: 5
 ---
 
 # Marvin Pro Customer Integration Interfaces
@@ -55,8 +55,11 @@ The current release has two arbitration layers. Publishing an input topic alone 
 | `0` | Idle | No IK forwarding |
 | `1` | VR | `/tj/control/ik_request/vr` |
 | `2` | VLA / customer Cartesian input | `/tj/control/ik_request/vla` |
+| `3` | Replay | `/tj/control/replay/ik_request` |
 
 Switch with `/tj/control/set_ik_input`. Read the current source from `/tj/info/ik_request_mux/active_source`.
+
+The status topic is read-only and cannot switch the source. See [Teleoperation Modes and Input Sources](./operation-modes) for the complete switching order.
 
 ### 3.2 Joint source
 
@@ -117,7 +120,7 @@ ros2 topic info /tj/control/ik_request/vla -v
 | `/tj/control/set_vel_ratio` | `marvin_msgs/srv/Int` | Set planner velocity ratio |
 | `/tj/control/clear_fault` | `std_srvs/srv/Trigger` | Clear faults |
 | `/tj/control/get_motor_err_code` | `marvin_msgs/srv/MotorErrCode` | Read motor error codes |
-| `/tj/control/set_ik_input` | `marvin_msgs/srv/Int` | Select IK source `0/1/2` |
+| `/tj/control/set_ik_input` | `marvin_msgs/srv/Int` | Select IK source: `0=Idle, 1=VR, 2=VLA, 3=Replay` |
 | `/tj/control/set_input` | `marvin_msgs/srv/Int` | Select joint source `0/1/2/3/4` |
 | `/tj/control/movej` | `marvin_msgs/srv/MoveJ` | Plan a 14-joint point-to-point move |
 | `/tj/control/go_home` | `std_srvs/srv/Trigger` | Plan both arms to Home; a successful response only means the trajectory started, and completion requires `succeeded` on `/tj/info/go_home_status` |
@@ -133,6 +136,7 @@ ros2 service call /tj/control/set_input marvin_msgs/srv/Int "{data: 1}"
 
 # Stop joint forwarding
 ros2 service call /tj/control/set_input marvin_msgs/srv/Int "{data: 0}"
+ros2 service call /tj/control/set_ik_input marvin_msgs/srv/Int "{data: 0}"
 ```
 
 ## 7. Read-Only Teleop and Control-Chain Topics

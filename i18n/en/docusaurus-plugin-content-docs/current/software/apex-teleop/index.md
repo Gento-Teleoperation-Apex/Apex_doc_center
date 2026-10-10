@@ -26,6 +26,7 @@ Versions continue to evolve. These numbers identify the current documentation ba
 
 ## Guides
 
+- [Input modes, IK sources, and full-body/dual-arm/base operation](/software/apex-teleop/operation-modes)
 - [Current Marvin Pro interface](/software/apex-teleop/pro-current)
 - [Classic interface for historical Marvin Pro and Skye/Luna](/software/apex-teleop/classic)
 - [Marvin Pro customer integration interfaces](/software/apex-teleop/customer-interfaces)

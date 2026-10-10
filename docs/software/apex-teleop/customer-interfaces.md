@@ -1,6 +1,6 @@
 ---
 title: Marvin Pro 接口
-sidebar_position: 4
+sidebar_position: 5
 ---
 
 # Marvin Pro 客户二次开发接口
@@ -57,8 +57,11 @@ ros2 service list | grep '^/tj/' | sort
 | `0` | Idle | 不转发 IK 请求 |
 | `1` | VR | `/tj/control/ik_request/vr` |
 | `2` | VLA / 客户末端控制 | `/tj/control/ik_request/vla` |
+| `3` | Replay | `/tj/control/replay/ik_request` |
 
 切换 Service：`/tj/control/set_ik_input`。当前来源：`/tj/info/ik_request_mux/active_source`。
+
+状态 Topic 只读，不能通过发布 Topic 切换来源。完整切换顺序见[遥操模式与输入源](./operation-modes)。
 
 ### 3.2 Joint 输入源
 
@@ -138,7 +141,7 @@ ros2 topic info /tj/control/ik_request/vla -v
 | `/tj/control/set_vel_ratio` | `marvin_msgs/srv/Int` | 设置规划速度比例 |
 | `/tj/control/clear_fault` | `std_srvs/srv/Trigger` | 清除故障 |
 | `/tj/control/get_motor_err_code` | `marvin_msgs/srv/MotorErrCode` | 获取电机错误码 |
-| `/tj/control/set_ik_input` | `marvin_msgs/srv/Int` | 切换 IK 输入源：`0/1/2` |
+| `/tj/control/set_ik_input` | `marvin_msgs/srv/Int` | 切换 IK 输入源：`0=Idle, 1=VR, 2=VLA, 3=Replay` |
 | `/tj/control/set_input` | `marvin_msgs/srv/Int` | 切换 Joint 输入源：`0/1/2/3/4` |
 | `/tj/control/movej` | `marvin_msgs/srv/MoveJ` | 双臂 14 关节点到点规划 |
 | `/tj/control/go_home` | `std_srvs/srv/Trigger` | 双臂规划回 Home；成功响应只表示轨迹已启动，完成状态以 `/tj/info/go_home_status` 的 `succeeded` 为准 |
@@ -161,6 +164,7 @@ ros2 service call /tj/control/set_input marvin_msgs/srv/Int "{data: 1}"
 
 ```bash
 ros2 service call /tj/control/set_input marvin_msgs/srv/Int "{data: 0}"
+ros2 service call /tj/control/set_ik_input marvin_msgs/srv/Int "{data: 0}"
 ```
 
 ## 7. 遥操与控制链只读 Topic

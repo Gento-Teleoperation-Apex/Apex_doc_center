@@ -60,6 +60,8 @@ sudo systemctl status apex-backend.service --no-pager
 
 Skye/Luna uses Pico with waist and leg trackers for full-body teleoperation. Follow the [Pico headset guide](/xr-teleop/pico) for developer mode, network, and Apex client setup.
 
+To switch among full-body, arms-only, arms-and-head, or mobile-base teleoperation, follow [Teleoperation Modes and Input Sources](/software/apex-teleop/operation-modes). Release both controller enable buttons before changing the motion range.
+
 After connection, test small arm motions first. For Skye, verify torso and lift mapping; for Luna, verify torso and leg mapping. Increase the range only after all directions are correct.
 
 ## 5. Quick checks

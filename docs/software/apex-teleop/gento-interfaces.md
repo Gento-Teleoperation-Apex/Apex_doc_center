@@ -1,6 +1,6 @@
 ---
 title: Gento（Skye/Luna）ROS 2 接口
-sidebar_position: 5
+sidebar_position: 6
 ---
 
 # Gento（Skye/Luna）ROS 2 接口

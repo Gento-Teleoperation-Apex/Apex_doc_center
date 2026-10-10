@@ -76,7 +76,7 @@ ros2 topic list -t | grep -E '^/tj/|^/hand_|^/quad_tile/|^/info/apex_package_inf
 | `/tj/control/ik_request` | `marvin_msgs/msg/IKRequest` | Read-only | Arbitrated QP IK request |
 | `/tj/control/ik_cmd_A` | `marvin_msgs/msg/Jointcmd` | Read-only | Compatibility left IK diagnostic output; not in the primary chain |
 | `/tj/control/ik_cmd_B` | `marvin_msgs/msg/Jointcmd` | Read-only | Compatibility right IK diagnostic output; not in the primary chain |
-| `/tj/info/ik_request_mux/active_source` | `std_msgs/msg/Int32` | Read-only | IK source: `0=idle, 1=VR, 2=VLA` |
+| `/tj/info/ik_request_mux/active_source` | `std_msgs/msg/Int32` | Read-only | IK source: `0=idle, 1=VR, 2=VLA, 3=Replay` |
 | `/tj/control/ik_result` | `marvin_msgs/msg/IKResult` | Read-only | IK result |
 | `/tj/joint_state_cmd` | `sensor_msgs/msg/JointState` | Read-only | Full-model QP target |
 | `/tj/control/qp_controller/joint_cmd_A` | `marvin_msgs/msg/JointcmdArm` | Read-only | QP left output |

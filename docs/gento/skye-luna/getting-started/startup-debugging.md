@@ -60,6 +60,8 @@ sudo systemctl status apex-backend.service --no-pager
 
 Skye/Luna 使用 Pico 头显及腰部、腿部追踪组件完成全身遥操。按 [Pico 头显操作说明](/xr-teleop/pico) 完成开发者模式、网络和 Apex 客户端设置。
 
+需要在全身、仅双臂、双臂加头部或带底盘遥操之间切换时，按[遥操模式与输入源](/software/apex-teleop/operation-modes)选择动作范围和输入源。切换动作范围前必须松开左右手柄的遥操使能键。
+
 头显连接成功后，先进行小幅双臂动作，再逐步检查追踪映射。Skye 检查躯干与升降动作，Luna 检查躯干与腿部动作；确认所有方向正确后再扩大动作范围。
 
 ## 5. 快速检查

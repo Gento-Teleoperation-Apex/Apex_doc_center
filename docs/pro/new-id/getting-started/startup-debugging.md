@@ -102,7 +102,7 @@ ros2 service call /tj/control/set_drag \
 1. 确认机器人已经离开打包姿态，双臂处于标准零位姿态，并且拖动模式已经关闭。
 2. 点击 **Impedance Mode**。
 3. 点击 **Home**，等待前端显示完成且机器人稳定到达遥操初始位。通过 ROS Service 调用 Home 时，成功响应只表示轨迹已经启动，必须继续确认 `/tj/info/go_home_status` 为 `succeeded`。
-4. 将 **Input Mode** 切换为 **Teleop**。
+4. 将 **Input Mode** 切换为 **Teleop**。需要核对 IK 来源或通过 Service 切换时，参见[遥操模式与输入源](/software/apex-teleop/operation-modes)。
 
 ## 6. 连接头显并遥操
 

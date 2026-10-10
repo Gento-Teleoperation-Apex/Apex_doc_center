@@ -94,10 +94,10 @@ Green indicates that a module is running. Dependent controls may remain unavaila
 | Mode | Description |
 |---|---|
 | None | No external motion input |
-| Teleop | Headset teleoperation input |
-| Custom | Customer application or VLA input |
+| Teleop | Teleop/QP output; used for both headset teleoperation and VLA Cartesian control |
+| Custom | Joint targets from a customer application; not for VLA Cartesian control |
 
-Read [Customer integration interfaces](./customer-interfaces) before using Custom mode.
+See [Teleoperation Modes and Input Sources](./operation-modes) for mode relationships, IK switching order, and full-body/dual-arm/base procedures. Read [Customer integration interfaces](./customer-interfaces) before using Custom mode.
 
 ## Camera view
 
