@@ -60,9 +60,9 @@ You can change the language by clicking the language dropdown button in the uppe
 
 ## Important Configurations
 
-### Robot End-effector Configuration
+### Teleoperation Mode Configuration
 
-This option allows you to freely switch the robotic arm's end-effector configuration, typically between a dexterous hand or a gripper. Depending on the manufacturer's actuator, the corresponding configuration on the XR teleoperation side must also be adjusted.
+This option allows you to switch teleoperation mode including tracking pipeline and the robotic arm's end-effector offset to controllers, typically between a dexterous hand or a gripper. Depending on the manufacturer's actuator, the corresponding configuration on the XR teleoperation side must also be adjusted.
 
 <figure>
     <img src={require("./Screenshots/teleop_endeffector.jpg").default} alt="Connect to host and end-effector settings" />
@@ -251,9 +251,41 @@ In developer mode, you can check the communication details and specific logs bet
 - Test Host connection, Spatial Video, and Data connection status and disconnect/connect them individually.
 - See App log regarding to Host connection, Spatial Video, and Data.
 
-## Safety check
+## Configuration File
 
-[To be updated.]
+:::tip Tip
+👇This feature is supported after version 1.1.0.3
+:::
+
+| Category | JSON Parameters |
+| --- | --- |
+| Core | `ipAddress` • `userHeight` • `language` • `transportProtocol` |
+| Teleop Modes | `teleopmode` • **`teleopModes`** |
+| Network Ports | `PORT_PUB_L` • `PORT_PUB_R` • `PORT_REC_L` • `PORT_REC_R` • `PORT_PUB_BODY` • `tcpServerPort` • `webrtcServerPort` • `fastapiServerPort` |
+| Spatial Video | `webrtcBandwidthLimit` • `isStereoVideo` • `activateWristVideo` |
+| Misc | `configIdentifier` • `forceOverwriteEveryStart` • `overwriteOnVersionMismatch` • `overwriteOnBuildGUIDMismatch` • `overwriteOnConfigIdentifierMismatch` • `autoSaveToPlayerPrefsInEditor` • `autoSaveToJSONInEditor` |
+
+You can modify, add, delete `teleopModes` under Android Path: */sdcard/Android/data/com.KernalMind.Apex_Teleop/files/PlayerPrefsConfig.json*. You should now only modify `teleopModes`, and keep other configs in factory mode. Please restart app after modifying this file to activate your configuration.
+
+`teleopModes` is a list of teleoperation modes and hand/controller offset presets. Each preset contains:
+
+- `displayLabel` (string): Mode name shown in the UI dropdown.
+- `trackingType` (int): Body tracking pipeline:
+  - `0`: Dual-arm only — disables body tracking and streams only hand/controller poses.
+  - `1`: PICO's official body tracking pipeline.
+  - `2`: Effortless Fullbody — a custom cross-platform, markerless full-body tracking pipeline.
+- `leftHand`/`rightHand` (object): Mounting pose offsets for the left and right wrists:
+  - `positionOffset` (Vector3): `{ "x": 0.0, "y": 0.0, "z": 0.0 }` — Position offset in Unity coordinates (meters).
+  - `rotationOffsetEuler` (Vector3): `{ "x": 0.0, "y": 0.0, "z": 0.0 }` — Euler rotation offset in Unity coordinates (degrees).
+
+To calculate your target point and controller offset, try to treat controller pivot point as Unity axis origin, apply Rotation first, then move by Position along the rotated local XYZ axes as the target pose, it should be at your wrist.
+
+You can use our [Controller Offset Adjustment Tool](pathname:///files/ControllerOffset.zip) to assist with visual adjustment and calculating pose parameters in your local browser.
+
+<figure>
+    <img src={require("./Screenshots/example.jpg").default} alt="" />
+    <figcaption>How does teleopModes config work</figcaption>
+</figure>
 
 ## Lookup table for interactions
 
@@ -276,12 +308,12 @@ In developer mode, you can check the communication details and specific logs bet
     <tr><td>Left Hand</td><td>Y Button</td><td>Start teleoperation</td></tr>
     <tr><td>Left Hand</td><td>X Button</td><td>Exit teleoperation</td></tr>
     <tr><td>Right Hand</td><td>A Button</td><td>Robot pose reset</td></tr>
-    <tr><td>Right Hand</td><td>B Button</td><td>Start/Stop host recording</td></tr>
+    <tr><td>Right Hand</td><td>B Button</td><td>Start/Stop host recording. Long press to discard recording.</td></tr>
     <tr><td>Right Hand</td><td>Menu Button</td><td>Hold to reset XR origin</td></tr>
     <tr><td>Both Hands</td><td>Trigger</td><td>Click UI, Control Gripper</td></tr>
     <tr><td>Both Hands</td><td>Grip</td><td>Hold to control robot</td></tr>
-    <tr><td>Left Hand</td><td>Thumbstick(Press and push)</td><td>Robot base rotation</td></tr>
-    <tr><td>Right Hand</td><td>Thumbstick(Press and push)</td><td>Robot base translation</td></tr>
+    <tr><td>Left Hand</td><td>Thumbstick</td><td>Chassis rotation</td></tr>
+    <tr><td>Right Hand</td><td>Thumbstick</td><td>Chassis translation</td></tr>
     <tr><td>Left Hand</td><td>Thumbstick(Long press)</td><td>Enable full-body chassis control</td></tr>
     <tr><td>Right Hand</td><td>Thumbstick(Long press)</td><td>Enable thumbstick chassis control</td></tr>
     <tr><td>Both Hands</td><td>Thumbstick(Long press both)</td><td>Disable chassis movement</td></tr>
