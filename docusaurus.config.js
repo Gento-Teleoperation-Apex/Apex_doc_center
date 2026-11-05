@@ -20,6 +20,7 @@ const config = {
     mermaid: true,
   },
   themes: ['@docusaurus/theme-mermaid'],
+  plugins: [require.resolve('./plugins/strip-ssr-null-characters')],
 
   i18n: {
     defaultLocale: 'zh-Hans',
