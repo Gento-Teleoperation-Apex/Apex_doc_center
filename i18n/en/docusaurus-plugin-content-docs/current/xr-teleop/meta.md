@@ -237,16 +237,10 @@ In developer mode, you can check the communication details and specific logs bet
 ## Configuration File
 
 :::tip Tip
-👇This feature is supported after version 1.1.0.3
-:::
+👇This feature is supported after version 1.1.0.3.
 
-| Category | JSON Parameters |
-| --- | --- |
-| Core | `ipAddress` • `userHeight` • `language` • `transportProtocol` |
-| Teleop Modes | `teleopmode` • **`teleopModes`** |
-| Network Ports | `PORT_PUB_L` • `PORT_PUB_R` • `PORT_REC_L` • `PORT_REC_R` • `PORT_PUB_BODY` • `tcpServerPort` • `webrtcServerPort` • `fastapiServerPort` |
-| Spatial Video | `webrtcBandwidthLimit` • `isStereoVideo` • `activateWristVideo` |
-| Misc | `configIdentifier` • `forceOverwriteEveryStart` • `overwriteOnVersionMismatch` • `overwriteOnBuildGUIDMismatch` • `overwriteOnConfigIdentifierMismatch` • `autoSaveToPlayerPrefsInEditor` • `autoSaveToJSONInEditor` |
+You can use our [XR Configurator](pathname:///tools/xr_configurator/) to configure presets, including visual adjustment of pose offsets, key bindings, and export as JSON. You can also [download the offline package](pathname:///files/ControllerOffset.zip).
+:::
 
 You can modify, add, delete `teleopModes` under Android Path: */sdcard/Android/data/com.KernalMind.Apex_Teleop/files/PlayerPrefsConfig.json*. You should now only modify `teleopModes`, and keep other configs in factory mode. Please restart app after modifying this file to activate your configuration.
 
@@ -262,8 +256,6 @@ You can modify, add, delete `teleopModes` under Android Path: */sdcard/Android/d
   - `rotationOffsetEuler` (Vector3): `{ "x": 0.0, "y": 0.0, "z": 0.0 }` — Euler rotation offset in Unity coordinates (degrees).
 
 To calculate your target point and controller offset, try to treat controller pivot point as Unity axis origin, apply Rotation first, then move by Position along the rotated local XYZ axes as the target pose, it should be at your wrist.
-
-You can use our [Controller Offset Adjustment Tool](pathname:///files/ControllerOffset.zip) to assist with visual adjustment and calculating pose parameters in your local browser.
 
 <figure>
     <img src={require("./Screenshots/example.jpg").default} alt="" />

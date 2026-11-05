@@ -253,17 +253,11 @@ Pico 人机遥操作
 
 :::tip 提示
 此功能在 1.1.0.3 版本之后支持。
+
+你可以使用我们提供的 [XR Configurator](pathname:///tools/xr_configurator/) 进行预设配置，包括可视化调节位姿偏移、按键配置等，并下载为 JSON。也可以[下载离线版](pathname:///files/ControllerOffset.zip)。
 :::
 
 你可以修改、添加、删除 Android 路径 */sdcard/Android/data/com.KernalMind.Apex_Teleop/files/PlayerPrefsConfig.json* 下的 `teleopModes`。你不应该修改除了 `teleopModes` 以外的设置，其他配置请保持出厂模式。修改此文件后，请重启应用以激活您的配置。
-
-| 类别 | JSON |
-| --- | --- |
-| 核心 | `ipAddress` • `userHeight` • `language` • `transportProtocol` |
-| 遥操模式 | `teleopmode` • **`teleopModes`** |
-| 网络端口 | `PORT_PUB_L` • `PORT_PUB_R` • `PORT_REC_L` • `PORT_REC_R` • `PORT_PUB_BODY` • `tcpServerPort` • `webrtcServerPort` • `fastapiServerPort` |
-| 空间视频 | `webrtcBandwidthLimit` • `isStereoVideo` • `activateWristVideo` |
-| 其他 | `configIdentifier` • `forceOverwriteEveryStart` • `overwriteOnVersionMismatch` • `overwriteOnBuildGUIDMismatch` • `overwriteOnConfigIdentifierMismatch` • `autoSaveToPlayerPrefsInEditor` • `autoSaveToJSONInEditor` |
 
 `teleopModes` 是遥操作模式与手部/手柄偏移预设列表。数组中每个预设对象包含：
 
@@ -277,8 +271,6 @@ Pico 人机遥操作
   - `rotationOffsetEuler` (Vector3): `{ "x": 0.0, "y": 0.0, "z": 0.0 }`（欧拉角，Unity 坐标系，单位：度）。
 
 要计算您的目标点和控制器偏移，可尝试将控制器枢轴点视为 Unity 坐标轴原点，先应用旋转，再沿旋转后的局部 XYZ 轴移动，得到的目标位姿应位于您的手腕处。
-
-您可以使用我们提供的[手柄偏移量调节工具](pathname:///files/ControllerOffset.zip)，在本地浏览器中打开即可辅助进行可视化调节与位姿参数计算。
 
 <figure>
     <img src={require("./Screenshots/example.jpg").default} alt="" />
