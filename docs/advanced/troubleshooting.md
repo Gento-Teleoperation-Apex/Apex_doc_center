@@ -445,7 +445,7 @@ source /etc/apex/apex_ros_env.sh
 ros2 topic echo /tj/info/vr_connected --once
 ros2 topic echo /tj/control/target_poseL --once
 ros2 topic echo /tj/control/enableL --once
-ros2 topic echo /tj/control/teleop/ik_request --once
+ros2 topic echo /tj/control/ik_request/vr --once
 ros2 topic echo /tj/control/ik_request --once
 ros2 topic echo /tj/control/qp_controller/joint_cmd_A --once
 ros2 topic echo /tj/control/input_mode --once
@@ -453,7 +453,7 @@ ros2 topic echo /tj/control/joint_cmd_A --once
 ros2 topic echo /tj/info/robot_state --once
 ```
 
-Pro 使用 `/tj/control/ik_request/vr`，Gento 使用 `/tj/control/teleop/ik_request`。不同版本可能使用不同状态 Topic，以目标机 `ros2 topic list` 为准。
+当前 Marvin Pro 与 Gento `v1.1.7.1g` 均使用 `/tj/control/ik_request/vr`。历史 Gento 包可能仍使用 `/tj/control/teleop/ik_request`，应以目标机 `ros2 topic list` 为准。
 
 日志出现：
 
@@ -830,7 +830,7 @@ grep -n 'ROS_LOCALHOST_ONLY' /etc/apex/apex.env
 ### Q45：如何判断是输入没有数据、QP 没输出，还是最终控制源没切对？
 
 ```bash
-ros2 topic echo /tj/control/teleop/ik_request --once
+ros2 topic echo /tj/control/ik_request/vr --once
 ros2 topic echo /tj/control/ik_request --once
 ros2 topic echo /tj/control/qp_controller/joint_cmd_A --once
 ros2 topic echo /tj/control/input_mode --once

@@ -7,6 +7,8 @@ sidebar_position: 4
 
 This page explains the relationship between Input Mode, the IK source, and the teleoperation motion range. It also provides standard procedures for full-body, dual-arm, and mobile-base teleoperation. Controls may differ slightly by delivery release. If an option is absent from the UI, first verify that the service listed here exists on the target device.
 
+For the updated Skye/Luna UI and configuration workflow, see the [current Gento operation guide](./gento-current). Delivered DAgger-enabled releases use the [DAgger manual](/vla/dagger) for model takeover and resumption. The Host manages input sources during intervention; do not run the manual source-switching commands on this page at the same time.
+
 ## 1. Prerequisites
 
 Before changing an input source:
@@ -57,7 +59,7 @@ ros2 topic echo /tj/control/input_mode --once
 
 The IK source selects the Cartesian request used by Teleop/QP. `/tj/info/ik_request_mux/active_source` is a read-only status topic; publishing to it cannot change the source.
 
-Current Marvin Pro releases use `/tj/control/set_ik_input`:
+Current Marvin Pro releases and Skye/Luna on the Gento `v1.1.7.1g` baseline use `/tj/control/set_ik_input`:
 
 | Value | IK source | Purpose |
 |---:|---|---|
@@ -77,7 +79,7 @@ ros2 service call /tj/control/set_ik_input marvin_msgs/srv/Int "{data: 1}"
 ros2 topic echo /tj/info/ik_request_mux/active_source --once
 ```
 
-Use the following order to prevent stale IK output from being forwarded briefly:
+Use the following order. Current releases clear the previous source cache and wait for a complete command from the new source, but both teleoperation enable controls must still be released before switching:
 
 | Scenario | Order |
 |---|---|
@@ -86,8 +88,8 @@ Use the following order to prevent stale IK output from being forwarded briefly:
 | Customer joint target | First `set_input=3`, then `set_ik_input=0` |
 | Stop external control | First `set_input=0`, then `set_ik_input=0` |
 
-:::note Product difference
-`set_ik_input` is a customer-facing interface on current Marvin Pro releases. If it is absent on a Skye/Luna or historical release, use the matched UI and delivery workflow. Do not call an internal mux interface unless instructed by support.
+:::note Version check
+The Gento `v1.1.7.1g` baseline and current Marvin Pro releases use the same `0=Idle, 1=VR, 2=VLA, 3=Replay` values. If the service is absent on a historical delivery, use its matched UI and delivery workflow. Do not call an internal mux interface unless instructed by support.
 :::
 
 ## 4. Teleoperation Motion Range
@@ -99,6 +101,7 @@ Supported Skye/Luna releases provide these motion ranges:
 | `full_body` | `0` | Arms, head, and body |
 | `arms_only` | `1` | Arms only; body and head locked |
 | `arms_head` | `2` | Arms and head; body locked |
+| `arms_body` | `3` | Arms and body; head locked |
 
 ```bash
 # Full body
@@ -113,6 +116,10 @@ ros2 service call /tj/control/set_teleop_motion_mode \
 ros2 service call /tj/control/set_teleop_motion_mode \
   marvin_msgs/srv/Int "{data: 2}"
 
+# Arms and body, with the head locked
+ros2 service call /tj/control/set_teleop_motion_mode \
+  marvin_msgs/srv/Int "{data: 3}"
+
 ros2 topic echo /tj/info/teleop_motion_mode --once
 ```
 
@@ -125,7 +132,7 @@ The mode can change only while both headset-controller enable buttons are releas
 1. Start Robot, Teleop, and the headset network module. Complete Ready, Impedance Mode, and Home.
 2. Release both enable buttons and select `full_body=0`.
 3. When the base is not required, verify `no_base=0`.
-4. Select **Teleop** as Input Mode in the matched Apex UI. Do not copy the Marvin Pro `set_ik_input=1` command to Skye/Luna; the native IK source values differ between the product lines.
+4. Select IK source `VR=1`, then Input Mode `Teleop=1`, or perform the equivalent operation in the matched Apex UI.
 5. Connect Pico and the waist and leg trackers, and verify the VR state.
 6. Test small arm motions first, then verify the head, torso, lift, or leg mapping in sequence.
 
@@ -136,7 +143,7 @@ Use this procedure directly for Marvin Pro. On Skye/Luna, select `arms_only=1` f
 1. Start Robot and Teleop. Complete Ready, Impedance Mode, and Home.
 2. On Skye/Luna, release both enable buttons and select `arms_only=1`. Skip this step on Marvin Pro.
 3. Verify `no_base=0`.
-4. On Marvin Pro, select IK source `VR=1` first and then Input Mode `Teleop=1`. On Skye/Luna, select **Teleop** in the matched UI and do not call the Pro `set_ik_input` service.
+4. Select IK source `VR=1` first and then Input Mode `Teleop=1`, or perform the equivalent operation in the matched Apex UI.
 5. Connect the headset and test small left- and right-arm motions separately before increasing the range.
 
 ### 5.3 Teleoperation with a mobile base
@@ -153,7 +160,7 @@ This procedure applies only to systems delivered with a configured base-teleoper
 2. Select the upper-body range, such as `full_body` or `arms_only`.
 3. Select base mode `1` for joystick driving or `2` for whole-body mapping.
 4. Verify the expected value on `/info/base_teleop/active_mode`.
-5. Select sources according to the product: on Marvin Pro, select the VR IK source before Teleop; on Skye/Luna, select Teleop in the matched UI. Begin at low speed with small motions.
+5. Select `VR=1` before `Teleop=1`, or perform the equivalent operation in the matched Apex UI. Begin at low speed with small motions.
 6. To finish, set base mode to `0` before setting Input Mode and the IK source to `0`.
 
 ```bash
@@ -176,7 +183,7 @@ ros2 topic echo /info/base_teleop/active_mode --once
 
 | Symptom | Check first |
 |---|---|
-| Headset connected but no robot motion | Robot Ready, Impedance Mode, Home, and Input Mode=`Teleop`; on Marvin Pro also verify IK=`VR` |
+| Headset connected but no robot motion | Robot Ready, Impedance Mode, Home, Input Mode=`Teleop`, and IK source=`VR` |
 | Customer joint topic has data but no motion | Input Mode=`Custom`, valid timestamps, and complete joint arrays |
 | VLA Cartesian topic has data but no motion | Do not select Custom; use IK=`VLA` and Input Mode=`Teleop` |
 | Full-body/dual-arm mode cannot change | Both enable buttons released and service available |

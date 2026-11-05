@@ -5,7 +5,7 @@ sidebar_position: 3
 
 # Skye/Luna 启动与调试
 
-本页提供 Skye/Luna 从上电到首次全身遥操的必要步骤。完整按钮、录制、回放和日志说明见 [经典版 Apex Teleop](/software/apex-teleop/classic)。
+本页提供 Skye/Luna 从上电到首次全身遥操的必要步骤。新版按钮、配置保存/应用、录制和安全回放见 [Gento 当前版界面与操作](/software/apex-teleop/gento-current)；历史界面保留 [经典版说明](/software/apex-teleop/classic)。已交付 DAgger 功能版的模型接管流程见 [DAgger 使用手册](/vla/dagger)。
 
 ## 1. 启动前检查
 
@@ -46,15 +46,17 @@ sudo systemctl start apex-backend.service
 sudo systemctl status apex-backend.service --no-pager
 ```
 
-## 3. 启动经典版 Apex Teleop
+## 3. 启动 Apex Teleop
 
 1. 打开 Apex Teleop。
 2. 输入当前控制器 IP，按 **Enter** 连接。
 3. 启动 **Robot**，确认 3D 模型姿态与实体机器人一致。
-4. 启动 **Teleop** 和网络模块；Camera 按需启动。
+4. 按任务需要启动网络模块、**Teleop**、**Tool** 和 **Camera**；每步确认结果。不要仅为状态灯全部变绿而启动未接硬件。
 5. 点击机器人启动入口，使机器人 Ready。
 6. 进入 **Impedance Mode**，再执行 **Home**。
 7. 确认机器人双臂和实体当前姿态正常；Skye 继续检查躯干与升降机构，Luna 继续检查躯干与膝式主体结构。
+
+执行 Home 前必须已按机型流程准备安全初始姿态；未知姿态不直接回零。新版界面完整区域、Ready 判据和配置流程按 [Gento 当前版操作](/software/apex-teleop/gento-current) 核对。
 
 ## 4. 连接 Pico 并遥操
 

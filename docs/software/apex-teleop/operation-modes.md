@@ -7,6 +7,8 @@ sidebar_position: 4
 
 本页说明 Input Mode、IK 输入源和遥操动作范围之间的关系，并给出全身遥操、双臂遥操和带底盘遥操的标准操作顺序。不同交付版本显示的控件可能略有差异；界面没有对应选项时，先确认目标设备是否提供本文列出的 Service。
 
+Skye/Luna 新版界面和配置流程见 [Gento 当前版操作指南](./gento-current)。已交付 DAgger 功能版的模型接管/恢复按 [DAgger 使用手册](/vla/dagger) 操作；接管期间由 Host 管理输入源，不同时手动执行本页的切源命令。
+
 ## 1. 操作前提
 
 切换任何输入源前，应先完成以下操作：
@@ -57,7 +59,7 @@ ros2 topic echo /tj/control/input_mode --once
 
 IK 输入源决定 Teleop/QP 使用哪一路末端位姿请求。`/tj/info/ik_request_mux/active_source` 是只读状态 Topic，不能通过向该 Topic 发布消息来切换来源。
 
-当前 Marvin Pro 通过 `/tj/control/set_ik_input` Service 切换：
+当前 Marvin Pro 以及 Gento `v1.1.7.1g` 基线的 Skye/Luna 均通过 `/tj/control/set_ik_input` Service 切换：
 
 | 数值 | IK 来源 | 用途 |
 |---:|---|---|
@@ -77,7 +79,7 @@ ros2 service call /tj/control/set_ik_input marvin_msgs/srv/Int "{data: 1}"
 ros2 topic echo /tj/info/ik_request_mux/active_source --once
 ```
 
-来源切换必须遵循以下顺序，以免短暂转发旧的 IK 输出：
+来源切换必须遵循以下顺序。当前版本会在切源时清除上一来源缓存并等待新来源的完整指令，但仍应先松开遥操使能并按顺序操作：
 
 | 场景 | 操作顺序 |
 |---|---|
@@ -86,8 +88,8 @@ ros2 topic echo /tj/info/ik_request_mux/active_source --once
 | 客户关节目标 | 先 `set_input=3`，再 `set_ik_input=0` |
 | 停止外部控制 | 先 `set_input=0`，再 `set_ik_input=0` |
 
-:::note 产品差异
-`set_ik_input` 是当前 Marvin Pro 对外接口。Skye/Luna 或历史交付版本若查询不到该 Service，应使用配套上位机和交付流程，不要自行调用内部 mux 接口。
+:::note 版本检查
+Gento `v1.1.7.1g` 基线和当前 Marvin Pro 提供相同的 `0=Idle, 1=VR, 2=VLA, 3=Replay` 编号。历史交付版本若查询不到该 Service，应使用配套上位机和交付流程，不要自行调用内部 mux 接口。
 :::
 
 ## 4. 遥操动作范围
@@ -99,6 +101,7 @@ ros2 topic echo /tj/info/ik_request_mux/active_source --once
 | `full_body` | `0` | 双臂、头部和身体 |
 | `arms_only` | `1` | 仅双臂，锁定身体和头部 |
 | `arms_head` | `2` | 双臂和头部，锁定身体 |
+| `arms_body` | `3` | 双臂和身体，锁定头部 |
 
 ```bash
 # 全身遥操
@@ -113,6 +116,10 @@ ros2 service call /tj/control/set_teleop_motion_mode \
 ros2 service call /tj/control/set_teleop_motion_mode \
   marvin_msgs/srv/Int "{data: 2}"
 
+# 双臂加身体，锁定头部
+ros2 service call /tj/control/set_teleop_motion_mode \
+  marvin_msgs/srv/Int "{data: 3}"
+
 ros2 topic echo /tj/info/teleop_motion_mode --once
 ```
 
@@ -125,7 +132,7 @@ ros2 topic echo /tj/info/teleop_motion_mode --once
 1. 启动 Robot、Teleop 和头显网络模块，完成 Ready、Impedance Mode 和 Home。
 2. 松开左右手柄使能键，将遥操动作范围切换为 `full_body=0`。
 3. 不使用底盘时确认底盘模式为 `no_base=0`。
-4. 在配套 Apex 界面中将 Input Mode 切换为 **Teleop**。不要在 Skye/Luna 上照抄 Marvin Pro 的 `set_ik_input=1` 命令；两条产品线的原生 IK 来源编号不同。
+4. 将 IK 来源切换为 `VR=1`，再将 Input Mode 切换为 **Teleop=1**；也可以使用提供相同操作的配套 Apex 界面。
 5. 连接 Pico、腰部和腿部追踪组件，确认 VR 状态正常。
 6. 先测试小幅双臂动作，再依次检查头部、躯干、升降或腿部映射。
 
@@ -136,7 +143,7 @@ Marvin Pro 直接按本流程使用；Skye/Luna 需要限制为双臂时，先�
 1. 启动 Robot、Teleop，完成 Ready、Impedance Mode 和 Home。
 2. Skye/Luna 松开使能键并切换为 `arms_only=1`；Marvin Pro 跳过此步。
 3. 确认底盘模式为 `no_base=0`。
-4. Marvin Pro 先切换 IK 来源为 `VR=1`，再切换 Input Mode 为 `Teleop=1`；Skye/Luna 直接通过配套界面选择 **Teleop**，不要调用 Pro 的 `set_ik_input`。
+4. 将 IK 来源切换为 `VR=1`，再将 Input Mode 切换为 `Teleop=1`；也可以使用提供相同操作的配套 Apex 界面。
 5. 连接头显，分别进行左右臂小幅动作，确认方向和使能逻辑正确后再扩大范围。
 
 ### 5.3 带底盘遥操
@@ -153,7 +160,7 @@ Marvin Pro 直接按本流程使用；Skye/Luna 需要限制为双臂时，先�
 2. 先选择上半身动作范围，例如 `full_body` 或 `arms_only`。
 3. 再选择底盘模式：摇杆驾驶选 `1`，全身联动选 `2`。
 4. 确认 `/info/base_teleop/active_mode` 返回预期数值。
-5. 按产品对应的头显遥操流程选择输入源：Marvin Pro 先选 VR IK、再选 Teleop；Skye/Luna 使用配套界面选择 Teleop。从低速、小范围开始测试。
+5. 按头显遥操流程先选择 `VR=1`，再选择 `Teleop=1`；也可以使用提供相同操作的配套 Apex 界面。从低速、小范围开始测试。
 6. 结束时先将底盘模式切回 `0`，再将 Input Mode 和 IK 来源切回 `0`。
 
 ```bash
@@ -176,7 +183,7 @@ ros2 topic echo /info/base_teleop/active_mode --once
 
 | 现象 | 优先检查 |
 |---|---|
-| 头显已连接但机器人不动 | Robot Ready、Impedance Mode、Home、Input Mode=`Teleop`；Marvin Pro 还需确认 IK=`VR` |
+| 头显已连接但机器人不动 | Robot Ready、Impedance Mode、Home、Input Mode=`Teleop`，以及 IK 来源=`VR` |
 | 客户关节 Topic 有数据但机器人不动 | Input Mode 是否为 `Custom`，消息时间戳和关节数组是否有效 |
 | VLA 末端 Topic 有数据但机器人不动 | 不要选择 Custom；应为 IK=`VLA`、Input Mode=`Teleop` |
 | 无法切换全身/双臂模式 | 左右手柄使能键是否完全松开，Service 是否存在 |

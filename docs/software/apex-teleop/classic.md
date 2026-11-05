@@ -5,7 +5,7 @@ sidebar_position: 3
 
 # 经典版 Apex Teleop
 
-本页适用于 Marvin Pro 历史 Orin 版本以及当前 Skye/Luna。Skye/Luna 当前源码核对快照为 `v1.0.6.95g-beta-10-g14cfc0d`；客户现场以交付清单为准，界面应使用同一交付批次的配套版本，不同批次的按钮文字可能略有差异。
+本页保留 Marvin Pro 历史 Orin 版本和使用经典界面的 Skye/Luna 说明。Skye/Luna 已有新版配套界面，含配置保存/应用、录制和回放，见 [Gento 当前版界面与操作](./gento-current)。客户现场以交付清单和实际界面为准，不混用不同批次的按钮及默认值。
 
 ![经典版 Apex Teleop 标注界面](/img/gento/luna/apex_teleop_overview_annotated.jpg)
 
@@ -34,6 +34,8 @@ Skye/Luna 使用 Pico 头显及全身追踪组件；Marvin Pro 历史版本按�
 | Log | 选择模块并查看运行日志 |
 
 ## 数据录制与回放
+
+以下默认路径仅用于本页历史部署；新版配置根目录和容器路径按 [Gento 当前版录制说明](./gento-current#6-录制数据) 核对，不要求所有版本都插入同名 U 盘。
 
 录制前确认卷标为 `BAG_STORAGE` 的 U 盘已正确挂载，并检查 Camera 状态。填写录制名称后点击 **Start Recording**，任务完成后点击 **Stop Recording**。数据默认保存在 `/media/<user>/BAG_STORAGE/recorded_bags`。回放时选择记录文件，再使用 **Play**、**Stop** 和循环选项。
 

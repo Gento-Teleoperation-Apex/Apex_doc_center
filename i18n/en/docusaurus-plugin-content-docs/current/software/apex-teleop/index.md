@@ -10,7 +10,7 @@ The Apex host software connects to the robot controller, manages teleoperation m
 | Software layer | Current documentation baseline | Purpose |
 |---|---|---|
 | Marvin Pro controller | `gento-apex 1.1.7.1` | Current Pro source-review target with Gento SDK `4.7.1`; the source still marks it as unreleased |
-| Skye/Luna controller | `v1.0.6.95g-beta-10-g14cfc0d` | Current Gento source-review snapshot; use the customer package listed in the delivery manifest |
+| Skye/Luna controller | `v1.1.7.1g` | Current formal Gento documentation baseline with Gento SDK `4.7.1`; use the package listed in the delivery manifest |
 | Teleop service and frontend | Matched to the delivery release | Processes teleoperation data and provides the host interface; do not mix it with another controller release |
 | Headset client | Matched to the delivery release | Provides video and teleoperation input |
 
@@ -22,10 +22,13 @@ Versions continue to evolve. These numbers identify the current documentation ba
 |---|---|---|
 | Marvin Pro (current Tianzhun version) | [Current interface](/software/apex-teleop/pro-current) | Current controller source-review target is `gento-apex 1.1.7.1`, which is not yet marked as a formal release |
 | Marvin Pro (historical Orin version) | [Classic interface](/software/apex-teleop/classic) | For previously delivered systems |
-| Skye / Luna | [Classic interface](/software/apex-teleop/classic) | Current source-review snapshot is `v1.0.6.95g-beta-10-g14cfc0d` |
+| Skye / Luna (matched newer interface) | [Current Gento Interface and Operation](/software/apex-teleop/gento-current) | Configuration save/apply, recording, and playback; verify features against the actual delivery |
+| Skye / Luna (historical interface) | [Classic interface](/software/apex-teleop/classic) | Retained for previously delivered releases |
 
 ## Guides
 
+- [Current Gento interface, configuration, recording, and safe playback](/software/apex-teleop/gento-current)
+- [Gento DAgger intervention and data collection](/vla/dagger)
 - [Input modes, IK sources, and full-body/dual-arm/base operation](/software/apex-teleop/operation-modes)
 - [Current Marvin Pro interface](/software/apex-teleop/pro-current)
 - [Classic interface for historical Marvin Pro and Skye/Luna](/software/apex-teleop/classic)

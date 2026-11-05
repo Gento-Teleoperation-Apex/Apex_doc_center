@@ -427,15 +427,14 @@ Gento 除双臂外还可能包含头部、身体、腰部、升降或腿部数�
 /tj/control/joint_cmd_head
 /tj/control/qp_controller/joint_cmd_body
 /tj/control/qp_controller/joint_cmd_head
-/tj/info/robot_cmd_state
-/tj/control/teleop/ik_request
+/tj/control/ik_request/vr
 ```
 
 以上是候选名称，不是所有版本都会发布。加入白名单前必须先在目标机执行：
 
 ```bash
 source /etc/apex/apex_ros_env.sh
-ros2 topic list -t | grep -E 'body|head|lift|robot_cmd_state|ik_request'
+ros2 topic list -t | grep -E 'body|head|lift|ik_request'
 ```
 
 Skye 和 Luna 的身体结构不同，不能直接复制同一组身体 Topic 并假定含义、关节数量和类型一致。

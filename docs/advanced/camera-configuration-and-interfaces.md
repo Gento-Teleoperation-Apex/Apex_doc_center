@@ -131,7 +131,20 @@ quad_csi_quickview:
 
 Mosaic 主路径不依赖这些 ROS Image。只有订阅单路彩色 Topic 时才执行 NVMM 到 CPU 的导出。
 
-### 4.2 Mosaic 与深度图像
+### 4.2 单路 H.264 视频
+
+启用对应输出后，相机组件可分别发布四路 H.264 视频。消息类型为 `foxglove_msgs/msg/CompressedVideo`，不是 `sensor_msgs/msg/CompressedImage`；输出尺寸可按通道配置，实际频率跟随有效相机输入并受系统负载影响。
+
+| Topic | 类型 | 编码 | 说明 |
+|---|---|---|---|
+| `/camera/left_eye/image_h264` | `foxglove_msgs/msg/CompressedVideo` | H.264 | 左头部相机独立码流 |
+| `/camera/right_eye/image_h264` | `foxglove_msgs/msg/CompressedVideo` | H.264 | 右头部相机独立码流 |
+| `/camera/left_wrist/image_h264` | `foxglove_msgs/msg/CompressedVideo` | H.264 | 左腕相机独立码流 |
+| `/camera/right_wrist/image_h264` | `foxglove_msgs/msg/CompressedVideo` | H.264 | 右腕相机独立码流 |
+
+这些 Topic 只在交付版本包含单路 H.264 功能且配置已启用时出现。不要用 `CompressedImage.format` 判断其编码；应查看 `CompressedVideo` 消息定义和 `format` 字段。
+
+### 4.3 Mosaic 与深度图像
 
 | Topic | 类型 | `CompressedImage.format` | 发布条件 / 说明 |
 |---|---|---|---|
@@ -198,6 +211,7 @@ source /etc/apex/apex_ros_env.sh
 
 ros2 node list
 ros2 topic list | grep -Ei 'camera|image|compressed|quad'
+ros2 topic info /camera/left_eye/image_h264 -v
 ros2 topic info /quad_tile/compressed_undistorted -v
 ros2 topic hz /quad_tile/compressed_undistorted
 ```
@@ -205,6 +219,7 @@ ros2 topic hz /quad_tile/compressed_undistorted
 | 现象 | 判断与处理 |
 |---|---|
 | `/quad_tile/compressed` 没有数据 | 先确认是否存在订阅者；无订阅者时不启动对应编码器属于正常行为 |
+| 单路 `image_h264` Topic 不存在 | 确认交付版本支持该功能，并检查对应通道 H.264 输出是否启用 |
 | 深度压缩 Topic 没有数据 | 确认深度已启用且存在订阅者 |
 | `CAM N DISABLED` | 对应槽位的 `source` 为 `none` |
 | `CAM N STALE` | 对应槽位超过 500 ms 没有新帧 |

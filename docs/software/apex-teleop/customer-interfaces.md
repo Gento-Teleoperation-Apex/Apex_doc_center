@@ -57,7 +57,7 @@ ros2 service list | grep '^/tj/' | sort
 | `0` | Idle | 不转发 IK 请求 |
 | `1` | VR | `/tj/control/ik_request/vr` |
 | `2` | VLA / 客户末端控制 | `/tj/control/ik_request/vla` |
-| `3` | Replay | `/tj/control/replay/ik_request` |
+| `3` | Replay | `/tj/control/ik_request/replay` |
 
 切换 Service：`/tj/control/set_ik_input`。当前来源：`/tj/info/ik_request_mux/active_source`。
 

@@ -147,7 +147,6 @@ Typical feedback interfaces:
 ```text
 /info/robot_info
 /info/robot_state
-/info/robot_cmd_state
 /info/joint_feedback
 /joint_states
 ```
@@ -157,7 +156,7 @@ Typical control and body interfaces:
 ```text
 /control/target_poseL
 /control/target_poseR
-/control/teleop/ik_request
+/control/ik_request/vr
 /control/ik_request
 /control/qp_controller/joint_cmd_A
 /control/qp_controller/joint_cmd_B
@@ -205,7 +204,7 @@ check_topic() {
 }
 
 {
-  for topic in /info/robot_info /info/robot_state /info/robot_cmd_state \
+  for topic in /info/robot_info /info/robot_state \
                /info/joint_feedback /joint_states /info/eef_left /info/eef_right; do
     check_topic "$topic"
   done
@@ -283,7 +282,7 @@ resolve_topic() {
   echo "每个 Topic 最多监听7秒，请持续做小幅双臂和身体动作。"
   for logical in /control/target_poseL /control/target_poseR \
                  /control/enableL /control/enableR \
-                 /control/teleop/ik_request \
+                 /control/ik_request/vr \
                  /control/ik_request \
                  /info/ik_request_mux/active_source \
                  /control/qp_controller/joint_cmd_A \
@@ -309,9 +308,11 @@ resolve_topic() {
 
 Expected data order:
 
+The following uses `ik_request/vr` from the Gento `v1.1.7.1g` baseline. If a historical delivery uses another topic, follow the target device's actual graph. See the [current Gento guide](/software/apex-teleop/gento-current) and [teleoperation modes and input sources](/software/apex-teleop/operation-modes) for UI and source settings. During DAgger intervention, observe passively and do not independently switch input sources.
+
 ```text
 target_pose / enable
-  -> teleop/ik_request
+  -> ik_request/vr
   -> ik_request_mux
   -> ik_request
   -> qp_controller/joint_cmd_A、B、body、head

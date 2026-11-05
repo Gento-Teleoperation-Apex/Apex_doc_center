@@ -305,7 +305,7 @@ source /etc/apex/apex_ros_env.sh
 ros2 topic echo /tj/info/vr_connected --once
 ros2 topic echo /tj/control/target_poseL --once
 ros2 topic echo /tj/control/enableL --once
-ros2 topic echo /tj/control/teleop/ik_request --once
+ros2 topic echo /tj/control/ik_request/vr --once
 ros2 topic echo /tj/control/ik_request --once
 ros2 topic echo /tj/control/qp_controller/joint_cmd_A --once
 ros2 topic echo /tj/control/input_mode --once
@@ -313,7 +313,7 @@ ros2 topic echo /tj/control/joint_cmd_A --once
 ros2 topic echo /tj/info/robot_state --once
 ```
 
-Pro uses `/tj/control/ik_request/vr`, while Gento uses `/tj/control/teleop/ik_request`. Releases may expose different state topics, so use the target `ros2 topic list`. A working gripper does not prove that arm IK/QP, Ready, or final commands are healthy. For a one-sided fault, compare L/R targets, enables, QP output, final commands, feedback, power, cabling, and SDK error codes.
+Current Marvin Pro and Gento `v1.1.7.1g` both use `/tj/control/ik_request/vr`. Historical Gento packages may still expose `/tj/control/teleop/ik_request`, so use the target `ros2 topic list`. A working gripper does not prove that arm IK/QP, Ready, or final commands are healthy. For a one-sided fault, compare L/R targets, enables, QP output, final commands, feedback, power, cabling, and SDK error codes.
 
 ### Q25-Q27: Headset network and system prompts
 
@@ -442,7 +442,7 @@ All participants must use the same Domain. Cross-machine DDS generally requires 
 ### Q45: How can input, QP, and final-source failures be separated?
 
 ```bash
-ros2 topic echo /tj/control/teleop/ik_request --once
+ros2 topic echo /tj/control/ik_request/vr --once
 ros2 topic echo /tj/control/ik_request --once
 ros2 topic echo /tj/control/qp_controller/joint_cmd_A --once
 ros2 topic echo /tj/control/input_mode --once

@@ -21,7 +21,7 @@ Skye and Luna are robot models that support full-body teleoperation; they are no
 | Wearable arm units (left/right) | Capture operator arm motion |
 | Waist tracker | Captures torso pose |
 | Leg trackers | Two trackers capture lower-body motion for Skye BODY/LIFT or Luna leg mapping |
-| Host PC | Runs the classic Apex Teleop interface |
+| Host PC | Runs the Apex Teleop interface matching the delivery release |
 
 ![Skye/Luna standard devices and accessories](/img/gento/skye-luna/device-overview.jpg)
 
@@ -56,7 +56,7 @@ Interface locations differ by model. Follow [Hardware Wiring](../getting-started
 
 | Software | Location | Description |
 |---|---|---|
-| Apex controller software | Tianzhun 003 | Current source-review snapshot is `v1.0.6.95g-beta-10-g14cfc0d`; use the customer package listed in the delivery manifest |
+| Apex controller software | Tianzhun 003 | Current formal documentation baseline is `v1.1.7.1g` with Gento SDK `4.7.1`; use the package listed in the delivery manifest |
 | Teleop service | Host PC | Use the matching version from the same delivery release; processes teleoperation data |
 | Apex frontend | Host PC | Use the matching version from the same delivery release; connects the robot, switches modes, records, plays back, and displays logs |
 | Apex Pico client | Pico headset | Network connection, video display, and full-body teleoperation input |
@@ -76,4 +76,4 @@ Do not assign the Pico headset the same IP address as Tianzhun 003.
 - Skye has a 2-DOF BODY and 1-DOF LIFT with no knee joints. Luna has a 6-DOF knee-style body structure.
 - Both Skye and Luna use one waist tracker and two leg trackers for full-body mapping. Marvin Pro primarily supports dual-arm teleoperation.
 - Skye/Luna uses Pico waist and leg tracking and does not use Meta Quest as the standard full-body headset.
-- Skye/Luna currently uses the [classic Apex Teleop interface](/software/apex-teleop/classic).
+- For the updated matching Skye/Luna UI, see the [current Gento operation guide](/software/apex-teleop/gento-current). Historical deployments retain the [classic Apex Teleop guide](/software/apex-teleop/classic). Confirm DAgger against the [feature-specific manual](/vla/dagger) and the actual delivery manifest.

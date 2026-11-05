@@ -55,7 +55,7 @@ The current release has two arbitration layers. Publishing an input topic alone 
 | `0` | Idle | No IK forwarding |
 | `1` | VR | `/tj/control/ik_request/vr` |
 | `2` | VLA / customer Cartesian input | `/tj/control/ik_request/vla` |
-| `3` | Replay | `/tj/control/replay/ik_request` |
+| `3` | Replay | `/tj/control/ik_request/replay` |
 
 Switch with `/tj/control/set_ik_input`. Read the current source from `/tj/info/ik_request_mux/active_source`.
 

@@ -420,15 +420,14 @@ Gento may include body, head, waist, lift, or leg data in addition to both arms.
 /tj/control/joint_cmd_head
 /tj/control/qp_controller/joint_cmd_body
 /tj/control/qp_controller/joint_cmd_head
-/tj/info/robot_cmd_state
-/tj/control/teleop/ik_request
+/tj/control/ik_request/vr
 ```
 
 These are candidates, not guaranteed interfaces. Inspect the target controller before adding anything:
 
 ```bash
 source /etc/apex/apex_ros_env.sh
-ros2 topic list -t | grep -E 'body|head|lift|robot_cmd_state|ik_request'
+ros2 topic list -t | grep -E 'body|head|lift|ik_request'
 ```
 
 Skye and Luna have different body structures. Do not copy one body-topic set to the other without confirming type, meaning, and joint count.

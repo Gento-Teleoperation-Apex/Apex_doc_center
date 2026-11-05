@@ -5,6 +5,10 @@ sidebar_position: 7
 
 # VLA Host 客户使用手册
 
+:::note 产品与版本范围
+本页保留 Marvin Pro 关节模式的既有说明。已交付 Gento DAgger 功能版的 Skye/Luna 支持独立的 Joint/EEF 与人工接管流程，请使用 [Gento DAgger 使用手册](/vla/dagger)，不要混用本页的旧参数或 EEF 限制。
+:::
+
 `vlahost` 用于连接机器人 ROS 2 控制系统与外部 VLA 模型主机。机器人侧运行
 `vlahost_server`，对外提供 HTTP/WebSocket 接口；模型侧不需要安装 ROS，只需要通过
 WebSocket读取机器人状态并发送关节目标。

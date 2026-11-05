@@ -5,7 +5,7 @@ sidebar_position: 3
 
 # Skye/Luna Startup and Debugging
 
-This page covers the minimum sequence from power-on to first full-body teleoperation. For buttons, recording, playback, and logs, see [Classic Apex Teleop](/software/apex-teleop/classic).
+This page covers the minimum sequence from power-on to first full-body teleoperation. For newer controls, configuration save/apply, recording, and safe playback, see [Current Gento Interface and Operation](/software/apex-teleop/gento-current). [Classic instructions](/software/apex-teleop/classic) remain available. For deliveries including model intervention, see [DAgger User Guide](/vla/dagger).
 
 ## 1. Before startup
 
@@ -46,15 +46,17 @@ sudo systemctl start apex-backend.service
 sudo systemctl status apex-backend.service --no-pager
 ```
 
-## 3. Start classic Apex Teleop
+## 3. Start Apex Teleop
 
 1. Open Apex Teleop.
 2. Enter the current controller IP and press **Enter**.
 3. Start **Robot** and verify that the 3D model matches the physical robot.
-4. Start **Teleop** and the network module. Camera is optional.
+4. Start the network module, **Teleop**, **Tool**, and **Camera** as required, checking each result. Do not start disconnected hardware merely to make every indicator green.
 5. Use the robot start control to set the robot Ready.
 6. Select **Impedance Mode**, then execute **Home**.
 7. Verify both arms and the physical robot pose. For Skye, also verify BODY and LIFT; for Luna, verify BODY and the knee-style body structure.
+
+Prepare a safe initial pose according to the model procedure before Home; do not Home from an unknown pose. Check interface areas, Ready criteria, and configuration workflow in [Current Gento Operation](/software/apex-teleop/gento-current).
 
 ## 4. Connect Pico
 

@@ -194,7 +194,6 @@ timeout 10 ros2 service list -t 2>&1 | tee -a "$OUT/03_graph.txt"
 ```text
 /info/robot_info
 /info/robot_state
-/info/robot_cmd_state
 /info/joint_feedback
 /joint_states
 ```
@@ -204,7 +203,7 @@ timeout 10 ros2 service list -t 2>&1 | tee -a "$OUT/03_graph.txt"
 ```text
 /control/target_poseL
 /control/target_poseR
-/control/teleop/ik_request
+/control/ik_request/vr
 /control/ik_request
 /control/qp_controller/joint_cmd_A
 /control/qp_controller/joint_cmd_B
@@ -256,7 +255,7 @@ check_topic() {
 }
 
 {
-  for topic in /info/robot_info /info/robot_state /info/robot_cmd_state \
+  for topic in /info/robot_info /info/robot_state \
                /info/joint_feedback /joint_states /info/eef_left /info/eef_right; do
     check_topic "$topic"
   done
@@ -362,7 +361,7 @@ resolve_topic() {
   echo "每个 Topic 最多监听7秒，请持续做小幅双臂和身体动作。"
   for logical in /control/target_poseL /control/target_poseR \
                  /control/enableL /control/enableR \
-                 /control/teleop/ik_request \
+                 /control/ik_request/vr \
                  /control/ik_request \
                  /info/ik_request_mux/active_source \
                  /control/qp_controller/joint_cmd_A \
@@ -392,9 +391,11 @@ resolve_topic() {
 
 ### 9.4 数据顺序
 
+以下使用 Gento `v1.1.7.1g` 基线的 `ik_request/vr` 名称；历史交付若使用其他 Topic，以目标机实际图谱为准。新版界面和输入源设置见 [Gento 当前版指南](/software/apex-teleop/gento-current) 与 [遥操模式与输入源](/software/apex-teleop/operation-modes)。DAgger 接管期间仅做被动观察，不另行切换输入源。
+
 ```text
 target_pose / enable
-  -> teleop/ik_request
+  -> ik_request/vr
   -> ik_request_mux
   -> ik_request
   -> qp_controller/joint_cmd_A、B、body、head
@@ -408,8 +409,8 @@ target_pose / enable
 ### 9.5 故障判断
 
 - `target_pose` 无：VR/controller_udp。
-- `target_pose` 有、`teleop/ik_request` 无：Teleop Manager、使能或 TF。
-- `teleop/ik_request` 有、`ik_request` 无：IK Request Mux 输入源。
+- `target_pose` 有、`ik_request/vr` 无：Teleop Manager、使能或 TF。
+- `ik_request/vr` 有、`ik_request` 无：IK Request Mux 输入源。
 - `ik_request` 有、QP 无：QP、模型或动态库。
 - QP 有、最终命令无：Joint Cmd Mux 输入源。
 - 双臂命令有、身体命令无：机型参数、身体输入或身体 QP 输出。

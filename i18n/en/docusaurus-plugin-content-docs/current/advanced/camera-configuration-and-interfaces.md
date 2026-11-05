@@ -131,7 +131,20 @@ The default `mosaic.fps` is 30 Hz. Most single-camera, undistorted, H.264, JPEG,
 
 The mosaic path does not depend on these ROS images. NVMM-to-CPU export occurs only when a per-camera color topic has a subscriber.
 
-### 4.2 Mosaic and depth images
+### 4.2 Per-camera H.264 video
+
+When enabled, the camera component publishes four independent H.264 streams. Their type is `foxglove_msgs/msg/CompressedVideo`, not `sensor_msgs/msg/CompressedImage`. Output dimensions are configurable per channel, and the actual rate follows valid camera input and available system capacity.
+
+| Topic | Type | Codec | Description |
+|---|---|---|---|
+| `/camera/left_eye/image_h264` | `foxglove_msgs/msg/CompressedVideo` | H.264 | Independent left head-camera stream |
+| `/camera/right_eye/image_h264` | `foxglove_msgs/msg/CompressedVideo` | H.264 | Independent right head-camera stream |
+| `/camera/left_wrist/image_h264` | `foxglove_msgs/msg/CompressedVideo` | H.264 | Independent left wrist-camera stream |
+| `/camera/right_wrist/image_h264` | `foxglove_msgs/msg/CompressedVideo` | H.264 | Independent right wrist-camera stream |
+
+These topics appear only when the delivered release includes per-camera H.264 support and the corresponding outputs are enabled. Do not inspect them as `CompressedImage`; use the `CompressedVideo` definition and its `format` field.
+
+### 4.3 Mosaic and depth images
 
 | Topic | Type | `CompressedImage.format` | Publication condition / description |
 |---|---|---|---|
@@ -198,6 +211,7 @@ source /etc/apex/apex_ros_env.sh
 
 ros2 node list
 ros2 topic list | grep -Ei 'camera|image|compressed|quad'
+ros2 topic info /camera/left_eye/image_h264 -v
 ros2 topic info /quad_tile/compressed_undistorted -v
 ros2 topic hz /quad_tile/compressed_undistorted
 ```
@@ -205,6 +219,7 @@ ros2 topic hz /quad_tile/compressed_undistorted
 | Symptom | Interpretation and action |
 |---|---|
 | No data on `/quad_tile/compressed` | Check for subscribers first; its encoder remains stopped without subscribers by design |
+| A per-camera `image_h264` topic is absent | Verify that the delivered release supports it and that H.264 output is enabled for the channel |
 | No compressed depth data | Verify that depth is enabled and a subscriber exists |
 | `CAM N DISABLED` | The slot source is `none` |
 | `CAM N STALE` | The slot has received no new frame for more than 500 ms |

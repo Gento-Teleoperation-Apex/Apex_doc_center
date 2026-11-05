@@ -21,7 +21,7 @@ Skye 和 Luna 是支持全身遥操作的机器人型号，并不是遥操系统
 | 操控手臂（左/右） | 捕获操作员双臂运动 |
 | 腰部传感器 | 捕获躯干姿态 |
 | 腿部传感器 | 两个，用于捕获下肢动作并计算 Skye 的躯干/升降或 Luna 的腿部映射 |
-| 上位机 | 运行经典版 Apex Teleop |
+| 上位机 | 运行与交付版本配套的 Apex Teleop 界面 |
 
 ![Skye/Luna 标准设备与配件](/img/gento/skye-luna/device-overview.jpg)
 
@@ -56,7 +56,7 @@ Skye 和 Luna 是支持全身遥操作的机器人型号，并不是遥操系统
 
 | 软件 | 安装位置 | 说明 |
 |---|---|---|
-| Apex 控制器端 | 天准003控制单元 | 当前源码核对快照为 `v1.0.6.95g-beta-10-g14cfc0d`；客户安装包以交付清单为准 |
+| Apex 控制器端 | 天准003控制单元 | 当前正式文档基线为 `v1.1.7.1g`，使用 Gento SDK `4.7.1`；客户安装包以交付清单为准 |
 | Teleop 遥操服务 | 上位机 | 使用与控制端同一交付批次的配套版本，负责遥操数据处理 |
 | Apex 前端 | 上位机 | 使用与控制端同一交付批次的配套版本，用于连接机器人、切换模式、录制、回放和查看日志 |
 | Apex Pico 客户端 | Pico 头显 | 网络连接、视频显示和全身遥操输入 |
@@ -76,4 +76,4 @@ Skye 和 Luna 是支持全身遥操作的机器人型号，并不是遥操系统
 - Skye 为 BODY 2 + LIFT 1 结构，不包含膝关节；Luna 为 BODY 6 膝式主体结构。
 - Skye/Luna 均使用一个腰部传感器和两个腿部传感器完成全身动作映射，Marvin Pro 主要进行双臂遥操。
 - Skye/Luna 使用 Pico 的腰部和腿部追踪组件，因此不使用 Meta Quest 作为标准全身遥操头显。
-- Skye/Luna 当前继续使用[经典版 Apex Teleop](/software/apex-teleop/classic)。
+- Skye/Luna 新版配套界面见 [Gento 当前版操作指南](/software/apex-teleop/gento-current)，历史部署保留 [经典版 Apex Teleop](/software/apex-teleop/classic) 说明；DAgger 按 [功能版使用手册](/vla/dagger) 和实际交付清单确认。

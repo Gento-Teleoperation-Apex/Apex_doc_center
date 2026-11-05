@@ -5,7 +5,7 @@ sidebar_position: 3
 
 # Classic Apex Teleop Interface
 
-This page applies to historical Orin-based Marvin Pro systems and current Skye/Luna systems. The current Skye/Luna source-review snapshot is `v1.0.6.95g-beta-10-g14cfc0d`. At customer sites, follow the delivery manifest and use the matching interface from the same release; button labels may vary slightly between releases.
+This page retains instructions for historical Orin-based Marvin Pro systems and Skye/Luna deliveries using the classic interface. For the newer matched Skye/Luna interface, configuration save/apply, recording, and playback, see [Current Gento Interface and Operation](./gento-current). Follow the delivery manifest and actual interface rather than mixing controls or defaults from different releases.
 
 ![Annotated classic Apex Teleop interface](/img/gento/luna/apex_teleop_overview_annotated.jpg)
 
@@ -34,6 +34,8 @@ Skye/Luna uses Pico with full-body trackers. Historical Marvin Pro systems use P
 | Log | Select a module and inspect runtime logs |
 
 ## Recording and playback
+
+The defaults below apply only to this historical deployment. Verify newer storage roots and container paths in [Current Gento recording instructions](./gento-current#6-record-data); not every release requires a USB drive with the same label.
 
 Before recording, confirm that the USB drive labeled `BAG_STORAGE` is mounted and check Camera state. Enter a recording name, click **Start Recording**, then click **Stop Recording** when finished. Data is stored by default in `/media/<user>/BAG_STORAGE/recorded_bags`. For playback, select a recording and use **Play**, **Stop**, and the loop option.
 

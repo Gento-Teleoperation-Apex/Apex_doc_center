@@ -88,6 +88,7 @@ const sidebars = {
         'vla/training',
         'vla/deployment',
         'vla/vla-host',
+        'vla/dagger',
       ],
     },
   ],
