@@ -7,7 +7,7 @@ sidebar_position: 4
 
 This page explains the relationship between Input Mode, the IK source, and the teleoperation motion range. It also provides standard procedures for full-body, dual-arm, and mobile-base teleoperation. Controls may differ slightly by delivery release. If an option is absent from the UI, first verify that the service listed here exists on the target device.
 
-For the updated Skye/Luna UI and configuration workflow, see the [current Gento operation guide](./gento-current). Delivered DAgger-enabled releases use the [DAgger manual](/vla/dagger) for model takeover and resumption. The Host manages input sources during intervention; do not run the manual source-switching commands on this page at the same time.
+For the updated Skye/Luna UI and configuration workflow, see the [current Gento operation guide](./gento-current). If another program is managing input sources, do not run the manual source-switching commands on this page at the same time.
 
 ## 1. Prerequisites
 

@@ -29,4 +29,4 @@ Pico 自身地址不能与天准003地址相同。调整现场网段时，应同
 
 ## 软件
 
-Skye/Luna 当前正式文档基线为 `v1.1.7.1g`，使用 Gento SDK `4.7.1`。客户现场以交付清单中的控制端安装包为准；Teleop 遥操服务、Apex 前端和 Pico 客户端必须使用同一交付批次的配套版本，不应根据控制端包号推断各自版本。新版配套界面见 [Gento 当前版操作指南](/software/apex-teleop/gento-current)，历史界面见 [经典版 Apex Teleop](/software/apex-teleop/classic)。DAgger 功能另按交付清单和 [DAgger 使用手册](/vla/dagger) 核对，不由上述基线包号推断。
+Skye/Luna 当前正式文档基线为 `v1.1.7.1g`，使用 Gento SDK `4.7.1`。客户现场以交付清单中的控制端安装包为准；Teleop 遥操服务、Apex 前端和 Pico 客户端必须使用同一交付批次的配套版本，不应根据控制端包号推断各自版本。新版配套界面见 [Gento 当前版操作指南](/software/apex-teleop/gento-current)，历史界面见 [经典版 Apex Teleop](/software/apex-teleop/classic)。

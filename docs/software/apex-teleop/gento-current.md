@@ -78,7 +78,7 @@ Teleop 仍 Locked 时，先检查 Robot 连接、Ready 和故障，不反复重�
 4. 松开使能后确认停止跟随，再扩大工作范围。切换动作范围前始终松开两侧使能。
 
 :::warning 普通遥操不是模型控制配置
-VLA Joint 选择 user/Custom 输入，VLA EEF 使用 VLA IK；不要在 DAgger 运行中按本节随意切回 VR。模型接管/恢复按 [DAgger 使用手册](/vla/dagger) 操作，详细枚举见 [输入模式与遥操范围](./operation-modes)。
+VLA Joint 选择 user/Custom 输入，VLA EEF 使用 VLA IK；模型控制期间不要按本节随意切回 VR。先停止模型输出，再按配套流程切换输入源，详细枚举见 [输入模式与遥操范围](./operation-modes)。
 :::
 
 ## 5. 配置：校验、保存、应用
@@ -116,7 +116,7 @@ VLA Joint 选择 user/Custom 输入，VLA EEF 使用 VLA IK；不要在 DAgger �
 4. 先进行短录制，点击 **停止录制**，等待文件结束写入并读取确认。
 5. 正式任务结束后同样停录、核对路径、数据、视频和任务名称，再备份归档。
 
-只看到“开始成功”或文件夹，不代表视频、所有话题或时序对齐均已完成。DAgger 额外需要检查干预区间和录制归属，见 [DAgger 数据检查](/vla/dagger#8-数据检查与归档)。
+只看到“开始成功”或文件夹，不代表视频、所有话题或时序对齐均已完成。
 
 ## 7. 实机回放
 

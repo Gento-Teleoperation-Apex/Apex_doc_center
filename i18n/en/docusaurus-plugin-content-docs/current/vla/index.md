@@ -11,7 +11,6 @@ This section is based on the [OpenPI](https://github.com/Physical-Intelligence/o
 
 ## Applicable Scenarios
 
-- For deliveries with Gento DAgger, use the [DAgger User Guide](/vla/dagger) for model execution, VR corrections, recovery, and intervention-data checks. This path does not require adopting the OpenPI training workflow below first.
 - Fine-tune PI0 / PI05 models using LeRobot-format datasets
 - Convert LeRobot v3.0 datasets exported by Data-Processing-Tool to the v2.1 format required by OpenPI training
 - Deploy trained checkpoints on robots such as Marvin Pro and execute language-instruction tasks through a WebSocket policy service
@@ -59,7 +58,6 @@ The model uses degrees internally. Robot-side `joint_states.positions` normally 
 
 | Document | Content |
 | --- | --- |
-| [Gento DAgger User Guide](/vla/dagger) | Joint/EEF intervention, recovery, segment/full-round recording, and data acceptance |
 | [Dataset Conversion](/vla/dataset-conversion) | LeRobot v3.0 to v2.1 format conversion |
 | [Dataset Sample](/vla/dataset-sample) | Four-camera video and directory structure description |
 | [Environment and Project Setup](/vla/environment) | OpenPI KMD, GPU, Docker, and robot-side vlahost environment |

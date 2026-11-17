@@ -5,7 +5,7 @@ sidebar_position: 6
 
 # Gento (Skye/Luna) ROS 2 Interfaces
 
-See [Current Gento Operation](./gento-current) for the newer interface, and [DAgger User Guide](/vla/dagger) for model Joint/EEF, intervention, and recording on deliveries including that feature. Verify this extension against its matched delivery; it does not automatically expand this page's historical release baseline.
+See [Current Gento Operation](./gento-current) for the newer interface. The interfaces on this page remain scoped to the formal release baseline below.
 
 This chapter is for customers who need to read Gento state, collect teleoperation data, or connect their own algorithms through `Custom` mode. The interface contract follows the formal Gento `v1.1.7.1g` release dated September 30, 2026.
 

@@ -5,7 +5,7 @@ sidebar_position: 6
 
 # Gento（Skye/Luna）ROS 2 接口
 
-新版界面操作见 [Gento 当前版指南](./gento-current)；已交付 DAgger 功能版的模型 Joint/EEF、人工接管与录制流程见 [DAgger 使用手册](/vla/dagger)。该扩展按配套交付核对，不自动扩大本页历史发布基线。
+新版界面操作见 [Gento 当前版指南](./gento-current)。本页接口仍以以下正式发布基线为准。
 
 本章面向需要读取 Gento 状态、采集遥操数据或通过 `Custom` 模式接入自有算法的客户。接口按 Gento `v1.1.7.1g`（2026-09-30）正式发布契约整理。
 

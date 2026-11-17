@@ -11,7 +11,6 @@ VLA（Vision-Language-Action）是一类结合视觉感知、自然语言指令�
 
 ## 适用场景
 
-- 已交付 Gento DAgger 功能版：模型执行、VR 人工纠正、恢复与干预数据检查，见 [DAgger 使用手册](/vla/dagger)。该路径不要求先采用下面的 OpenPI 训练流程。
 - 使用 LeRobot 格式数据集微调 PI0 / PI05 模型
 - 将 Data-Processing-Tool 导出的 LeRobot v3.0 数据集转换为 OpenPI 训练所需的 v2.1 格式
 - 在 Marvin Pro 等机型上部署训练好的 checkpoint，通过 WebSocket 策略服务执行语言指令任务
@@ -59,7 +58,6 @@ VLA（Vision-Language-Action）是一类结合视觉感知、自然语言指令�
 
 | 文档 | 内容 |
 | --- | --- |
-| [Gento DAgger 使用手册](/vla/dagger) | Joint/EEF 模型接管、恢复、分段/整轮录制和数据验收 |
 | [数据集转换](/vla/dataset-conversion) | LeRobot v3.0 → v2.1 格式转换 |
 | [数据集样例](/vla/dataset-sample) | 四路相机视频与目录结构说明 |
 | [环境与项目准备](/vla/environment) | OpenPI KMD、GPU、Docker 与机器人端 vlahost 环境 |

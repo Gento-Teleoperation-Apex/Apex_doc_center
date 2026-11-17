@@ -28,7 +28,6 @@ Apex 上位机软件用于连接机器人控制器、管理遥操模块、切换
 ## 文档导航
 
 - [Gento 当前版界面、配置、录制与安全回放](/software/apex-teleop/gento-current)
-- [Gento DAgger 人工接管与干预数据采集](/vla/dagger)
 - [遥操模式、IK 输入源与全身/双臂/底盘操作](/software/apex-teleop/operation-modes)
 - [Marvin Pro 当前版界面与操作](/software/apex-teleop/pro-current)
 - [Marvin Pro 历史版与 Skye/Luna 经典界面](/software/apex-teleop/classic)

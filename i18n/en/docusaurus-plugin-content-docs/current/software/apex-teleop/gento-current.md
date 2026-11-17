@@ -78,7 +78,7 @@ Choose "No base" for tasks without base operation. With a delivered base, select
 4. Confirm following stops when enable is released before increasing motion range. Release both enables before changing range.
 
 :::warning Ordinary VR setup is not model setup
-VLA Joint uses user/Custom input; VLA EEF uses VLA IK. Do not manually apply this section during DAgger operation. Follow [DAgger User Guide](/vla/dagger) for intervention/recovery and [Input Modes and Motion Range](./operation-modes) for enumerations.
+VLA Joint uses user/Custom input; VLA EEF uses VLA IK. Do not switch back to VR using this section while model control is active. Stop model output before changing input sources through the matching workflow. See [Input Modes and Motion Range](./operation-modes) for enumerations.
 :::
 
 ## 5. Configuration: Validate, Save, Apply
@@ -116,7 +116,7 @@ Applying may restart affected modules. On failure, retain the error and revision
 4. Make a short test, click **Stop Recording**, wait for finalization, and read back the files.
 5. For production runs, stop recording, verify paths/data/video/task name, and archive a backup.
 
-A successful start or an existing directory does not establish complete video, topics, or alignment. DAgger also needs intervention intervals and recording ownership; see [DAgger Data Checks](/vla/dagger#8-data-checks-and-archiving).
+A successful start or an existing directory does not establish complete video, topics, or alignment.
 
 ## 7. Physical Playback
 

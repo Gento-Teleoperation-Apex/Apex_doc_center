@@ -5,7 +5,7 @@ sidebar_position: 3
 
 # Skye/Luna 启动与调试
 
-本页提供 Skye/Luna 从上电到首次全身遥操的必要步骤。新版按钮、配置保存/应用、录制和安全回放见 [Gento 当前版界面与操作](/software/apex-teleop/gento-current)；历史界面保留 [经典版说明](/software/apex-teleop/classic)。已交付 DAgger 功能版的模型接管流程见 [DAgger 使用手册](/vla/dagger)。
+本页提供 Skye/Luna 从上电到首次全身遥操的必要步骤。新版按钮、配置保存/应用、录制和安全回放见 [Gento 当前版界面与操作](/software/apex-teleop/gento-current)；历史界面保留 [经典版说明](/software/apex-teleop/classic)。
 
 ## 1. 启动前检查
 

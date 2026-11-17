@@ -5,7 +5,7 @@ sidebar_position: 3
 
 # Skye/Luna Startup and Debugging
 
-This page covers the minimum sequence from power-on to first full-body teleoperation. For newer controls, configuration save/apply, recording, and safe playback, see [Current Gento Interface and Operation](/software/apex-teleop/gento-current). [Classic instructions](/software/apex-teleop/classic) remain available. For deliveries including model intervention, see [DAgger User Guide](/vla/dagger).
+This page covers the minimum sequence from power-on to first full-body teleoperation. For newer controls, configuration save/apply, recording, and safe playback, see [Current Gento Interface and Operation](/software/apex-teleop/gento-current). [Classic instructions](/software/apex-teleop/classic) remain available.
 
 ## 1. Before startup
 

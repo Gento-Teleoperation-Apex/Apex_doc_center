@@ -1,6 +1,7 @@
 ---
 title: Gento DAgger 使用手册
 sidebar_position: 8
+draft: true
 description: Skye/Luna 模型执行、VR 人工接管、恢复模型和干预数据检查的客户操作流程。
 ---
 
@@ -157,7 +158,7 @@ curl -sS --max-time 5 "$BACKEND_URL/api/v1/robot/status" | python3 -m json.tool
 
 `/state.stamp` 是快照时间，不是每个传感器的采样时间；仅看到快照不断返回，不能证明每项反馈没有冻结。
 
-![VLA Host 调试面板布局](/img/vla/dagger/host-panel.jpg)
+![VLA Host 调试面板布局](@site/draft-assets/vla/dagger/host-panel.jpg)
 
 图为布局参考，其中“等待数据/视频”不是通过状态。左侧查看反馈；右侧 Joint/EEF 选择只改变 action 格式，**不会自动切换机器人控制源**。首次测试只使用当前反馈对应的保持目标，不复制任意示例坐标。
 

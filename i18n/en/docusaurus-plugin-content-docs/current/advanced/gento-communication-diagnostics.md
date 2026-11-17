@@ -308,7 +308,7 @@ resolve_topic() {
 
 Expected data order:
 
-The following uses `ik_request/vr` from the Gento `v1.1.7.1g` baseline. If a historical delivery uses another topic, follow the target device's actual graph. See the [current Gento guide](/software/apex-teleop/gento-current) and [teleoperation modes and input sources](/software/apex-teleop/operation-modes) for UI and source settings. During DAgger intervention, observe passively and do not independently switch input sources.
+The following uses `ik_request/vr` from the Gento `v1.1.7.1g` baseline. If a historical delivery uses another topic, follow the target device's actual graph. See the [current Gento guide](/software/apex-teleop/gento-current) and [teleoperation modes and input sources](/software/apex-teleop/operation-modes) for UI and source settings. When another program is managing input sources, observe passively and do not independently switch input sources.
 
 ```text
 target_pose / enable

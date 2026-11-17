@@ -76,4 +76,4 @@ Do not assign the Pico headset the same IP address as Tianzhun 003.
 - Skye has a 2-DOF BODY and 1-DOF LIFT with no knee joints. Luna has a 6-DOF knee-style body structure.
 - Both Skye and Luna use one waist tracker and two leg trackers for full-body mapping. Marvin Pro primarily supports dual-arm teleoperation.
 - Skye/Luna uses Pico waist and leg tracking and does not use Meta Quest as the standard full-body headset.
-- For the updated matching Skye/Luna UI, see the [current Gento operation guide](/software/apex-teleop/gento-current). Historical deployments retain the [classic Apex Teleop guide](/software/apex-teleop/classic). Confirm DAgger against the [feature-specific manual](/vla/dagger) and the actual delivery manifest.
+- For the updated matching Skye/Luna UI, see the [current Gento operation guide](/software/apex-teleop/gento-current). Historical deployments retain the [classic Apex Teleop guide](/software/apex-teleop/classic).

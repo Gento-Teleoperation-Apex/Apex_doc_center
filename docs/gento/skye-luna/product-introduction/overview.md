@@ -76,4 +76,4 @@ Skye 和 Luna 是支持全身遥操作的机器人型号，并不是遥操系统
 - Skye 为 BODY 2 + LIFT 1 结构，不包含膝关节；Luna 为 BODY 6 膝式主体结构。
 - Skye/Luna 均使用一个腰部传感器和两个腿部传感器完成全身动作映射，Marvin Pro 主要进行双臂遥操。
 - Skye/Luna 使用 Pico 的腰部和腿部追踪组件，因此不使用 Meta Quest 作为标准全身遥操头显。
-- Skye/Luna 新版配套界面见 [Gento 当前版操作指南](/software/apex-teleop/gento-current)，历史部署保留 [经典版 Apex Teleop](/software/apex-teleop/classic) 说明；DAgger 按 [功能版使用手册](/vla/dagger) 和实际交付清单确认。
+- Skye/Luna 新版配套界面见 [Gento 当前版操作指南](/software/apex-teleop/gento-current)，历史部署保留 [经典版 Apex Teleop](/software/apex-teleop/classic) 说明。

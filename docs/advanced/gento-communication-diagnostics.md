@@ -391,7 +391,7 @@ resolve_topic() {
 
 ### 9.4 数据顺序
 
-以下使用 Gento `v1.1.7.1g` 基线的 `ik_request/vr` 名称；历史交付若使用其他 Topic，以目标机实际图谱为准。新版界面和输入源设置见 [Gento 当前版指南](/software/apex-teleop/gento-current) 与 [遥操模式与输入源](/software/apex-teleop/operation-modes)。DAgger 接管期间仅做被动观察，不另行切换输入源。
+以下使用 Gento `v1.1.7.1g` 基线的 `ik_request/vr` 名称；历史交付若使用其他 Topic，以目标机实际图谱为准。新版界面和输入源设置见 [Gento 当前版指南](/software/apex-teleop/gento-current) 与 [遥操模式与输入源](/software/apex-teleop/operation-modes)。其他程序正在管理输入源时，仅做被动观察，不另行切换输入源。
 
 ```text
 target_pose / enable

@@ -6,7 +6,7 @@ sidebar_position: 7
 # VLA Host Customer Guide
 
 :::note Product and version scope
-This page retains the existing Marvin Pro joint-mode instructions. Skye/Luna deliveries with Gento DAgger have their own Joint/EEF and intervention workflow. Use [Gento DAgger User Guide](/vla/dagger) instead of mixing this page's older parameters or EEF restrictions with that delivery.
+This page retains the existing Marvin Pro joint-mode instructions and does not apply to other products or delivery releases. Do not reuse its parameters or EEF restrictions across products; confirm supported capabilities against the matching delivery manifest.
 :::
 
 `vlahost` connects the robot ROS 2 control system to an external VLA model host. The robot runs `vlahost_server`, which exposes HTTP and WebSocket APIs. The model host does not need ROS: it receives robot state over WebSocket and sends joint targets through the same network API.

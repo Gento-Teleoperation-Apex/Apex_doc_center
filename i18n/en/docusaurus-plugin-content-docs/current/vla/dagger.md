@@ -1,6 +1,7 @@
 ---
 title: Gento DAgger User Guide
 sidebar_position: 8
+draft: true
 description: Customer workflow for model execution, VR intervention, model recovery, and intervention-data checks on Skye/Luna.
 ---
 
@@ -157,7 +158,7 @@ Set these URLs again in every new terminal. From the model computer, replace `12
 
 `/state.stamp` is the snapshot time, not each sensor's sample time. Receiving snapshots continuously does not prove that every feedback source is updating.
 
-![VLA Host debugging panel layout](/img/vla/dagger/host-panel.jpg)
+![VLA Host debugging panel layout](@site/draft-assets/vla/dagger/host-panel.jpg)
 
 This is a layout reference. "Waiting for data/video" is not a pass condition. Read feedback on the left. Choosing Joint/EEF on the right changes the action format; it **does not switch the robot's control source**. Use a hold target based on current feedback for the first test, never arbitrary example coordinates.
 
