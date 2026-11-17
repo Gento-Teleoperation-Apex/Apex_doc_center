@@ -60,9 +60,9 @@ Pico 人机遥操作
 
 ## 重要配置
 
-### 机械臂末端执行器配置
+### 遥操模式配置
 
-在这个选项中自由切换机械臂末端的配置，通常是灵巧手或者夹爪。根据不同厂家的执行器，遥操的XR 端也需要更改相应配置。
+在这个选项中切换遥操模式，每个遥操模式有不同的追踪管线以及机械臂末端的配置，通常是灵巧手或者夹爪。根据不同厂家的执行器，遥操的XR 端也需要更改相应配置。
 
 <figure>
     <img src={require("./Screenshots/teleop_endeffector.jpg").default} alt="连接到主机与末端原点设置" />
@@ -249,9 +249,33 @@ Pico 人机遥操作
 - 测试主机连接、空间视频和数据传输状态并单独断开/连接它们。
 - 查看与主机连接、空间视频和数据传输相关的应用日志。
 
-## 安全检查
+## 配置表
 
-[待更新。]
+:::tip 提示
+此功能在 1.1.0.3 版本之后支持。
+
+你可以使用我们提供的 [XR Configurator](pathname:///tools/xr_configurator/) 进行预设配置，包括可视化调节位姿偏移、按键配置等，并下载为 JSON。也可以[下载离线版](pathname:///files/ControllerOffset.zip)。
+:::
+
+你可以修改、添加、删除 Android 路径 */sdcard/Android/data/com.KernalMind.Apex_Teleop/files/PlayerPrefsConfig.json* 下的 `teleopModes`。你不应该修改除了 `teleopModes` 以外的设置，其他配置请保持出厂模式。修改此文件后，请重启应用以激活您的配置。
+
+`teleopModes` 是遥操作模式与手部/手柄偏移预设列表。数组中每个预设对象包含：
+
+- `displayLabel` (string): 界面下拉菜单显示的模式名称。
+- `trackingType` (int): 身体追踪管线类型：
+  - `0`: 仅双臂模式：关闭身体追踪，仅串流双手手部/手柄姿态。
+  - `1`: Pico 官方身体追踪管线。
+  - `2`: Effortless Fullbody IK 是自研的跨平台无穿戴全身动捕管线。
+- `leftHand` / `rightHand` (object): 左右位姿偏移量：
+  - `positionOffset` (Vector3): `{ "x": 0.0, "y": 0.0, "z": 0.0 }`（Unity 坐标系，单位：米）。
+  - `rotationOffsetEuler` (Vector3): `{ "x": 0.0, "y": 0.0, "z": 0.0 }`（欧拉角，Unity 坐标系，单位：度）。
+
+要计算您的目标点和控制器偏移，可尝试将控制器枢轴点视为 Unity 坐标轴原点，先应用旋转，再沿旋转后的局部 XYZ 轴移动，得到的目标位姿应位于您的手腕处。
+
+<figure>
+    <img src={require("./Screenshots/example.jpg").default} alt="" />
+    <figcaption>teleopModes 配置的工作原理</figcaption>
+</figure>
 
 ## 交互按键对照表
 
@@ -274,12 +298,12 @@ Pico 人机遥操作
     <tr><td>左手</td><td>Y 键</td><td>开始遥操作</td></tr>
     <tr><td>左手</td><td>X 键</td><td>退出遥操作</td></tr>
     <tr><td>右手</td><td>A 键</td><td>重置机器人姿态</td></tr>
-    <tr><td>右手</td><td>B 键</td><td>开始/结束主机录制</td></tr>
+    <tr><td>右手</td><td>B 键</td><td>开始/结束主机录制，长按以撤销录制</td></tr>
     <tr><td>右手</td><td>菜单键</td><td>长按以重置原点</td></tr>
     <tr><td>左/右</td><td>扳机键</td><td>点击UI, 控制夹爪</td></tr>
     <tr><td>左/右</td><td>侧边键</td><td>摇操时按住</td></tr>
-    <tr><td>左手</td><td>摇杆(摇杆下压)</td><td>机器人底盘旋转</td></tr>
-    <tr><td>右手</td><td>摇杆(摇杆下压)</td><td>机器人底盘平面移动</td></tr>
+    <tr><td>左手</td><td>摇杆</td><td>底盘旋转</td></tr>
+    <tr><td>右手</td><td>摇杆</td><td>底盘平面移动</td></tr>
     <tr><td>左手</td><td>摇杆(长按)</td><td>开启全身控制底盘</td></tr>
     <tr><td>右手</td><td>摇杆(长按)</td><td>开启摇杆控制底盘运动</td></tr>
     <tr><td>双手</td><td>摇杆(同时长按)</td><td>关闭底盘运动</td></tr>

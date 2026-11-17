@@ -270,4 +270,16 @@ article:has(.bingru-theme) figcaption {
 [data-theme='dark'] article:has(.bingru-theme) img[src*=".svg"],
 [data-theme='dark'] article:has(.bingru-theme) img[src*="image/svg+xml"] {
   filter: invert(1) !important;
-}
+}
+
+/* Scoped links for bingru-theme */
+article:has(.bingru-theme) a:not(.md-toc-inner):not(:has(code):has(img)) {
+  color: var(--bingru-text-secondary) !important;
+  text-decoration: underline !important;
+}
+
+[data-theme='dark'] article:has(.bingru-theme) a:not(.md-toc-inner):not(:has(code):has(img)) {
+  color: var(--bingru-text-secondary) !important;
+  text-decoration: underline !important;
+}
+
