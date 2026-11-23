@@ -51,6 +51,7 @@ const sidebars = {
             'xr-teleop/meta',
             'xr-teleop/pico-app-installation',
             'xr-teleop/pico',
+            'xr-teleop/data-interface',
             'xr-teleop/privacy-policy',
           ],
         },

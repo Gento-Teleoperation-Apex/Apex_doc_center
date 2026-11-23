@@ -22,6 +22,7 @@ Please select the manual that corresponds to the headset you are currently using
 * [Meta Quest User Manual](./meta.md)
 * [PICO App Installation](./pico-app-installation.md)
 * [PICO User Manual](./pico.md)
+* [Apex XR Data Interface](./data-interface.md)
 * [Privacy Policy](./privacy-policy.md)
 
 ---

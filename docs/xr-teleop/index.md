@@ -22,6 +22,7 @@ sidebar_position: 0
 * [Meta Quest 用户手册](./meta.md)
 * [PICO App 安装](./pico-app-installation.md)
 * [PICO 用户手册](./pico.md)
+* [Apex XR 数据接口](./data-interface.md)
 * [隐私政策](./privacy-policy.md)
 
 ---
