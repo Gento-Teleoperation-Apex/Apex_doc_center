@@ -27,14 +27,14 @@ Download Apex XR Live Preview
 <details>
 <summary>macOS</summary>
 
-[Download the Python version (18.77 MiB)](pathname:///files/apex-xr-viewer/apex-xr-viewer.pyz). Requires Python 3.10 or later. From the download folder, run `python3 apex-xr-viewer.pyz`.
+[Download the Python version](pathname:///files/apex-xr-viewer/apex-xr-viewer.pyz). Requires Python 3.10 or later. From the download folder, run `python3 apex-xr-viewer.pyz`.
 
 </details>
 
 <details>
 <summary>Linux</summary>
 
-[Download the Python version (18.77 MiB)](pathname:///files/apex-xr-viewer/apex-xr-viewer.pyz). Requires Python 3.10 or later. From the download folder, run `python3 apex-xr-viewer.pyz`.
+[Download the Python version](pathname:///files/apex-xr-viewer/apex-xr-viewer.pyz). Requires Python 3.10 or later. From the download folder, run `python3 apex-xr-viewer.pyz`.
 
 </details>
 
@@ -105,6 +105,8 @@ Byte offsets are zero-based and ranges are inclusive.
 | 863–894 | 32 | `float32[8]` | Analogs | Thumbstick, trigger, and grip values. |
 | 895–896 | 2 | `uint16` | Checksum | CRC16-Modbus over bytes 0–894. |
 
+Compared with the legacy 745-byte packet, the new format keeps the `PICO9` header and the offsets of the first nine joints, then adds the left and right elbows after the torso. The button, analog, and checksum sections each start 152 bytes later. Receivers that only accept the legacy length must be updated; the viewer linked above supports both packet lengths.
+
 ## Joint data
 
 ### Keypoint order
@@ -151,7 +153,9 @@ Each record contains 19 `float32` values. Offsets are relative to the start of t
 | 854 | Left Y button | `uint8` | 0, 1 | 10 |
 | 855 | Right A button | `uint8` | 0, 1 | 8 |
 | 856 | Right B button | `uint8` | 0, 1 | 12 |
-| 857–862 | Reserved, set to zero | `uint8` | 0, 1 | — |
+| 857 | Left thumbstick click (Scale Toggle) | `uint8` | 0, 1 | 5 |
+| 858 | Right thumbstick click (Scale Toggle) | `uint8` | 0, 1 | 6 |
+| 859–862 | Reserved, set to zero | `uint8` | 0 | — |
 | 863–866 | Left thumbstick X axis | `float32` | -1.0 to 1.0 | 5 |
 | 867–870 | Left thumbstick Y axis | `float32` | -1.0 to 1.0 | 5 |
 | 871–874 | Right thumbstick X axis | `float32` | -1.0 to 1.0 | 6 |

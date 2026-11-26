@@ -27,14 +27,14 @@ Apex XR 数据接口用于跨设备传输遥操作数据。PICO 和 Meta Quest �
 <details>
 <summary>macOS</summary>
 
-[下载 Python 版（18.77 MiB）](pathname:///files/apex-xr-viewer/apex-xr-viewer.pyz)。需要 Python 3.10 或更新版本。在下载目录运行 `python3 apex-xr-viewer.pyz`。
+[下载 Python 版](pathname:///files/apex-xr-viewer/apex-xr-viewer.pyz)。需要 Python 3.10 或更新版本。在下载目录运行 `python3 apex-xr-viewer.pyz`。
 
 </details>
 
 <details>
 <summary>Linux</summary>
 
-[下载 Python 版（18.77 MiB）](pathname:///files/apex-xr-viewer/apex-xr-viewer.pyz)。需要 Python 3.10 或更新版本。在下载目录运行 `python3 apex-xr-viewer.pyz`。
+[下载 Python 版](pathname:///files/apex-xr-viewer/apex-xr-viewer.pyz)。需要 Python 3.10 或更新版本。在下载目录运行 `python3 apex-xr-viewer.pyz`。
 
 </details>
 
@@ -105,6 +105,8 @@ Apex XR 使用 Zenoh 的发现流程，使用下方的自定义 UTF-8 JSON 报�
 | 863–894 | 32 | `float32[8]` | 模拟量 | 摇杆、扳机键和侧边键的输入值。 |
 | 895–896 | 2 | `uint16` | 校验码 | 使用 CRC16-Modbus，覆盖第 0–894 字节。 |
 
+相比旧版 745 字节包，新版保留 `PICO9` 包头和前九个关节的偏移，在躯干后追加左右肘。按键、模拟量和校验码的起始偏移均后移 152 字节。仅支持旧版长度的接收器需要更新；上方提供的查看器支持两种包长。
+
 ## 关节数据
 
 ### 关键点顺序
@@ -151,7 +153,9 @@ Apex XR 使用 Zenoh 的发现流程，使用下方的自定义 UTF-8 JSON 报�
 | 854 | 左手 Y 键 | uint8 | 0,1 | 10 |
 | 855 | 右手 A 键 | uint8 | 0,1 | 8 |
 | 856 | 右手 B 键 | uint8 | 0,1 | 12 |
-| 857–862 | 预留，置零 | uint8 | 0,1 | — |
+| 857 | 左手摇杆按下（Scale Toggle） | uint8 | 0,1 | 5 |
+| 858 | 右手摇杆按下（Scale Toggle） | uint8 | 0,1 | 6 |
+| 859–862 | 预留，置零 | uint8 | 0 | — |
 | 863–866 | 左手摇杆 X 轴 | float32 | -1.0 至 1.0 | 5 |
 | 867–870 | 左手摇杆 Y 轴 | float32 | -1.0 至 1.0 | 5 |
 | 871–874 | 右手摇杆 X 轴 | float32 | -1.0 至 1.0 | 6 |
