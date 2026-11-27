@@ -2,7 +2,7 @@
 title: Apex XR Data Interface
 sidebar_label: Apex XR Data Interface
 ---
-
+<div className="bingru-theme" />
 The Apex XR Data Interface transmits teleoperation data between devices. PICO and Meta Quest use the same packet format. Meta Quest supports only Dual-arm mode and Effortless Full-body Tracking, so it does not provide PICO Body Tracking data.
 
 | Teleoperation mode | Available data |

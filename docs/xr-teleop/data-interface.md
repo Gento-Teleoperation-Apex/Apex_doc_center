@@ -3,6 +3,7 @@ title: Apex XR 数据接口
 sidebar_label: Apex XR 数据接口
 ---
 
+<div className="bingru-theme" />
 Apex XR 数据接口用于跨设备传输遥操作数据。PICO 和 Meta Quest 共用同一数据包格式。Meta Quest 只有“仅双臂”和“简易全身追踪”两种遥操模式，因此不提供 PICO 全身追踪数据。
 
 | 遥操模式 | 可用数据 |
